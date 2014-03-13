@@ -12,7 +12,7 @@ public class Answer {
   private Integer id;
   private Integer answer;
   private Timestamp submissionTime;
-  private Integer userId;
+  private User user;
   private Integer questionId;
   private Integer scheduleId;
 
@@ -46,14 +46,14 @@ public class Answer {
     this.submissionTime = submissionTime;
   }
 
-  @Basic
-  @Column(name = "userId")
-  public Integer getUserId() {
-    return userId;
+  @JoinColumn(name = "userId")
+  @ManyToOne(fetch = FetchType.LAZY)
+  public User getUser() {
+    return user;
   }
 
-  public void setUserId(final Integer userId) {
-    this.userId = userId;
+  public void setUser(final User user) {
+    this.user = user;
   }
 
   @Basic

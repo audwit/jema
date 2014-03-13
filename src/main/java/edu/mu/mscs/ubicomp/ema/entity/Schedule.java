@@ -20,7 +20,7 @@ public class Schedule {
   private Byte secondNotificationSent;
   private Byte thirdNotificationSent;
   private Byte noResponse;
-  private Integer userId;
+  private User user;
 
   @Id
   @Column(name = "id")
@@ -122,14 +122,14 @@ public class Schedule {
     this.noResponse = noResponse;
   }
 
-  @Basic
-  @Column(name = "userId")
-  public Integer getUserId() {
-    return userId;
+  @JoinColumn(name = "userId")
+  @ManyToOne(fetch = FetchType.LAZY)
+  public User getUser() {
+    return user;
   }
 
-  public void setUserId(final Integer userId) {
-    this.userId = userId;
+  public void setUser(final User user) {
+    this.user = user;
   }
 
   @Override
