@@ -44,6 +44,7 @@ public class ContactingTime {
   }
 
   @OneToOne
+  @PrimaryKeyJoinColumn
   public User getUser() {
     return user;
   }
