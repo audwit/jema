@@ -48,7 +48,7 @@ public class Schedule {
   }
 
   @Basic
-  @Column(name = "denied")
+  @Column(name = "denied", nullable = false, columnDefinition = "TINYINT(1)")
   public Boolean getDenied() {
     return denied;
   }

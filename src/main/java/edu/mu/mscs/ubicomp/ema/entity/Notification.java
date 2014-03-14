@@ -57,7 +57,7 @@ public class Notification {
   }
 
   @Basic
-  @Column(name = "sent")
+  @Column(name = "sent", nullable = false, columnDefinition = "TINYINT(1)")
   public Boolean getSent() {
     return sent;
   }
