@@ -10,7 +10,6 @@ import java.util.Collection;
 public class Question {
   private Integer id;
   private String title;
-  private Integer activityId;
   private Collection<Answer> answers;
   private Activity activity;
 
@@ -32,16 +31,6 @@ public class Question {
 
   public void setTitle(final String title) {
     this.title = title;
-  }
-
-  @Basic
-  @Column(name = "activityId")
-  public Integer getActivityId() {
-    return activityId;
-  }
-
-  public void setActivityId(final Integer activityId) {
-    this.activityId = activityId;
   }
 
   @OneToMany(mappedBy = "question")

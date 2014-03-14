@@ -11,7 +11,6 @@ public class ContactingTime {
   private Integer id;
   private Time startTime;
   private Time endTime;
-  private Integer userId;
   private User user;
 
   @Id
@@ -42,16 +41,6 @@ public class ContactingTime {
 
   public void setEndTime(final Time endTime) {
     this.endTime = endTime;
-  }
-
-  @Basic
-  @Column(name = "userId")
-  public Integer getUserId() {
-    return userId;
-  }
-
-  public void setUserId(final Integer userId) {
-    this.userId = userId;
   }
 
   @OneToOne

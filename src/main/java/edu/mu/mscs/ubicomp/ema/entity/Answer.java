@@ -9,9 +9,6 @@ import java.sql.Timestamp;
 @Entity
 public class Answer {
   private Integer id;
-  private Integer userId;
-  private Integer scheduleId;
-  private Integer questionId;
   private Integer answer;
   private Timestamp submissionTime;
   private Question question;
@@ -26,36 +23,6 @@ public class Answer {
 
   public void setId(final Integer id) {
     this.id = id;
-  }
-
-  @Basic
-  @Column(name = "userId")
-  public Integer getUserId() {
-    return userId;
-  }
-
-  public void setUserId(final Integer userId) {
-    this.userId = userId;
-  }
-
-  @Basic
-  @Column(name = "scheduleId")
-  public Integer getScheduleId() {
-    return scheduleId;
-  }
-
-  public void setScheduleId(final Integer scheduleId) {
-    this.scheduleId = scheduleId;
-  }
-
-  @Basic
-  @Column(name = "questionId")
-  public Integer getQuestionId() {
-    return questionId;
-  }
-
-  public void setQuestionId(final Integer questionId) {
-    this.questionId = questionId;
   }
 
   @Basic

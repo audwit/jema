@@ -10,7 +10,6 @@ import java.util.Collection;
 @Entity
 public class Schedule {
   private Integer id;
-  private Integer userId;
   private Date surveyDate;
   private Boolean denied;
   private Collection<Answer> answers;
@@ -25,16 +24,6 @@ public class Schedule {
 
   public void setId(final Integer id) {
     this.id = id;
-  }
-
-  @Basic
-  @Column(name = "userId")
-  public Integer getUserId() {
-    return userId;
-  }
-
-  public void setUserId(final Integer userId) {
-    this.userId = userId;
   }
 
   @Basic

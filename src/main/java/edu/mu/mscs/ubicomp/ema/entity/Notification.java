@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 @Entity
 public class Notification {
   private Integer id;
-  private Integer scheduleId;
   private Timestamp scheduledTime;
   private Timestamp sentTime;
   private Boolean sent;
@@ -24,16 +23,6 @@ public class Notification {
 
   public void setId(final Integer id) {
     this.id = id;
-  }
-
-  @Basic
-  @Column(name = "scheduleId")
-  public Integer getScheduleId() {
-    return scheduleId;
-  }
-
-  public void setScheduleId(final Integer scheduleId) {
-    this.scheduleId = scheduleId;
   }
 
   @Basic
