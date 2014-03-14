@@ -38,12 +38,12 @@ public class NotificationGeneratorService {
 
   @Scheduled(cron = "*/10 * * * * *")
   public void generate() {
-    Date today = new Date();
+    final Date today = new Date();
     logger.debug("Started notification generation at: " + dateFormat.format(today));
 
     final List<Schedule> schedules = scheduleRepository.findSchedule(today);
     logger.debug("Total schedules found: " + schedules.size());
-    if (CollectionUtils.isEmpty(schedules)) {
+    if (CollectionUtils.isNotEmpty(schedules)) {
       Map<User, List<Schedule>> userSchedulesMap = generateUserSchedulesMap(schedules);
       for (Map.Entry<User, List<Schedule>> userSchedulesEntry : userSchedulesMap.entrySet()) {
         generateNotificationForUser(userSchedulesEntry.getKey(), userSchedulesEntry.getValue(), today);
