@@ -7,14 +7,16 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "Answer")
 public class Answer {
   private Integer id;
+  private Integer userId;
+  private Integer scheduleId;
+  private Integer questionId;
   private Integer answer;
   private Timestamp submissionTime;
+  private Question question;
   private User user;
-  private Integer questionId;
-  private Integer scheduleId;
+  private Schedule schedule;
 
   @Id
   @Column(name = "id")
@@ -24,6 +26,36 @@ public class Answer {
 
   public void setId(final Integer id) {
     this.id = id;
+  }
+
+  @Basic
+  @Column(name = "userId")
+  public Integer getUserId() {
+    return userId;
+  }
+
+  public void setUserId(final Integer userId) {
+    this.userId = userId;
+  }
+
+  @Basic
+  @Column(name = "scheduleId")
+  public Integer getScheduleId() {
+    return scheduleId;
+  }
+
+  public void setScheduleId(final Integer scheduleId) {
+    this.scheduleId = scheduleId;
+  }
+
+  @Basic
+  @Column(name = "questionId")
+  public Integer getQuestionId() {
+    return questionId;
+  }
+
+  public void setQuestionId(final Integer questionId) {
+    this.questionId = questionId;
   }
 
   @Basic
@@ -46,34 +78,34 @@ public class Answer {
     this.submissionTime = submissionTime;
   }
 
-  @JoinColumn(name = "userId")
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "questionId", referencedColumnName = "id", nullable = false)
+  public Question getQuestion() {
+    return question;
+  }
+
+  public void setQuestion(final Question questionByQuestionId) {
+    this.question = questionByQuestionId;
+  }
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "userId", referencedColumnName = "Study_id", nullable = false)
   public User getUser() {
     return user;
   }
 
-  public void setUser(final User user) {
-    this.user = user;
+  public void setUser(final User userByUserId) {
+    this.user = userByUserId;
   }
 
-  @Basic
-  @Column(name = "questionId")
-  public Integer getQuestionId() {
-    return questionId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "scheduleId", referencedColumnName = "id")
+  public Schedule getSchedule() {
+    return schedule;
   }
 
-  public void setQuestionId(final Integer questionId) {
-    this.questionId = questionId;
-  }
-
-  @Basic
-  @Column(name = "scheduleId")
-  public Integer getScheduleId() {
-    return scheduleId;
-  }
-
-  public void setScheduleId(final Integer scheduleId) {
-    this.scheduleId = scheduleId;
+  public void setSchedule(final Schedule scheduleByScheduleId) {
+    this.schedule = scheduleByScheduleId;
   }
 
   @Override

@@ -4,14 +4,27 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
-@Table(name = "User")
 public class User {
+  private Integer id;
   private String email;
   private String password;
   private String role;
-  private Integer id;
+  private ContactingTime contactingTime;
+  private Collection<Answer> answers;
+  private Collection<Schedule> schedules;
+
+  @Id
+  @Column(name = "Study_id")
+  public Integer getId() {
+    return id;
+  }
+
+  public void setId(final Integer studyId) {
+    this.id = studyId;
+  }
 
   @Basic
   @Column(name = "Email")
@@ -43,14 +56,31 @@ public class User {
     this.role = role;
   }
 
-  @Id
-  @Column(name = "Study_id")
-  public Integer getId() {
-    return id;
+  @OneToOne(mappedBy = "user")
+  public ContactingTime getContactingTime() {
+    return contactingTime;
   }
 
-  public void setId(final Integer id) {
-    this.id = id;
+  public void setContactingTime(final ContactingTime contactingTime) {
+    this.contactingTime = contactingTime;
+  }
+
+  @OneToMany(mappedBy = "user")
+  public Collection<Answer> getAnswers() {
+    return answers;
+  }
+
+  public void setAnswers(final Collection<Answer> answersByStudyId) {
+    this.answers = answersByStudyId;
+  }
+
+  @OneToMany(mappedBy = "user")
+  public Collection<Schedule> getSchedules() {
+    return schedules;
+  }
+
+  public void setSchedules(final Collection<Schedule> schedulesByStudyId) {
+    this.schedules = schedulesByStudyId;
   }
 
   @Override
@@ -68,7 +98,7 @@ public class User {
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 31)
+    return new HashCodeBuilder(11, 31)
         .append(id)
         .hashCode();
   }

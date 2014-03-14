@@ -4,13 +4,15 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
-@Table(name = "Question")
 public class Question {
   private Integer id;
   private String title;
   private Integer activityId;
+  private Collection<Answer> answers;
+  private Activity activity;
 
   @Id
   @Column(name = "id")
@@ -42,6 +44,25 @@ public class Question {
     this.activityId = activityId;
   }
 
+  @OneToMany(mappedBy = "question")
+  public Collection<Answer> getAnswers() {
+    return answers;
+  }
+
+  public void setAnswers(final Collection<Answer> answersById) {
+    this.answers = answersById;
+  }
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "activityId", referencedColumnName = "id", nullable = false)
+  public Activity getActivity() {
+    return activity;
+  }
+
+  public void setActivity(final Activity activityByActivityId) {
+    this.activity = activityByActivityId;
+  }
+
   @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
@@ -57,7 +78,7 @@ public class Question {
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 31)
+    return new HashCodeBuilder(17, 11)
         .append(id)
         .hashCode();
   }

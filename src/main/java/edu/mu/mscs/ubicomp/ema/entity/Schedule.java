@@ -5,21 +5,16 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.sql.Time;
+import java.util.Collection;
 
 @Entity
-@Table(name = "Schedule")
 public class Schedule {
   private Integer id;
-  private Byte active;
-  private Date startDate;
-  private Time startTime;
-  private Date endDate;
-  private Time endTime;
-  private Byte firstNotificationSent;
-  private Byte secondNotificationSent;
-  private Byte thirdNotificationSent;
-  private Byte noResponse;
+  private Integer userId;
+  private Date surveyDate;
+  private Boolean denied;
+  private Collection<Answer> answers;
+  private Collection<Notification> notifications;
   private User user;
 
   @Id
@@ -33,97 +28,55 @@ public class Schedule {
   }
 
   @Basic
-  @Column(name = "active")
-  public Byte getActive() {
-    return active;
+  @Column(name = "userId")
+  public Integer getUserId() {
+    return userId;
   }
 
-  public void setActive(final Byte active) {
-    this.active = active;
-  }
-
-  @Basic
-  @Column(name = "startDate")
-  public Date getStartDate() {
-    return startDate;
-  }
-
-  public void setStartDate(final Date startDate) {
-    this.startDate = startDate;
+  public void setUserId(final Integer userId) {
+    this.userId = userId;
   }
 
   @Basic
-  @Column(name = "startTime")
-  public Time getStartTime() {
-    return startTime;
+  @Column(name = "surveyDate")
+  public Date getSurveyDate() {
+    return surveyDate;
   }
 
-  public void setStartTime(final Time startTime) {
-    this.startTime = startTime;
-  }
-
-  @Basic
-  @Column(name = "endDate")
-  public Date getEndDate() {
-    return endDate;
-  }
-
-  public void setEndDate(final Date endDate) {
-    this.endDate = endDate;
+  public void setSurveyDate(final Date surveyDate) {
+    this.surveyDate = surveyDate;
   }
 
   @Basic
-  @Column(name = "endTime")
-  public Time getEndTime() {
-    return endTime;
+  @Column(name = "denied")
+  public Boolean getDenied() {
+    return denied;
   }
 
-  public void setEndTime(final Time endTime) {
-    this.endTime = endTime;
+  public void setDenied(final Boolean denied) {
+    this.denied = denied;
   }
 
-  @Basic
-  @Column(name = "firstNotificationSent")
-  public Byte getFirstNotificationSent() {
-    return firstNotificationSent;
+  @OneToMany(mappedBy = "schedule")
+  public Collection<Answer> getAnswers() {
+    return answers;
   }
 
-  public void setFirstNotificationSent(final Byte firstNotificationSent) {
-    this.firstNotificationSent = firstNotificationSent;
+  public void setAnswers(final Collection<Answer> answersById) {
+    this.answers = answersById;
   }
 
-  @Basic
-  @Column(name = "secondNotificationSent")
-  public Byte getSecondNotificationSent() {
-    return secondNotificationSent;
+  @OneToMany(mappedBy = "schedule")
+  public Collection<Notification> getNotifications() {
+    return notifications;
   }
 
-  public void setSecondNotificationSent(final Byte secondNotificationSent) {
-    this.secondNotificationSent = secondNotificationSent;
+  public void setNotifications(final Collection<Notification> notificationsById) {
+    this.notifications = notificationsById;
   }
 
-  @Basic
-  @Column(name = "thirdNotificationSent")
-  public Byte getThirdNotificationSent() {
-    return thirdNotificationSent;
-  }
-
-  public void setThirdNotificationSent(final Byte thirdNotificationSent) {
-    this.thirdNotificationSent = thirdNotificationSent;
-  }
-
-  @Basic
-  @Column(name = "noResponse")
-  public Byte getNoResponse() {
-    return noResponse;
-  }
-
-  public void setNoResponse(final Byte noResponse) {
-    this.noResponse = noResponse;
-  }
-
-  @JoinColumn(name = "userId")
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "userId", referencedColumnName = "Study_id", nullable = false)
   public User getUser() {
     return user;
   }
@@ -147,9 +100,8 @@ public class Schedule {
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 31)
+    return new HashCodeBuilder(19, 31)
         .append(id)
         .hashCode();
   }
-
 }

@@ -7,11 +7,11 @@ import javax.persistence.*;
 import java.sql.Time;
 
 @Entity
-@Table(name = "ContactingTime")
 public class ContactingTime {
   private Integer id;
   private Time startTime;
   private Time endTime;
+  private Integer userId;
   private User user;
 
   @Id
@@ -44,8 +44,17 @@ public class ContactingTime {
     this.endTime = endTime;
   }
 
-  @JoinColumn(name = "userId")
-  @ManyToOne(fetch = FetchType.LAZY)
+  @Basic
+  @Column(name = "userId")
+  public Integer getUserId() {
+    return userId;
+  }
+
+  public void setUserId(final Integer userId) {
+    this.userId = userId;
+  }
+
+  @OneToOne
   public User getUser() {
     return user;
   }

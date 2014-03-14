@@ -4,13 +4,14 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
-@Table(name = "Activity")
 public class Activity {
   private Integer id;
   private String uniqueName;
   private String title;
+  private Collection<Question> questions;
 
   @Id
   @Column(name = "id")
@@ -40,6 +41,15 @@ public class Activity {
 
   public void setTitle(final String title) {
     this.title = title;
+  }
+
+  @OneToMany(mappedBy = "activity")
+  public Collection<Question> getQuestions() {
+    return questions;
+  }
+
+  public void setQuestions(final Collection<Question> questionsById) {
+    this.questions = questionsById;
   }
 
   @Override
