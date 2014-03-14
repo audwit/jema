@@ -45,11 +45,18 @@ public class NotificationGeneratorService {
 
     Map<User, List<Schedule>> userSchedulesMap = generateUserSchedulesMap(schedules);
     for (Map.Entry<User, List<Schedule>> userSchedulesEntry : userSchedulesMap.entrySet()) {
-      final User user = userSchedulesEntry.getKey();
-      final ContactingTime contactingTime = user.getContactingTime();
+      generateNotificationForUser(userSchedulesEntry.getKey(), userSchedulesEntry.getValue(), today);
+    }
+  }
 
+  private void generateNotificationForUser(final User user, final List<Schedule> userSchedules, final Date today) {
+    final ContactingTime contactingTime = user.getContactingTime();
+    if(contactingTime != null) {
       logger.debug("Generating notifications for user: " + user + " with contact time: " + contactingTime);
-      generateNotification(today, contactingTime, userSchedulesEntry.getValue());
+      generateNotification(today, contactingTime, userSchedules);
+    }
+    else {
+      logger.warn("No contacting time for user: " + user);
     }
   }
 
