@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 @EnableScheduling
 public class NotificationGeneratorService {
   private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+  private static final SimpleDateFormat ZERO_TIME_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
   private Logger logger = LoggerFactory.getLogger(getClass());
 
   public static final int TOTAL_TIME_SLOT = 20;
@@ -37,9 +39,10 @@ public class NotificationGeneratorService {
   private NotificationRepository notificationRepository;
 
   @Scheduled(cron = "*/10 * * * * *")
-  public void generate() {
-    final Date today = new Date();
-    logger.debug("Started notification generation at: " + dateFormat.format(today));
+  public void generate() throws ParseException {
+    final Date now = new Date();
+    final Date today = ZERO_TIME_FORMATTER.parse(ZERO_TIME_FORMATTER.format(now));
+    logger.debug("Started notification generation at: {}", dateFormat.format(today));
 
     final List<Schedule> schedules = scheduleRepository.findSchedule(today);
     logger.debug("Total schedules found: " + schedules.size());
@@ -56,7 +59,7 @@ public class NotificationGeneratorService {
   private void generateNotificationForUser(final User user, final List<Schedule> userSchedules, final Date today) {
     final ContactingTime contactingTime = user.getContactingTime();
     if (contactingTime != null) {
-      logger.debug("Generating notifications for user: %s with contact time: %s", user, contactingTime);
+      logger.debug("Generating notifications contact time: {}", contactingTime);
       generateNotification(today, contactingTime, userSchedules);
     } else {
       logger.warn("No contacting time for user: " + user);
@@ -71,7 +74,6 @@ public class NotificationGeneratorService {
       final int randomSlot = random.nextInt(usableSlot - usedSlot);
       final Time baseTime = addMinute(contactingTime.getStartTime(), (usedSlot + randomSlot) * SLOT_DURATION);
       final List<Notification> notifications = createNotifications(today, baseTime, schedule);
-      logger.debug("Total notification generated for schedule: %s total: %d", schedule, notifications.size());
       notificationRepository.persistAll(notifications);
 
       usedSlot += randomSlot;
