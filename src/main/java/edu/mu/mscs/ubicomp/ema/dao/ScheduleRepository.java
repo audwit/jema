@@ -21,7 +21,7 @@ public class ScheduleRepository {
 
   public List<Schedule> findSchedule(final Date date) {
     final TypedQuery<Schedule> query = entityManager.createQuery(
-        "SELECT s FROM Schedule s WHERE s.startDate = :today",
+        "SELECT s FROM Schedule s WHERE s.surveyDate = :today",
         Schedule.class
     ).setParameter("today", date);
 
