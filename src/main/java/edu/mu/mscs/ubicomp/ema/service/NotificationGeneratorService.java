@@ -37,6 +37,7 @@ public class NotificationGeneratorService {
   private ScheduleRepository scheduleRepository;
   @Autowired
   private NotificationRepository notificationRepository;
+  private final Random random = new Random();
 
   @Scheduled(cron = "*/10 * * * * *")
   public void generate() throws ParseException {
@@ -67,7 +68,6 @@ public class NotificationGeneratorService {
 
   private void generateNotification(final Date today, final ContactingTime contactingTime, final List<Schedule> schedules) {
     logger.debug("Generating notifications ContactTime: {}", contactingTime);
-    final Random random = new Random();
     final int usableSlot = TOTAL_TIME_SLOT - schedules.size() * 3;
     int usedSlot = 0;
     int i = 0;
