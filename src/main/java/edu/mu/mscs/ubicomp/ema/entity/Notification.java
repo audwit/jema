@@ -17,6 +17,7 @@ public class Notification {
   private Schedule schedule;
 
   @Id
+  @GeneratedValue
   @Column(name = "id")
   public Integer getId() {
     return id;
