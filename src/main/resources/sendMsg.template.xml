@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<clickAPI>
+  <sendMsg>
+    <api_id>API_ID</api_id>
+    <user>USERNAME</user>
+    <password>PASSWORD</password>
+    <from>FROM</from>
+    <to>TO</to>
+    <text>TEXT</text>
+  </sendMsg>
+</clickAPI>
