@@ -56,6 +56,7 @@ public class NotificationSenderService {
   private ClickATellClient client;
 
   private ExecutorService executorService;
+  public static final SimpleDateFormat SEQUENCE_ID_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
   @PostConstruct
   public void initialize() {
@@ -68,7 +69,8 @@ public class NotificationSenderService {
   @Scheduled(cron = "*/10 * * * * *")
   public void send() throws ParseException {
     final Date now = new Date();
-    logger.debug("Sending notification at time: {}", now);
+    final String sequenceId = SEQUENCE_ID_FORMAT.format(now);
+    logger.debug("Sending notification at time: {}", sequenceId);
 
     final Date date = DATE_FORMATTER.parse(DATE_FORMATTER.format(now));
     final Date time = TIME_FORMATTER.parse(TIME_FORMATTER.format(now));
@@ -76,14 +78,14 @@ public class NotificationSenderService {
     final List<Notification> notifications = notificationRepository.findNotifications(date, time);
     if (CollectionUtils.isNotEmpty(notifications)) {
       logger.debug("Found total notification: {}", notifications.size());
-      sendNotifications(notifications);
+      sendNotifications(notifications, sequenceId);
     }
     else {
       logger.debug("No notification found to be sent");
     }
   }
 
-  private void sendNotifications(final List<Notification> notifications) {
+  private void sendNotifications(final List<Notification> notifications, final String sequenceId) {
     final Map<Integer, List<Notification>> notificationBuckets = new HashMap<>();
     for (Notification notification : notifications) {
       final Integer serial = notification.getSerial();
@@ -96,12 +98,12 @@ public class NotificationSenderService {
       notificationBucket.add(notification);
     }
 
-    sendNotifications(message0, notificationBuckets.get(0));
-    sendNotifications(message1, notificationBuckets.get(1));
-    sendNotifications(message2, notificationBuckets.get(2));
+    sendNotifications(message0, notificationBuckets.get(0), sequenceId);
+    sendNotifications(message1, notificationBuckets.get(1), sequenceId);
+    sendNotifications(message2, notificationBuckets.get(2), sequenceId);
   }
 
-  private void sendNotifications(final String message, final List<Notification> notifications) {
+  private void sendNotifications(final String message, final List<Notification> notifications, final String sequenceId) {
     executorService.submit(new Runnable() {
       @Override
       public void run() {
