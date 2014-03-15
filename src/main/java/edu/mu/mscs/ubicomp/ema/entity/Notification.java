@@ -5,14 +5,15 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.sql.Time;
 
 @Entity
 public class Notification {
   private Integer id;
-  private Timestamp scheduledTime;
-  private Timestamp sentTime;
+  private Time scheduledTime;
+  private Time sentTime;
   private Boolean sent;
+  private Integer serial;
   private String status;
   private Schedule schedule;
 
@@ -29,21 +30,21 @@ public class Notification {
 
   @Basic
   @Column(name = "scheduledTime")
-  public Timestamp getScheduledTime() {
+  public Time getScheduledTime() {
     return scheduledTime;
   }
 
-  public void setScheduledTime(final Timestamp scheduledTime) {
+  public void setScheduledTime(final Time scheduledTime) {
     this.scheduledTime = scheduledTime;
   }
 
   @Basic
   @Column(name = "sentTime")
-  public Timestamp getSentTime() {
+  public Time getSentTime() {
     return sentTime;
   }
 
-  public void setSentTime(final Timestamp sentTime) {
+  public void setSentTime(final Time sentTime) {
     this.sentTime = sentTime;
   }
 
@@ -55,6 +56,16 @@ public class Notification {
 
   public void setSent(final Boolean sent) {
     this.sent = sent;
+  }
+
+  @Basic
+  @Column(name = "serial")
+  public Integer getSerial() {
+    return serial;
+  }
+
+  public void setSerial(final Integer serial) {
+    this.serial = serial;
   }
 
   @Basic
