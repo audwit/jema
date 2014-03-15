@@ -21,7 +21,7 @@ public class ScheduleRepository {
 
   public List<Schedule> findSchedule(final Date date) {
     final TypedQuery<Schedule> query = entityManager.createQuery(
-        "SELECT s FROM Schedule s WHERE s.surveyDate = :today",
+        "SELECT s FROM Schedule s WHERE s.surveyDate = :today AND s NOT IN (SELECT n.schedule FROM Notification n JOIN n.schedule ss WHERE ss.surveyDate = :today )",
         Schedule.class
     ).setParameter("today", date);
 
