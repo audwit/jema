@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 @Transactional
 @EnableScheduling
 public class NotificationGeneratorService {
-  private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
   private static final SimpleDateFormat ZERO_TIME_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
   private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -43,7 +42,7 @@ public class NotificationGeneratorService {
   public void generate() throws ParseException {
     final Date now = new Date();
     final Date today = ZERO_TIME_FORMATTER.parse(ZERO_TIME_FORMATTER.format(now));
-    logger.debug("Started notification generation at: {}", dateFormat.format(today));
+    logger.debug("Started notification generation at: {}", today);
 
     final List<Schedule> schedules = scheduleRepository.findSchedule(today);
     logger.debug("Total schedules found: " + schedules.size());
