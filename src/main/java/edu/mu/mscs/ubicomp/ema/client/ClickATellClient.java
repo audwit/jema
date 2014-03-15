@@ -62,6 +62,8 @@ public class ClickATellClient {
         .replace("TEXT", textMessage)
         .replace("TO", numbers);
 
+    logger.debug("Sending total {} notification using: {}", phoneNumbers.size(), textMessage);
+    logger.debug("Request body: {}", requestBody);
   }
 
 }
