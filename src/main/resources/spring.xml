@@ -24,6 +24,11 @@
   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
     <property name="persistenceUnitName" value="emaPersistenceUnit"/>
     <property name="dataSource" ref="dataSource"/>
+    <property name="jpaVendorAdapter">
+      <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="showSql" value="${hibernate.showSql}"/>
+      </bean>
+    </property>
   </bean>
   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
     <property name="entityManagerFactory" ref="entityManagerFactory"/>
