@@ -59,7 +59,6 @@ public class NotificationGeneratorService {
   private void generateNotificationForUser(final User user, final List<Schedule> userSchedules, final Date today) {
     final ContactingTime contactingTime = user.getContactingTime();
     if (contactingTime != null) {
-      logger.debug("Generating notifications contact time: {}", contactingTime);
       generateNotification(today, contactingTime, userSchedules);
     } else {
       logger.warn("No contacting time for user: " + user);
@@ -67,16 +66,22 @@ public class NotificationGeneratorService {
   }
 
   private void generateNotification(final Date today, final ContactingTime contactingTime, final List<Schedule> schedules) {
+    logger.debug("Generating notifications ContactTime: {}", contactingTime);
     final Random random = new Random();
     final int usableSlot = TOTAL_TIME_SLOT - schedules.size() * 3;
     int usedSlot = 0;
+    int i = 0;
     for (Schedule schedule : schedules) {
       final int randomSlot = random.nextInt(usableSlot - usedSlot);
-      final Time baseTime = addMinute(contactingTime.getStartTime(), (usedSlot + randomSlot) * SLOT_DURATION);
+      final int baseSlot = usedSlot + randomSlot + i * 3;
+      final Time baseTime = addMinute(contactingTime.getStartTime(), baseSlot * SLOT_DURATION);
+      logger.debug("Randomized notification start time: {}", baseTime);
+
       final List<Notification> notifications = createNotifications(today, baseTime, schedule);
       notificationRepository.persistAll(notifications);
 
       usedSlot += randomSlot;
+      i++;
     }
   }
 
