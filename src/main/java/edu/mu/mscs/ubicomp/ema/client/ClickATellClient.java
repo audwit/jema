@@ -84,15 +84,17 @@ public class ClickATellClient {
     try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
       HttpPost httpPost = createRequest(requestBody);
       try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+        final int statusCode = response.getStatusLine().getStatusCode();
         final HttpEntity entity = response.getEntity();
         final String responseString = IOUtils.toString(entity.getContent());
-        logger.debug("\n" + responseString);
+        logger.debug("Response: \n" + responseString);
         EntityUtils.consume(entity);
-      } catch (IOException e) {
-        logger.warn("Failed to send text message" + e.getMessage(), e);
+        if (statusCode > 300) {
+          throw new RuntimeException("Failed to send text message. Response status code: " + statusCode);
+        }
       }
     } catch (IOException e) {
-      logger.warn("Internal error while sending text message: " + e.getMessage(), e);
+      throw new RuntimeException("Failed to send text message" + e.getMessage(), e);
     }
   }
 
