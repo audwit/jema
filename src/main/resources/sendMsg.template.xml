@@ -7,5 +7,6 @@
     <from>FROM</from>
     <to>TO</to>
     <text>TEXT</text>
+    <sequence_no>SEQUENCE_NO</sequence_no>
   </sendMsg>
 </clickAPI>
