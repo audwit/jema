@@ -11,17 +11,15 @@ import java.util.List;
 
 @Repository
 public class ScheduleRepository {
+  public static final String SELECT_SCHEDULE = "SELECT s FROM Schedule s WHERE s.surveyDate = :today " +
+      "AND s NOT IN (SELECT n.schedule FROM Notification n JOIN n.schedule ss WHERE ss.surveyDate = :today )";
 
   @PersistenceContext
   private EntityManager entityManager;
 
-  public Schedule find(final Integer id) {
-    return entityManager.find(Schedule.class, id);
-  }
-
   public List<Schedule> findSchedule(final Date date) {
     final TypedQuery<Schedule> query = entityManager.createQuery(
-        "SELECT s FROM Schedule s WHERE s.surveyDate = :today AND s NOT IN (SELECT n.schedule FROM Notification n JOIN n.schedule ss WHERE ss.surveyDate = :today )",
+        SELECT_SCHEDULE,
         Schedule.class
     ).setParameter("today", date);
 
