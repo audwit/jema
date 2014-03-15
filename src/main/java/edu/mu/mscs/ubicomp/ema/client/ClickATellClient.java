@@ -63,7 +63,7 @@ public class ClickATellClient {
         .replace("TO", numbers);
 
     logger.debug("Sending total {} notification using: {}", phoneNumbers.size(), textMessage);
-    logger.debug("Request body: {}", requestBody);
+    logger.debug("Request body: \n{}", requestBody);
   }
 
 }
