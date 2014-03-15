@@ -30,6 +30,10 @@ public class NotificationSenderService {
   private Logger logger = LoggerFactory.getLogger(getClass());
 
   @SuppressWarnings("SpringJavaAutowiringInspection")
+  @Autowired
+  @Value("${notification.dummyNumber}")
+  private String dummyNumber;
+  @SuppressWarnings("SpringJavaAutowiringInspection")
   @Autowired(required = true)
   @Value("${notification.message0}")
   private String message0;
@@ -103,7 +107,7 @@ public class NotificationSenderService {
       public void run() {
         final List<String> phoneNumbers = new LinkedList<>();
         for (Notification notification : notifications) {
-          phoneNumbers.add(notification.getPhoneNumber());
+          phoneNumbers.add(dummyNumber);
         }
         client.sendTextMessage(message, phoneNumbers);
       }
