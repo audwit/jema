@@ -29,30 +29,30 @@ public class NotificationSenderService {
   private static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("HH:mm");
   private Logger logger = LoggerFactory.getLogger(getClass());
 
-  @SuppressWarnings("SpringJavaAutowiringInspection")
   @Autowired
   @Value("${notification.dummyNumber}")
+  @SuppressWarnings("SpringJavaAutowiringInspection")
   private String dummyNumber;
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  @Autowired(required = true)
+  @Autowired
   @Value("${notification.message0}")
+  @SuppressWarnings("SpringJavaAutowiringInspection")
   private String message0;
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  @Autowired(required = true)
+  @Autowired
   @Value("${notification.message1}")
+  @SuppressWarnings("SpringJavaAutowiringInspection")
   private String message1;
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  @Autowired(required = true)
+  @Autowired
   @Value("${notification.message2}")
-  private String message2;
   @SuppressWarnings("SpringJavaAutowiringInspection")
-  @Autowired(required = true)
+  private String message2;
+  @Autowired
   @Value("${notificationSender.totalThread}")
+  @SuppressWarnings("SpringJavaAutowiringInspection")
   private int totalThread;
 
-  @Autowired(required = true)
+  @Autowired
   private NotificationRepository notificationRepository;
-  @Autowired(required = true)
+  @Autowired
   private ClickATellClient client;
 
   private ExecutorService executorService;

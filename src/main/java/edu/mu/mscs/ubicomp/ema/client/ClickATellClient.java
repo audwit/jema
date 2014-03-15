@@ -17,25 +17,25 @@ import java.util.List;
 public class ClickATellClient {
   private Logger logger = LoggerFactory.getLogger(getClass());
 
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  @Autowired(required = true)
+  @Autowired
   @Value("${clickATell.baseApiUri}")
+  @SuppressWarnings("SpringJavaAutowiringInspection")
   private String baseApiUri;
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  @Autowired(required = true)
+  @Autowired
   @Value("${clickATell.username}")
+  @SuppressWarnings("SpringJavaAutowiringInspection")
   private String username;
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  @Autowired(required = true)
+  @Autowired
   @Value("${clickATell.password}")
+  @SuppressWarnings("SpringJavaAutowiringInspection")
   private String password;
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  @Autowired(required = true)
+  @Autowired
   @Value("${clickATell.apiId}")
-  private String apiId;
   @SuppressWarnings("SpringJavaAutowiringInspection")
-  @Autowired(required = true)
+  private String apiId;
+  @Autowired
   @Value("${clickATell.from}")
+  @SuppressWarnings("SpringJavaAutowiringInspection")
   private String from;
 
   private String requestTemplate;
