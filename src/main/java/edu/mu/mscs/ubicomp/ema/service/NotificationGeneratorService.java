@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Time;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -49,23 +48,23 @@ public class NotificationGeneratorService {
     if (CollectionUtils.isNotEmpty(schedules)) {
       Map<User, List<Schedule>> userSchedulesMap = generateUserSchedulesMap(schedules);
       for (Map.Entry<User, List<Schedule>> userSchedulesEntry : userSchedulesMap.entrySet()) {
-        generateNotificationForUser(userSchedulesEntry.getKey(), userSchedulesEntry.getValue(), today);
+        generateNotificationForUser(userSchedulesEntry.getKey(), userSchedulesEntry.getValue());
       }
     } else {
       logger.debug("No schedule found to generate notification.");
     }
   }
 
-  private void generateNotificationForUser(final User user, final List<Schedule> userSchedules, final Date today) {
+  private void generateNotificationForUser(final User user, final List<Schedule> userSchedules) {
     final ContactingTime contactingTime = user.getContactingTime();
     if (contactingTime != null) {
-      generateNotification(today, contactingTime, userSchedules);
+      generateNotification(contactingTime, userSchedules);
     } else {
       logger.warn("No contacting time for user: " + user);
     }
   }
 
-  private void generateNotification(final Date today, final ContactingTime contactingTime, final List<Schedule> schedules) {
+  private void generateNotification(final ContactingTime contactingTime, final List<Schedule> schedules) {
     logger.debug("Generating notifications ContactTime: {}", contactingTime);
     final int usableSlot = TOTAL_TIME_SLOT - schedules.size() * 3;
     int usedSlot = 0;
@@ -76,7 +75,7 @@ public class NotificationGeneratorService {
       final Time baseTime = addMinute(contactingTime.getStartTime(), baseSlot * SLOT_DURATION);
       logger.debug("Randomized notification start time: {}", baseTime);
 
-      final List<Notification> notifications = createNotifications(today, baseTime, schedule);
+      final List<Notification> notifications = createNotifications(baseTime, schedule);
       notificationRepository.persistAll(notifications);
 
       usedSlot += randomSlot;
@@ -84,16 +83,16 @@ public class NotificationGeneratorService {
     }
   }
 
-  private List<Notification> createNotifications(final Date today, final Time baseTime, final Schedule schedule) {
+  private List<Notification> createNotifications(final Time baseTime, final Schedule schedule) {
     final List<Notification> notifications = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
       final Time startTime = addMinute(baseTime, SLOT_DURATION * i);
-      final Timestamp scheduledTime = new Timestamp(startTime.getTime() + today.getTime());
 
       final Notification notification = new Notification();
       notification.setSchedule(schedule);
       notification.setSent(false);
-      notification.setScheduledTime(scheduledTime);
+      notification.setScheduledTime(startTime);
+      notification.setSerial(i);
       notifications.add(notification);
     }
 
