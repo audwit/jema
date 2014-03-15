@@ -52,7 +52,6 @@ public class ClickATellClient {
 
   private String requestTemplate;
 
-
   @PostConstruct
   public void initialize() throws IOException {
     requestTemplate = IOUtils.toString(getClass().getResourceAsStream("/sendMsg.template.xml"))
@@ -62,7 +61,7 @@ public class ClickATellClient {
         .replace("FROM", from);
   }
 
-  public void sendTextMessage(final String textMessage, final List<String> phoneNumbers) {
+  public void sendTextMessage(final String textMessage, final List<String> phoneNumbers, final String sequenceNo) {
     if (StringUtils.isBlank(textMessage)) {
       throw new IllegalArgumentException("textMessage should not be null or empty");
     }
@@ -73,7 +72,8 @@ public class ClickATellClient {
     final String numbers = StringUtils.join(phoneNumbers, ",");
     final String requestBody = requestTemplate
         .replace("TEXT", textMessage)
-        .replace("TO", numbers);
+        .replace("TO", numbers)
+        .replace("SEQUENCE_NO", sequenceNo);
 
     logger.debug("Sending total {} notification using: {}", phoneNumbers.size(), textMessage);
     logger.debug("Request body: \n{}", requestBody);
