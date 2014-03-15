@@ -5,10 +5,13 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.Date;
 import java.util.List;
 
 @Repository
 public class NotificationRepository {
+  public static final String QL_STRING = "FROM Notification n JOIN n.schedule s WHERE s.surveyDate = :date AND n.scheduledTime = :time";
 
   @PersistenceContext
   private EntityManager entityManager;
@@ -19,4 +22,11 @@ public class NotificationRepository {
     }
   }
 
+  public List<Notification> findNotifications(final Date date, final Date time) {
+    final TypedQuery<Notification> query = entityManager.createQuery(QL_STRING, Notification.class)
+        .setParameter("date", date)
+        .setParameter("time", time);
+
+    return query.getResultList();
+  }
 }
