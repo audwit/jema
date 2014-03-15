@@ -14,13 +14,26 @@
     <property name="suffix" value=".jsp"/>
   </bean>
 
-  <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="${datasource.driverClassName}"/>
+    <property name="url" value="${datasource.url}"/>
+    <property name="username" value="${datasource.username}"/>
+    <property name="password" value="${datasource.password}"/>
+  </bean>
+
+  <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
     <property name="persistenceUnitName" value="emaPersistenceUnit"/>
+    <property name="dataSource" ref="dataSource"/>
   </bean>
   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
     <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    <property name="dataSource" ref="dataSource"/>
   </bean>
   <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
   <tx:annotation-driven/>
+
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="location" value="file:${user.home}/ema.properties" />
+  </bean>
 
 </beans>
