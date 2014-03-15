@@ -3,6 +3,15 @@ package edu.mu.mscs.ubicomp.ema.client;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +20,13 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ClickATellClient {
+  public static final String REQUEST_BODY_KEY = "data";
   private Logger logger = LoggerFactory.getLogger(getClass());
 
   @Autowired
@@ -40,6 +52,7 @@ public class ClickATellClient {
 
   private String requestTemplate;
 
+
   @PostConstruct
   public void initialize() throws IOException {
     requestTemplate = IOUtils.toString(getClass().getResourceAsStream("/sendMsg.template.xml"))
@@ -50,10 +63,10 @@ public class ClickATellClient {
   }
 
   public void sendTextMessage(final String textMessage, final List<String> phoneNumbers) {
-    if(StringUtils.isBlank(textMessage)) {
+    if (StringUtils.isBlank(textMessage)) {
       throw new IllegalArgumentException("textMessage should not be null or empty");
     }
-    if(CollectionUtils.isEmpty(phoneNumbers)) {
+    if (CollectionUtils.isEmpty(phoneNumbers)) {
       logger.debug("Not sending any message, no phone numbers given.");
     }
 
@@ -64,6 +77,31 @@ public class ClickATellClient {
 
     logger.debug("Sending total {} notification using: {}", phoneNumbers.size(), textMessage);
     logger.debug("Request body: \n{}", requestBody);
+    sendInternal(requestBody);
+  }
+
+  private void sendInternal(final String requestBody) {
+    try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+      HttpPost httpPost = createRequest(requestBody);
+      try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+        final HttpEntity entity = response.getEntity();
+        final String responseString = IOUtils.toString(entity.getContent());
+        logger.debug("\n" + responseString);
+        EntityUtils.consume(entity);
+      } catch (IOException e) {
+        logger.warn("Failed to send text message" + e.getMessage(), e);
+      }
+    } catch (IOException e) {
+      logger.warn("Internal error while sending text message: " + e.getMessage(), e);
+    }
+  }
+
+  private HttpPost createRequest(final String requestBody) throws UnsupportedEncodingException {
+    HttpPost httpPost = new HttpPost(baseApiUri);
+    List<NameValuePair> nameValuePairs = new ArrayList<>();
+    nameValuePairs.add(new BasicNameValuePair(REQUEST_BODY_KEY, requestBody));
+    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+    return httpPost;
   }
 
 }
