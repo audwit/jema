@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 @EnableScheduling
 @Transactional
 public class NotificationSenderService {
+  public static final SimpleDateFormat SEQUENCE_ID_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
   private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
   private static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("HH:mm");
   private Logger logger = LoggerFactory.getLogger(getClass());
@@ -56,7 +57,6 @@ public class NotificationSenderService {
   private ClickATellClient client;
 
   private ExecutorService executorService;
-  public static final SimpleDateFormat SEQUENCE_ID_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
   @PostConstruct
   public void initialize() {
@@ -79,8 +79,7 @@ public class NotificationSenderService {
     if (CollectionUtils.isNotEmpty(notifications)) {
       logger.debug("Found total notification: {}", notifications.size());
       sendNotifications(notifications, sequenceId);
-    }
-    else {
+    } else {
       logger.debug("No notification found to be sent");
     }
   }
@@ -90,20 +89,20 @@ public class NotificationSenderService {
     for (Notification notification : notifications) {
       final Integer serial = notification.getSerial();
       List<Notification> notificationBucket = notificationBuckets.get(serial);
-
-      if(notificationBucket == null) {
+      if (notificationBucket == null) {
         notificationBucket = new LinkedList<>();
         notificationBuckets.put(serial, notificationBucket);
       }
+
       notificationBucket.add(notification);
     }
 
-    sendNotifications(message0, notificationBuckets.get(0), sequenceId);
-    sendNotifications(message1, notificationBuckets.get(1), sequenceId);
-    sendNotifications(message2, notificationBuckets.get(2), sequenceId);
+    sendNotifications(message0, notificationBuckets.get(0), sequenceId + "_0");
+    sendNotifications(message1, notificationBuckets.get(1), sequenceId + "_1");
+    sendNotifications(message2, notificationBuckets.get(2), sequenceId + "_2");
   }
 
-  private void sendNotifications(final String message, final List<Notification> notifications, final String sequenceId) {
+  private void sendNotifications(final String message, final List<Notification> notifications, final String sequenceNo) {
     executorService.submit(new Runnable() {
       @Override
       public void run() {
@@ -111,7 +110,7 @@ public class NotificationSenderService {
         for (Notification notification : notifications) {
           phoneNumbers.add(dummyNumber);
         }
-        client.sendTextMessage(message, phoneNumbers);
+        client.sendTextMessage(message, phoneNumbers, sequenceNo);
       }
     });
   }
