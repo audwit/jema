@@ -2,6 +2,7 @@ package edu.mu.mscs.ubicomp.ema.entity;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -92,5 +93,13 @@ public class Schedule {
     return new HashCodeBuilder(19, 31)
         .append(id)
         .hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .append("id", id)
+        .append("surveyDate", surveyDate)
+        .toString();
   }
 }
