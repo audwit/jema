@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public class NotificationRepository {
-  public static final String QL_STRING = "FROM Notification n JOIN n.schedule s WHERE s.surveyDate = :date AND n.scheduledTime = :time";
+  public static final String QL_STRING = "SELECT n FROM Notification n JOIN n.schedule s WHERE s.surveyDate = :date AND n.scheduledTime = :time";
 
   @PersistenceContext
   private EntityManager entityManager;
