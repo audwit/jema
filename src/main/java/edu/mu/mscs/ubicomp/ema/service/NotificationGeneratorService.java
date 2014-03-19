@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -46,25 +47,19 @@ public class NotificationGeneratorService {
     final List<Schedule> schedules = scheduleRepository.findSchedule(today);
     logger.debug("Total schedules found: " + schedules.size());
     if (CollectionUtils.isNotEmpty(schedules)) {
-      Map<User, List<Schedule>> userSchedulesMap = generateUserSchedulesMap(schedules);
-      for (Map.Entry<User, List<Schedule>> userSchedulesEntry : userSchedulesMap.entrySet()) {
-        generateNotificationForUser(userSchedulesEntry.getKey(), userSchedulesEntry.getValue());
-      }
+      schedules
+          .stream()
+          .collect(Collectors.groupingBy(Schedule::getUser))
+          .entrySet()
+          .forEach(entry -> generateNotification(entry.getKey(), entry.getValue()));
     } else {
       logger.debug("No schedule found to generate notification.");
     }
   }
 
-  private void generateNotificationForUser(final User user, final List<Schedule> userSchedules) {
+  private void generateNotification(final User user, final List<Schedule> schedules) {
     final ContactingTime contactingTime = user.getContactingTime();
-    if (contactingTime != null) {
-      generateNotification(contactingTime, userSchedules);
-    } else {
-      logger.warn("No contacting time for user: " + user);
-    }
-  }
-
-  private void generateNotification(final ContactingTime contactingTime, final List<Schedule> schedules) {
+    Objects.requireNonNull(contactingTime, "No contacting time for user: " + user);
     logger.debug("Generating notifications ContactTime: {}", contactingTime);
     final int usableSlot = TOTAL_TIME_SLOT - schedules.size() * 3;
     int usedSlot = 0;
@@ -103,19 +98,6 @@ public class NotificationGeneratorService {
     final long time1 = time.getTime();
     final long time2 = TimeUnit.MINUTES.toMillis(minute);
     return new Time(time1 + time2);
-  }
-
-  private Map<User, List<Schedule>> generateUserSchedulesMap(final List<Schedule> schedules) {
-    Map<User, List<Schedule>> userSchedulesMap = new HashMap<>();
-    for (Schedule schedule : schedules) {
-      List<Schedule> userSchedules = userSchedulesMap.get(schedule.getUser());
-      if (userSchedules == null) {
-        userSchedules = new ArrayList<>();
-        userSchedulesMap.put(schedule.getUser(), userSchedules);
-      }
-      userSchedules.add(schedule);
-    }
-    return userSchedulesMap;
   }
 
 }
