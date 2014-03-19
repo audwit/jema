@@ -67,9 +67,10 @@ public class ClickATellClient {
     }
     if (CollectionUtils.isEmpty(phoneNumbers)) {
       logger.debug("Not sending any message, no phone numbers given.");
+      return;
     }
 
-    final String numbers = StringUtils.join(phoneNumbers, ",");
+    final String numbers = phoneNumbers.stream().reduce(",", String::concat);
     final String requestBody = requestTemplate
         .replace("TEXT", textMessage)
         .replace("TO", numbers)
