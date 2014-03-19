@@ -17,9 +17,12 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Service
 @EnableScheduling
@@ -57,6 +60,7 @@ public class NotificationSenderService {
   private ClickATellClient client;
 
   private ExecutorService executorService;
+  private ArrayList<String> messages;
 
   @PostConstruct
   public void initialize() {
@@ -64,9 +68,13 @@ public class NotificationSenderService {
         .namingPattern(getClass().getName() + "-%d")
         .build();
     executorService = Executors.newFixedThreadPool(totalThread, threadFactory);
+    messages = new ArrayList<>(3);
+    messages.add(0, message0);
+    messages.add(1, message1);
+    messages.add(2, message2);
   }
 
-  @Scheduled(cron = "*/10 * * * * *")
+  @Scheduled(cron = "*/30 * * * * *")
   public void send() throws ParseException {
     final Date now = new Date();
     final String sequenceId = SEQUENCE_ID_FORMAT.format(now);
@@ -85,34 +93,23 @@ public class NotificationSenderService {
   }
 
   private void sendNotifications(final List<Notification> notifications, final String sequenceId) {
-    final Map<Integer, List<Notification>> notificationBuckets = new HashMap<>();
-    for (Notification notification : notifications) {
-      final Integer serial = notification.getSerial();
-      List<Notification> notificationBucket = notificationBuckets.get(serial);
-      if (notificationBucket == null) {
-        notificationBucket = new LinkedList<>();
-        notificationBuckets.put(serial, notificationBucket);
-      }
-
-      notificationBucket.add(notification);
-    }
-
-    sendNotifications(message0, notificationBuckets.get(0), sequenceId + "_0");
-    sendNotifications(message1, notificationBuckets.get(1), sequenceId + "_1");
-    sendNotifications(message2, notificationBuckets.get(2), sequenceId + "_2");
+    notifications.stream()
+        .collect(Collectors.groupingBy(Notification::getSerial))
+        .entrySet()
+        .forEach(entry -> {
+          final Integer serial = entry.getKey();
+          sendNotifications(messages.get(serial), entry.getValue(), sequenceId + "_" + serial);
+        });
   }
 
   private void sendNotifications(final String message, final List<Notification> notifications, final String sequenceNo) {
-    executorService.submit(new Runnable() {
-      @Override
-      public void run() {
-        final List<String> phoneNumbers = new LinkedList<>();
-        for (Notification notification : notifications) {
-          phoneNumbers.add(dummyNumber);
-        }
-        client.sendTextMessage(message, phoneNumbers, sequenceNo);
-      }
-    });
+    final List<String> phoneNumbers = notifications.stream()
+        .map(notification -> dummyNumber)
+        .collect(Collectors.toList());
+
+    executorService.submit(
+        () -> client.sendTextMessage(message, phoneNumbers, sequenceNo)
+    );
   }
 
 }
