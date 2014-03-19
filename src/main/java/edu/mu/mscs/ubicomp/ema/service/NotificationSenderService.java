@@ -87,11 +87,7 @@ public class NotificationSenderService {
   private void sendNotifications(final List<Notification> notifications, final String sequenceId) {
     notifications.stream()
         .collect(Collectors.groupingBy(Notification::getSerial))
-        .entrySet()
-        .forEach(entry -> {
-          final Integer serial = entry.getKey();
-          sendNotifications(messages.get(serial), entry.getValue(), sequenceId + "_" + serial);
-        });
+        .forEach((serial, serialNotifications) -> sendNotifications(messages.get(serial), serialNotifications, sequenceId + "_" + serial));
   }
 
   private void sendNotifications(final String message, final List<Notification> notifications, final String sequenceNo) {

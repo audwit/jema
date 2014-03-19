@@ -50,8 +50,7 @@ public class NotificationGeneratorService {
       schedules
           .stream()
           .collect(Collectors.groupingBy(Schedule::getUser))
-          .entrySet()
-          .forEach(entry -> generateNotification(entry.getKey(), entry.getValue()));
+          .forEach(this::generateNotification);
     } else {
       logger.debug("No schedule found to generate notification.");
     }
