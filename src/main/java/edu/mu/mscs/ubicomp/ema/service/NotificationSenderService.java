@@ -18,6 +18,7 @@ import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -38,18 +39,6 @@ public class NotificationSenderService {
   @SuppressWarnings("SpringJavaAutowiringInspection")
   private String dummyNumber;
   @Autowired
-  @Value("${notification.message0}")
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  private String message0;
-  @Autowired
-  @Value("${notification.message1}")
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  private String message1;
-  @Autowired
-  @Value("${notification.message2}")
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  private String message2;
-  @Autowired
   @Value("${notificationSender.totalThread}")
   @SuppressWarnings("SpringJavaAutowiringInspection")
   private int totalThread;
@@ -62,16 +51,19 @@ public class NotificationSenderService {
   private ExecutorService executorService;
   private ArrayList<String> messages;
 
+  @Autowired
+  @Value("${notification.messages}")
+  @SuppressWarnings("SpringJavaAutowiringInspection")
+  public void setMessages(final String messages) {
+    this.messages = new ArrayList<>(Arrays.asList(messages.split(",")));
+  }
+
   @PostConstruct
   public void initialize() {
     final BasicThreadFactory threadFactory = new BasicThreadFactory.Builder()
         .namingPattern(getClass().getName() + "-%d")
         .build();
     executorService = Executors.newFixedThreadPool(totalThread, threadFactory);
-    messages = new ArrayList<>(3);
-    messages.add(0, message0);
-    messages.add(1, message1);
-    messages.add(2, message2);
   }
 
   @Scheduled(cron = "*/30 * * * * *")
