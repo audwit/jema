@@ -4,6 +4,7 @@
     <api_id>API_ID</api_id>
     <user>USERNAME</user>
     <password>PASSWORD</password>
+    <mo>1</mo>
     <from>FROM</from>
     <to>TO</to>
     <text>TEXT</text>
