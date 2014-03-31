@@ -66,8 +66,8 @@ public class Answer {
     this.user = userByUserId;
   }
 
-  @OneToOne
-  @PrimaryKeyJoinColumn
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "scheduleId", referencedColumnName = "id")
   public Schedule getSchedule() {
     return schedule;
   }
