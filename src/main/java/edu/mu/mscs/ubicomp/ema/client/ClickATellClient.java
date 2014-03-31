@@ -70,7 +70,7 @@ public class ClickATellClient {
       return;
     }
 
-    final String numbers = phoneNumbers.stream().reduce(",", String::concat);
+    final String numbers = StringUtils.join(phoneNumbers, ",");
     final String requestBody = requestTemplate
         .replace("TEXT", textMessage)
         .replace("TO", numbers)
