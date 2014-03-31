@@ -11,7 +11,6 @@ import java.sql.Time;
 public class ContactingTime {
   private Integer id;
   private Time startTime;
-  private Time endTime;
   private User user;
 
   @Id
@@ -32,16 +31,6 @@ public class ContactingTime {
 
   public void setStartTime(final Time startTime) {
     this.startTime = startTime;
-  }
-
-  @Basic
-  @Column(name = "endTime")
-  public Time getEndTime() {
-    return endTime;
-  }
-
-  public void setEndTime(final Time endTime) {
-    this.endTime = endTime;
   }
 
   @OneToOne
