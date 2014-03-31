@@ -58,7 +58,10 @@ public class NotificationGeneratorService {
 
   private void generateNotification(final User user, final List<Schedule> schedules) {
     final ContactingTime contactingTime = user.getContactingTime();
-    Objects.requireNonNull(contactingTime, "No contacting time for user: " + user);
+    if(contactingTime == null) {
+      logger.warn("No contacting time for user: " + user);
+      return;
+    }
     logger.debug("Generating notifications ContactTime: {}", contactingTime);
     final int usableSlot = TOTAL_TIME_SLOT - schedules.size() * 3;
     int usedSlot = 0;
