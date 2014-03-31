@@ -16,6 +16,7 @@ public class Schedule {
   private Collection<Answer> answers;
   private Collection<Notification> notifications;
   private User user;
+  private Answer answer;
 
   @Id
   @Column(name = "id")
@@ -73,6 +74,15 @@ public class Schedule {
 
   public void setUser(final User user) {
     this.user = user;
+  }
+
+  @OneToOne(mappedBy = "schedule")
+  public Answer getAnswer() {
+    return answer;
+  }
+
+  public void setAnswer(final Answer answer) {
+    this.answer = answer;
   }
 
   @Override

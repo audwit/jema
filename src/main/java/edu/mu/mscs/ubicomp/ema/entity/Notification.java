@@ -16,6 +16,7 @@ public class Notification {
   private Integer serial;
   private String status;
   private Schedule schedule;
+  private Answer answer;
 
   @Id
   @GeneratedValue
@@ -86,6 +87,15 @@ public class Notification {
 
   public void setSchedule(final Schedule scheduleByScheduleId) {
     this.schedule = scheduleByScheduleId;
+  }
+
+  @OneToOne(mappedBy = "notification")
+  public Answer getAnswer() {
+    return answer;
+  }
+
+  public void setAnswer(final Answer answer) {
+    this.answer = answer;
   }
 
   @Override

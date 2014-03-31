@@ -14,6 +14,7 @@ public class Answer {
   private Question question;
   private User user;
   private Schedule schedule;
+  private Notification notification;
 
   @Id
   @Column(name = "id")
@@ -65,14 +66,24 @@ public class Answer {
     this.user = userByUserId;
   }
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "scheduleId", referencedColumnName = "id")
+  @OneToOne
+  @PrimaryKeyJoinColumn
   public Schedule getSchedule() {
     return schedule;
   }
 
-  public void setSchedule(final Schedule scheduleByScheduleId) {
-    this.schedule = scheduleByScheduleId;
+  public void setSchedule(final Schedule schedule) {
+    this.schedule = schedule;
+  }
+
+  @OneToOne
+  @PrimaryKeyJoinColumn
+  public Notification getNotification() {
+    return notification;
+  }
+
+  public void setNotification(final Notification notification) {
+    this.notification = notification;
   }
 
   @Override
