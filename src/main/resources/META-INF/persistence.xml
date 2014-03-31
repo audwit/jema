@@ -13,6 +13,7 @@
     <class>edu.mu.mscs.ubicomp.ema.entity.Question</class>
     <class>edu.mu.mscs.ubicomp.ema.entity.Schedule</class>
     <class>edu.mu.mscs.ubicomp.ema.entity.User</class>
+    <class>edu.mu.mscs.ubicomp.ema.entity.Notification</class>
 
   </persistence-unit>
 
