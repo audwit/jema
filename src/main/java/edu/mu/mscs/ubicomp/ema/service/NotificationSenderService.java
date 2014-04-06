@@ -87,16 +87,17 @@ public class NotificationSenderService {
   private void sendNotifications(final List<Notification> notifications, final String sequenceId) {
     notifications.stream()
         .collect(Collectors.groupingBy(Notification::getSerial))
-        .forEach((serial, serialNotifications) -> sendNotifications(messages.get(serial), serialNotifications, sequenceId + "_" + serial));
+        .forEach((serial, serialNotifications) -> sendNotifications(serial, serialNotifications, sequenceId));
   }
 
-  private void sendNotifications(final String message, final List<Notification> notifications, final String sequenceNo) {
+  private void sendNotifications(final int serial, final List<Notification> notifications, final String sequenceId) {
+    final String sequenceNo = sequenceId + "_" + serial;
     final List<String> phoneNumbers = notifications.stream()
         .map(notification -> dummyNumber)
         .collect(Collectors.toList());
 
     executorService.submit(
-        () -> client.sendTextMessage(message, phoneNumbers, sequenceNo)
+        () -> client.sendTextMessage(messages.get(serial), phoneNumbers, sequenceNo)
     );
   }
 
