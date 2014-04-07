@@ -2,8 +2,10 @@ package edu.mu.mscs.ubicomp.ema.entity;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Collection;
 
 @Entity
@@ -15,6 +17,7 @@ public class User {
   private ContactingTime contactingTime;
   private Collection<Answer> answers;
   private Collection<Schedule> schedules;
+  private Timestamp lastLogin;
 
   @Id
   @Column(name = "Study_id")
@@ -83,6 +86,16 @@ public class User {
     this.schedules = schedulesByStudyId;
   }
 
+  @Basic
+  @Column(name = "last_login")
+  public Timestamp getLastLogin() {
+    return lastLogin;
+  }
+
+  public void setLastLogin(final Timestamp lastLogin) {
+    this.lastLogin = lastLogin;
+  }
+
   @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
@@ -101,5 +114,13 @@ public class User {
     return new HashCodeBuilder(11, 31)
         .append(id)
         .hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .append("id", id)
+        .append("email", email)
+        .toString();
   }
 }
