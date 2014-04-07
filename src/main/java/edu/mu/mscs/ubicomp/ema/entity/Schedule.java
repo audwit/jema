@@ -66,7 +66,7 @@ public class Schedule {
   }
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId", referencedColumnName = "Study_id", nullable = false)
+  @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
   public User getUser() {
     return user;
   }
