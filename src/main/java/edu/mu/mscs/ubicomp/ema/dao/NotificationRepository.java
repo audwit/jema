@@ -17,9 +17,7 @@ public class NotificationRepository {
   private EntityManager entityManager;
 
   public void persistAll(final List<Notification> notifications) {
-    for (Notification notification : notifications) {
-      entityManager.persist(notification);
-    }
+    notifications.forEach(entityManager::persist);
   }
 
   public List<Notification> findNotifications(final Date date, final Date time) {
