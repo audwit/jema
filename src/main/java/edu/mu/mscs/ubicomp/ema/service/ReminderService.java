@@ -62,7 +62,7 @@ public class ReminderService {
 
   private Message retrieveRandomMessage() {
     final int totalMessage = messageRepository.getTotalMessage();
-    final int id = random.nextInt(totalMessage);
+    final int id = random.nextInt(totalMessage) + 1;
     return messageRepository.find(id);
   }
 
