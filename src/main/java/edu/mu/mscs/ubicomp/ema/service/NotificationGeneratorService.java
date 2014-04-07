@@ -10,21 +10,21 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@EnableScheduling
 public class NotificationGeneratorService {
   private static final SimpleDateFormat ZERO_TIME_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
   private Logger logger = LoggerFactory.getLogger(getClass());
@@ -38,7 +38,6 @@ public class NotificationGeneratorService {
   private NotificationRepository notificationRepository;
   private final Random random = new Random();
 
-  @Scheduled(cron = "*/10 * * * * *")
   public void generate() throws ParseException {
     final Date now = new Date();
     final Date today = ZERO_TIME_FORMATTER.parse(ZERO_TIME_FORMATTER.format(now));
