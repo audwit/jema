@@ -3,6 +3,7 @@ package edu.mu.mscs.ubicomp.ema.service;
 import edu.mu.mscs.ubicomp.ema.client.ClickATellClient;
 import edu.mu.mscs.ubicomp.ema.dao.NotificationRepository;
 import edu.mu.mscs.ubicomp.ema.entity.Notification;
+import edu.mu.mscs.ubicomp.ema.util.DateTimeUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
@@ -14,10 +15,11 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,9 +28,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class NotificationSenderService {
-  public static final SimpleDateFormat SEQUENCE_ID_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-  private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
-  private static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("HH:mm");
   private Logger logger = LoggerFactory.getLogger(getClass());
 
   @Autowired
@@ -64,14 +63,17 @@ public class NotificationSenderService {
   }
 
   public void send() throws ParseException {
-    final Date now = new Date();
-    final String sequenceId = SEQUENCE_ID_FORMAT.format(now);
+    final LocalDateTime now = LocalDateTime.now();
+    final LocalDate date = now.toLocalDate();
+    final LocalTime time = LocalTime.of(now.getHour(), now.getMinute() < 30 ? 0 : 30);
+
+    final String sequenceId = now.toString();
     logger.debug("Sending notification at time: {}", sequenceId);
 
-    final Date date = DATE_FORMATTER.parse(DATE_FORMATTER.format(now));
-    final Date time = TIME_FORMATTER.parse(TIME_FORMATTER.format(now));
-
-    final List<Notification> notifications = notificationRepository.findNotifications(date, time);
+    final List<Notification> notifications = notificationRepository.findNotifications(
+        DateTimeUtils.toDate(date),
+        DateTimeUtils.toDate(time)
+    );
     if (CollectionUtils.isNotEmpty(notifications)) {
       logger.debug("Found total notification: {}", notifications.size());
       sendNotifications(notifications, sequenceId);
