@@ -9,17 +9,23 @@ import edu.mu.mscs.ubicomp.ema.util.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class ReminderService {
   private Logger logger = LoggerFactory.getLogger(getClass());
   private Random random = new Random();
 
+  @Autowired
+  @Value("${notification.dummyNumber}")
+  @SuppressWarnings("SpringJavaAutowiringInspection")
+  private String dummyNumber;
   @Autowired
   private ClickATellClient client;
   @Autowired
@@ -34,6 +40,15 @@ public class ReminderService {
 
     final Message message = retrieveRandomMessage();
     logger.debug("Sending notification using message: {}", message);
+
+    sendTextMessage(inactiveUsers, message);
+  }
+
+  private void sendTextMessage(final List<User> inactiveUsers, final Message message) {
+    final List<String> phoneNumbers = inactiveUsers.stream()
+        .map(user -> dummyNumber)
+        .collect(Collectors.toList());
+    client.sendTextMessage(message.getContent(), phoneNumbers);
   }
 
   private List<User> getInactiveUsers(final LocalDate today) {
