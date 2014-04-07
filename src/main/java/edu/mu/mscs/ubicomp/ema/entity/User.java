@@ -11,6 +11,7 @@ import java.util.Collection;
 @Entity
 public class User {
   private Integer id;
+  private String username;
   private String email;
   private String password;
   private String role;
@@ -20,7 +21,7 @@ public class User {
   private Timestamp lastLogin;
 
   @Id
-  @Column(name = "Study_id")
+  @Column(name = "id")
   public Integer getId() {
     return id;
   }
@@ -30,7 +31,17 @@ public class User {
   }
 
   @Basic
-  @Column(name = "Email")
+  @Column(name = "name")
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(final String username) {
+    this.username = username;
+  }
+
+  @Basic
+  @Column(name = "email")
   public String getEmail() {
     return email;
   }
@@ -40,7 +51,7 @@ public class User {
   }
 
   @Basic
-  @Column(name = "Password")
+  @Column(name = "password")
   public String getPassword() {
     return password;
   }
@@ -50,7 +61,7 @@ public class User {
   }
 
   @Basic
-  @Column(name = "Role")
+  @Column(name = "role")
   public String getRole() {
     return role;
   }
