@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -26,7 +24,6 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
-@EnableScheduling
 @Transactional
 public class NotificationSenderService {
   public static final SimpleDateFormat SEQUENCE_ID_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -66,7 +63,6 @@ public class NotificationSenderService {
     executorService = Executors.newFixedThreadPool(totalThread, threadFactory);
   }
 
-  @Scheduled(cron = "*/30 * * * * *")
   public void send() throws ParseException {
     final Date now = new Date();
     final String sequenceId = SEQUENCE_ID_FORMAT.format(now);

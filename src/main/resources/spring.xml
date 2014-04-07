@@ -18,6 +18,7 @@
   <task:scheduler id="scheduler" pool-size="10"/>
   <task:scheduled-tasks scheduler="scheduler">
     <task:scheduled ref="reminderService" method="sendNotifications" cron="${reminderService.schedule}"/>
+    <task:scheduled ref="notificationSenderService" method="send" cron="${notificationSenderService.schedule}"/>
   </task:scheduled-tasks>
 
   <!-- JPA -->
