@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,13 +62,20 @@ public class ClickATellClient {
         .replace("FROM", from);
   }
 
-  public void sendTextMessage(final String textMessage, final List<String> phoneNumbers, final String sequenceNo) {
+  public void sendTextMessage(final String textMessage, final List<String> phoneNumbers) {
+    sendTextMessage(textMessage, phoneNumbers, null);
+  }
+
+  public void sendTextMessage(final String textMessage, final List<String> phoneNumbers, String sequenceNo) {
     if (StringUtils.isBlank(textMessage)) {
       throw new IllegalArgumentException("textMessage should not be null or empty");
     }
     if (CollectionUtils.isEmpty(phoneNumbers)) {
       logger.debug("Not sending any message, no phone numbers given.");
       return;
+    }
+    if (StringUtils.isEmpty(sequenceNo)) {
+      sequenceNo = LocalDateTime.now().toString();
     }
 
     final String numbers = StringUtils.join(phoneNumbers, ",");
