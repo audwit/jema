@@ -35,35 +35,47 @@ public class ReminderService {
 
   public void sendNotifications() {
     final LocalDate today = LocalDate.now();
-    final List<User> inactiveUsers = getInactiveUsers(today);
-    logger.debug("Found total inactive users: {}", inactiveUsers.size());
+    sendFirstReminder(today);
+    sendSecondReminder(today);
+  }
 
+  private void sendFirstReminder(final LocalDate today) {
+    final List<User> inactiveUsers = getInactiveUsersSince(today, 2, 1);
     final Message message = retrieveRandomMessage();
-    logger.debug("Sending notification using message: {}", message);
+    sendTextMessage(inactiveUsers, message);
+  }
 
+  private void sendSecondReminder(final LocalDate today) {
+    final List<User> inactiveUsers = getInactiveUsersSince(today, 3, 2);
+    final Message message = retrieveRandomMessage();
     sendTextMessage(inactiveUsers, message);
   }
 
   private void sendTextMessage(final List<User> inactiveUsers, final Message message) {
+    final String textMessage = message.getContent();
     final List<String> phoneNumbers = inactiveUsers.stream()
         .map(user -> dummyNumber)
         .collect(Collectors.toList());
-    client.sendTextMessage(message.getContent(), phoneNumbers);
+    client.sendTextMessage(textMessage, phoneNumbers);
   }
 
-  private List<User> getInactiveUsers(final LocalDate today) {
-    final LocalDate lastLoginStart = today.minusWeeks(2);
-    final LocalDate lastLoginEnd = today.minusWeeks(1);
-    return userRepository.getInactiveUsers(
+  private List<User> getInactiveUsersSince(final LocalDate today, final int lastLoginStartWeek, final int lastLoginEndWeek) {
+    final LocalDate lastLoginStart = today.minusWeeks(lastLoginStartWeek);
+    final LocalDate lastLoginEnd = today.minusWeeks(lastLoginEndWeek);
+    final List<User> inactiveUsers = userRepository.getInactiveUsers(
         DateTimeUtils.toDate(lastLoginStart),
         DateTimeUtils.toDate(lastLoginEnd)
     );
+    logger.debug("Found total inactive users: {}", inactiveUsers.size());
+    return inactiveUsers;
   }
 
   private Message retrieveRandomMessage() {
     final int totalMessage = messageRepository.getTotalMessage();
     final int id = random.nextInt(totalMessage) + 1;
-    return messageRepository.find(id);
+    final Message message = messageRepository.find(id);
+    logger.debug("Sending notification using message: {}", message);
+    return message;
   }
 
 }
