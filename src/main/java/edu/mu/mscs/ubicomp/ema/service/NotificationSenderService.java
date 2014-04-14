@@ -45,7 +45,7 @@ public class NotificationSenderService {
   private ClickATellClient client;
 
   private ExecutorService executorService;
-  private ArrayList<String> messages;
+  private List<String> messages;
 
   @Autowired
   @Value("${notification.messages}")
