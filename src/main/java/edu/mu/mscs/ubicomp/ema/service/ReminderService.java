@@ -1,6 +1,7 @@
 package edu.mu.mscs.ubicomp.ema.service;
 
 import edu.mu.mscs.ubicomp.ema.client.ClickATellClient;
+import edu.mu.mscs.ubicomp.ema.client.MailClient;
 import edu.mu.mscs.ubicomp.ema.dao.MessageRepository;
 import edu.mu.mscs.ubicomp.ema.dao.UserRepository;
 import edu.mu.mscs.ubicomp.ema.entity.Message;
@@ -9,9 +10,11 @@ import edu.mu.mscs.ubicomp.ema.util.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -23,7 +26,11 @@ public class ReminderService {
   private String dummyNumber;
   private String message1;
   private String message2;
+  private String email1;
+  private String email2;
+
   private ClickATellClient textMessageClient;
+  private MailClient mailClient;
   private MessageRepository messageRepository;
   private UserRepository userRepository;
 
@@ -39,8 +46,20 @@ public class ReminderService {
     this.message2 = message2;
   }
 
+  public void setEmail1(final String email1) {
+    this.email1 = email1;
+  }
+
+  public void setEmail2(final String email2) {
+    this.email2 = email2;
+  }
+
   public void setTextMessageClient(final ClickATellClient textMessageClient) {
     this.textMessageClient = textMessageClient;
+  }
+
+  public void setMailClient(final MailClient mailClient) {
+    this.mailClient = mailClient;
   }
 
   public void setMessageRepository(final MessageRepository messageRepository) {
@@ -55,6 +74,8 @@ public class ReminderService {
     final LocalDate today = LocalDate.now();
     sendFirstReminder(today);
     sendSecondReminder(today);
+    sendThirdReminder(today);
+    sendFourthReminder(today);
   }
 
   private void sendFirstReminder(final LocalDate today) {
@@ -76,11 +97,31 @@ public class ReminderService {
     textMessageClient.sendTextMessage(textMessage, phoneNumbers);
   }
 
+  private void sendThirdReminder(final LocalDate today) {
+    final List<User> inactiveUsers = getLastLoggedInOn(today.minusWeeks(1).minusDays(2));
+    final String subject = "Reminder three";
+    inactiveUsers.forEach((user)-> sendEmailSafely(subject, email1, user));
+  }
+
+  private void sendFourthReminder(final LocalDate today) {
+    final List<User> inactiveUsers = getLastLoggedInOn(today.minusWeeks(5));
+    final String subject = "Reminder fourth";
+    inactiveUsers.forEach((user)-> sendEmailSafely(subject, email2, user));
+  }
+
+  private void sendEmailSafely(final String subject, final String email, final User user) {
+    try {
+      mailClient.send(user.getEmail(),  subject, String.format(email, user.getUsername()));
+    } catch (MessagingException e) {
+      logger.warn("Failed sending email notification.", e);
+    }
+  }
+
   private List<User> getLastLoggedInOn(final LocalDate lastLoginDate) {
-    final List<User> inactiveUsers = userRepository.getInactiveUsers(
-        DateTimeUtils.toDate(LocalDateTime.of(lastLoginDate, LocalTime.MIN)),
-        DateTimeUtils.toDate(LocalDateTime.of(lastLoginDate, LocalTime.MAX))
-    );
+    final Date lastLoginStart = DateTimeUtils.toDate(LocalDateTime.of(lastLoginDate, LocalTime.MIN));
+    final Date lastLoginEnd = DateTimeUtils.toDate(LocalDateTime.of(lastLoginDate, LocalTime.MAX));
+
+    final List<User> inactiveUsers = userRepository.getInactiveUsers(lastLoginStart, lastLoginEnd);
     logger.debug("Found total inactive users: {}", inactiveUsers.size());
     return inactiveUsers;
   }
