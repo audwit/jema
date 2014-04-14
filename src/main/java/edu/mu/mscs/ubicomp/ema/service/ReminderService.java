@@ -8,30 +8,36 @@ import edu.mu.mscs.ubicomp.ema.entity.User;
 import edu.mu.mscs.ubicomp.ema.util.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-@Service
 public class ReminderService {
   private Logger logger = LoggerFactory.getLogger(getClass());
   private Random random = new Random();
 
-  @Autowired
-  @Value("${notification.dummyNumber}")
-  @SuppressWarnings("SpringJavaAutowiringInspection")
   private String dummyNumber;
-  @Autowired
-  private ClickATellClient client;
-  @Autowired
+  private ClickATellClient textMessageClient;
   private MessageRepository messageRepository;
-  @Autowired
   private UserRepository userRepository;
+
+  public void setDummyNumber(final String dummyNumber) {
+    this.dummyNumber = dummyNumber;
+  }
+
+  public void setTextMessageClient(final ClickATellClient textMessageClient) {
+    this.textMessageClient = textMessageClient;
+  }
+
+  public void setMessageRepository(final MessageRepository messageRepository) {
+    this.messageRepository = messageRepository;
+  }
+
+  public void setUserRepository(final UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
   public void sendNotifications() {
     final LocalDate today = LocalDate.now();
@@ -56,7 +62,7 @@ public class ReminderService {
     final List<String> phoneNumbers = inactiveUsers.stream()
         .map(user -> dummyNumber)
         .collect(Collectors.toList());
-    client.sendTextMessage(textMessage, phoneNumbers);
+    textMessageClient.sendTextMessage(textMessage, phoneNumbers);
   }
 
   private List<User> getInactiveUsersSince(final LocalDate today, final int lastLoginStartWeek, final int lastLoginEndWeek) {
