@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -56,13 +58,13 @@ public class ReminderService {
   }
 
   private void sendFirstReminder(final LocalDate today) {
-    final List<User> inactiveUsers = getInactiveUsersSince(today, 2, 1);
+    final List<User> inactiveUsers = getLastLoggedInOn(today.minusWeeks(1));
     final Message message = retrieveRandomMessage();
     sendTextMessage(inactiveUsers, message.getContent() + "\n" + message1);
   }
 
   private void sendSecondReminder(final LocalDate today) {
-    final List<User> inactiveUsers = getInactiveUsersSince(today, 3, 2);
+    final List<User> inactiveUsers = getLastLoggedInOn(today.minusWeeks(1).minusDays(1));
     final Message message = retrieveRandomMessage();
     sendTextMessage(inactiveUsers, message.getContent() + "\n" + message2);
   }
@@ -74,12 +76,10 @@ public class ReminderService {
     textMessageClient.sendTextMessage(textMessage, phoneNumbers);
   }
 
-  private List<User> getInactiveUsersSince(final LocalDate today, final int lastLoginStartWeek, final int lastLoginEndWeek) {
-    final LocalDate lastLoginStart = today.minusWeeks(lastLoginStartWeek);
-    final LocalDate lastLoginEnd = today.minusWeeks(lastLoginEndWeek);
+  private List<User> getLastLoggedInOn(final LocalDate lastLoginDate) {
     final List<User> inactiveUsers = userRepository.getInactiveUsers(
-        DateTimeUtils.toDate(lastLoginStart),
-        DateTimeUtils.toDate(lastLoginEnd)
+        DateTimeUtils.toDate(LocalDateTime.of(lastLoginDate, LocalTime.MIN)),
+        DateTimeUtils.toDate(LocalDateTime.of(lastLoginDate, LocalTime.MAX))
     );
     logger.debug("Found total inactive users: {}", inactiveUsers.size());
     return inactiveUsers;
