@@ -63,8 +63,8 @@
   <tx:annotation-driven/>
 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="location" value="file:${user.home}/ema.properties"/>
+    <property name="location" value="file:${user.home}/ema/config/ema.properties"/>
   </bean>
-  <util:properties id="mailConfigurations" location="file:${user.home}/mail.properties"/>
+  <util:properties id="mailConfigurations" location="file:${user.home}/ema/config/mail.properties"/>
 
 </beans>
