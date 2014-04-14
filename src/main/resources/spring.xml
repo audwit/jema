@@ -24,6 +24,8 @@
   </bean>
 
   <bean class="edu.mu.mscs.ubicomp.ema.service.ReminderService" id="reminderService">
+    <property name="message1" ref="message1"/>
+    <property name="message2" ref="message2"/>
     <property name="dummyNumber" value="${notification.dummyNumber}"/>
     <property name="textMessageClient" ref="clickATellClient"/>
     <property name="messageRepository" ref="messageRepository"/>
@@ -66,5 +68,10 @@
     <property name="location" value="file:${user.home}/ema/config/ema.properties"/>
   </bean>
   <util:properties id="mailConfigurations" location="file:${user.home}/ema/config/mail.properties"/>
-
+  <bean id="message1" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/message1.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="message2" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/message2.txt" type="java.io.InputStream" />
+  </bean>
 </beans>

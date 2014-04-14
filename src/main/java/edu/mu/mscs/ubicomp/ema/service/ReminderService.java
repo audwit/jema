@@ -19,12 +19,22 @@ public class ReminderService {
   private Random random = new Random();
 
   private String dummyNumber;
+  private String message1;
+  private String message2;
   private ClickATellClient textMessageClient;
   private MessageRepository messageRepository;
   private UserRepository userRepository;
 
   public void setDummyNumber(final String dummyNumber) {
     this.dummyNumber = dummyNumber;
+  }
+
+  public void setMessage1(final String message1) {
+    this.message1 = message1;
+  }
+
+  public void setMessage2(final String message2) {
+    this.message2 = message2;
   }
 
   public void setTextMessageClient(final ClickATellClient textMessageClient) {
@@ -48,17 +58,16 @@ public class ReminderService {
   private void sendFirstReminder(final LocalDate today) {
     final List<User> inactiveUsers = getInactiveUsersSince(today, 2, 1);
     final Message message = retrieveRandomMessage();
-    sendTextMessage(inactiveUsers, message);
+    sendTextMessage(inactiveUsers, message.getContent() + "\n" + message1);
   }
 
   private void sendSecondReminder(final LocalDate today) {
     final List<User> inactiveUsers = getInactiveUsersSince(today, 3, 2);
     final Message message = retrieveRandomMessage();
-    sendTextMessage(inactiveUsers, message);
+    sendTextMessage(inactiveUsers, message.getContent() + "\n" + message2);
   }
 
-  private void sendTextMessage(final List<User> inactiveUsers, final Message message) {
-    final String textMessage = message.getContent();
+  private void sendTextMessage(final List<User> inactiveUsers, final String textMessage) {
     final List<String> phoneNumbers = inactiveUsers.stream()
         .map(user -> dummyNumber)
         .collect(Collectors.toList());
