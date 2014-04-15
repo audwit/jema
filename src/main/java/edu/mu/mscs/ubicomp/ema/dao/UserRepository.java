@@ -23,4 +23,8 @@ public class UserRepository {
     return query.getResultList();
   }
 
+  public void update(final User user) {
+    entityManager.merge(user);
+    entityManager.flush();
+  }
 }
