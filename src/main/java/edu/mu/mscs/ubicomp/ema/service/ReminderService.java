@@ -30,6 +30,10 @@ public class ReminderService {
   private String email2;
   private String subject1;
   private String subject2;
+  private int firstNotificationDifference;
+  private int secondNotificationDifference;
+  private int thirdNotificationDifference;
+  private int fourthNotificationDifference;
 
   private ClickATellClient textMessageClient;
   private MailClient mailClient;
@@ -64,6 +68,22 @@ public class ReminderService {
     this.subject2 = subject2;
   }
 
+  public void setFirstNotificationDifference(final int firstNotificationDifference) {
+    this.firstNotificationDifference = firstNotificationDifference;
+  }
+
+  public void setSecondNotificationDifference(final int secondNotificationDifference) {
+    this.secondNotificationDifference = secondNotificationDifference;
+  }
+
+  public void setThirdNotificationDifference(final int thirdNotificationDifference) {
+    this.thirdNotificationDifference = thirdNotificationDifference;
+  }
+
+  public void setFourthNotificationDifference(final int fourthNotificationDifference) {
+    this.fourthNotificationDifference = fourthNotificationDifference;
+  }
+
   public void setTextMessageClient(final ClickATellClient textMessageClient) {
     this.textMessageClient = textMessageClient;
   }
@@ -89,13 +109,13 @@ public class ReminderService {
   }
 
   private void sendFirstReminder(final LocalDate today) {
-    final List<User> inactiveUsers = getLastLoggedInOn(today.minusWeeks(1));
+    final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(firstNotificationDifference));
     final Message message = retrieveRandomMessage();
     sendTextMessage(inactiveUsers, message.getContent() + "\n" + message1);
   }
 
   private void sendSecondReminder(final LocalDate today) {
-    final List<User> inactiveUsers = getLastLoggedInOn(today.minusWeeks(1).minusDays(1));
+    final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(secondNotificationDifference));
     final Message message = retrieveRandomMessage();
     sendTextMessage(inactiveUsers, message.getContent() + "\n" + message2);
   }
@@ -108,12 +128,12 @@ public class ReminderService {
   }
 
   private void sendThirdReminder(final LocalDate today) {
-    final List<User> inactiveUsers = getLastLoggedInOn(today.minusWeeks(1).minusDays(2));
+    final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(thirdNotificationDifference));
     inactiveUsers.forEach((user)-> sendEmailSafely(subject1, String.format(email1, user.getUsername()), user));
   }
 
   private void sendFourthReminder(final LocalDate today) {
-    final List<User> inactiveUsers = getLastLoggedInOn(today.minusWeeks(1).minusDays(3));
+    final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(fourthNotificationDifference));
     inactiveUsers.forEach((user)-> sendEmailSafely(subject2, String.format(email2, user.getUsername()), user));
   }
 

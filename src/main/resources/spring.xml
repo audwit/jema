@@ -30,6 +30,10 @@
     <property name="email2" ref="email2"/>
     <property name="subject1" value="${reminderServiceConfig.subject1}"/>
     <property name="subject2" value="${reminderServiceConfig.subject2}"/>
+    <property name="firstNotificationDifference" value="${reminderServiceConfig.firstNotificationDifference}"/>
+    <property name="secondNotificationDifference" value="${reminderServiceConfig.secondNotificationDifference}"/>
+    <property name="thirdNotificationDifference" value="${reminderServiceConfig.thirdNotificationDifference}"/>
+    <property name="fourthNotificationDifference" value="${reminderServiceConfig.fourthNotificationDifference}"/>
     <property name="dummyNumber" value="${notification.dummyNumber}"/>
     <property name="textMessageClient" ref="clickATellClient"/>
     <property name="mailClient" ref="mailClient"/>
