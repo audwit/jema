@@ -28,6 +28,8 @@
     <property name="message2" ref="message2"/>
     <property name="email1" ref="email1"/>
     <property name="email2" ref="email2"/>
+    <property name="subject1" value="${reminderServiceConfig.subject1}"/>
+    <property name="subject2" value="${reminderServiceConfig.subject2}"/>
     <property name="dummyNumber" value="${notification.dummyNumber}"/>
     <property name="textMessageClient" ref="clickATellClient"/>
     <property name="mailClient" ref="mailClient"/>

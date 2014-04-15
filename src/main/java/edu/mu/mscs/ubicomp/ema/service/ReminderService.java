@@ -28,6 +28,8 @@ public class ReminderService {
   private String message2;
   private String email1;
   private String email2;
+  private String subject1;
+  private String subject2;
 
   private ClickATellClient textMessageClient;
   private MailClient mailClient;
@@ -52,6 +54,14 @@ public class ReminderService {
 
   public void setEmail2(final String email2) {
     this.email2 = email2;
+  }
+
+  public void setSubject1(final String subject1) {
+    this.subject1 = subject1;
+  }
+
+  public void setSubject2(final String subject2) {
+    this.subject2 = subject2;
   }
 
   public void setTextMessageClient(final ClickATellClient textMessageClient) {
@@ -99,14 +109,12 @@ public class ReminderService {
 
   private void sendThirdReminder(final LocalDate today) {
     final List<User> inactiveUsers = getLastLoggedInOn(today.minusWeeks(1).minusDays(2));
-    final String subject = "Reminder three";
-    inactiveUsers.forEach((user)-> sendEmailSafely(subject, email1, user));
+    inactiveUsers.forEach((user)-> sendEmailSafely(subject1, String.format(email1, user.getUsername()), user));
   }
 
   private void sendFourthReminder(final LocalDate today) {
-    final List<User> inactiveUsers = getLastLoggedInOn(today.minusWeeks(5));
-    final String subject = "Reminder fourth";
-    inactiveUsers.forEach((user)-> sendEmailSafely(subject, email2, user));
+    final List<User> inactiveUsers = getLastLoggedInOn(today.minusWeeks(1).minusDays(3));
+    inactiveUsers.forEach((user)-> sendEmailSafely(subject2, String.format(email2, user.getUsername()), user));
   }
 
   private void sendEmailSafely(final String subject, final String email, final User user) {
