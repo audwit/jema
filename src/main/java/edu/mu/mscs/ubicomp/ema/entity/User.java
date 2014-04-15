@@ -15,6 +15,7 @@ public class User {
   private String email;
   private String password;
   private String role;
+  private String resetToken;
   private ContactingTime contactingTime;
   private Collection<Answer> answers;
   private Collection<Schedule> schedules;
@@ -68,6 +69,16 @@ public class User {
 
   public void setRole(final String role) {
     this.role = role;
+  }
+
+  @Basic
+  @Column(name = "reset_token")
+  public String getResetToken() {
+    return resetToken;
+  }
+
+  public void setResetToken(final String token) {
+    this.resetToken = token;
   }
 
   @OneToOne(mappedBy = "user")
