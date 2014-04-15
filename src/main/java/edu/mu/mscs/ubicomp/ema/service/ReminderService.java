@@ -17,6 +17,7 @@ import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ReminderService {
@@ -39,6 +40,7 @@ public class ReminderService {
   private MailClient mailClient;
   private MessageRepository messageRepository;
   private UserRepository userRepository;
+  private String baseUrl;
 
   public void setDummyNumber(final String dummyNumber) {
     this.dummyNumber = dummyNumber;
@@ -100,6 +102,10 @@ public class ReminderService {
     this.userRepository = userRepository;
   }
 
+  public void setBaseUrl(final String baseUrl) {
+    this.baseUrl = baseUrl;
+  }
+
   public void sendNotifications() {
     final LocalDate today = LocalDate.now();
     sendFirstReminder(today);
@@ -134,15 +140,27 @@ public class ReminderService {
 
   private void sendFourthReminder(final LocalDate today) {
     final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(fourthNotificationDifference));
-    inactiveUsers.forEach((user)-> sendEmailSafely(subject2, String.format(email2, user.getUsername()), user));
+    inactiveUsers.forEach((user) -> sendEmailSafely(subject2, String.format(email2, user.getUsername()), user));
   }
 
   private void sendEmailSafely(final String subject, final String email, final User user) {
+    final String token = UUID.randomUUID().toString();
+    updateUserToken(user, token);
+    String url = createResetUrl(user);
     try {
-      mailClient.send(user.getEmail(),  subject, String.format(email, user.getUsername()));
+      mailClient.send(user.getEmail(),  subject, String.format(email, user.getUsername(), url));
     } catch (MessagingException e) {
       logger.warn("Failed sending email notification.", e);
     }
+  }
+
+  private String createResetUrl(final User user) {
+    return String.format("%s/profile/resetlogin/%d/%s", baseUrl, user.getId(), user.getResetToken());
+  }
+
+  private void updateUserToken(final User user, final String token) {
+    user.setResetToken(token);
+    userRepository.update(user);
   }
 
   private List<User> getLastLoggedInOn(final LocalDate lastLoginDate) {
