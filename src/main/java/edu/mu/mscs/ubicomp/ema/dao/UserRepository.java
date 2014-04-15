@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class UserRepository {
     return query.getResultList();
   }
 
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public void update(final User user) {
     entityManager.merge(user);
     entityManager.flush();
