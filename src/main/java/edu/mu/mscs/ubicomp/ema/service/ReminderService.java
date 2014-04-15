@@ -14,11 +14,7 @@ import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class ReminderService {
   private Logger logger = LoggerFactory.getLogger(getClass());
@@ -117,20 +113,24 @@ public class ReminderService {
   private void sendFirstReminder(final LocalDate today) {
     final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(firstNotificationDifference));
     final Message message = retrieveRandomMessage();
-    sendTextMessage(inactiveUsers, message.getContent() + "\n" + message1);
+    sendTextMessage(inactiveUsers, message, message1);
   }
 
   private void sendSecondReminder(final LocalDate today) {
     final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(secondNotificationDifference));
     final Message message = retrieveRandomMessage();
-    sendTextMessage(inactiveUsers, message.getContent() + "\n" + message2);
+    sendTextMessage(inactiveUsers, message, message1);
   }
 
-  private void sendTextMessage(final List<User> inactiveUsers, final String textMessage) {
-    final List<String> phoneNumbers = inactiveUsers.stream()
-        .map(user -> dummyNumber)
-        .collect(Collectors.toList());
-    textMessageClient.sendTextMessage(textMessage, phoneNumbers);
+  private void sendTextMessage(final List<User> inactiveUsers, final Message message, final String textMessage) {
+    final String messageFormat = String.format("%s\n%s", message.getContent(), textMessage);
+    for (User inactiveUser : inactiveUsers) {
+      final String token = UUID.randomUUID().toString();
+      updateUserToken(inactiveUser, token);
+      String url = createResetUrl(inactiveUser);
+      final String textMessageBody = String.format(messageFormat, url);
+      textMessageClient.sendTextMessage(textMessageBody, Arrays.asList(dummyNumber));
+    }
   }
 
   private void sendThirdReminder(final LocalDate today) {
