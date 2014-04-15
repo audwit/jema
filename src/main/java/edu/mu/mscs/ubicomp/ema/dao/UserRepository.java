@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public class UserRepository {
-  private static final String QL_STRING = "FROM User u WHERE u.lastLogin > :lastLoginStart AND u.lastLogin < :lastLoginEnd";
+  private static final String QL_STRING = "FROM User u WHERE u.lastLogin >= :lastLoginStart AND u.lastLogin <= :lastLoginEnd";
 
   @PersistenceContext
   private EntityManager entityManager;
