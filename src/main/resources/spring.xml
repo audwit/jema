@@ -39,7 +39,7 @@
     <property name="mailClient" ref="mailClient"/>
     <property name="messageRepository" ref="messageRepository"/>
     <property name="userRepository" ref="userRepository"/>
-    <property name="baseUrl" value="${reminderServiceConfig.baseUrl}"/>
+    <property name="baseUrl" value="${application.baseUrl}"/>
   </bean>
 
   <!-- schedulers -->
