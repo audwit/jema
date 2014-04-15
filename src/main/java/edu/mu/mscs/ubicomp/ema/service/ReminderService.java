@@ -119,7 +119,7 @@ public class ReminderService {
   private void sendSecondReminder(final LocalDate today) {
     final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(secondNotificationDifference));
     final Message message = retrieveRandomMessage();
-    sendTextMessage(inactiveUsers, message, message1);
+    sendTextMessage(inactiveUsers, message, message2);
   }
 
   private void sendTextMessage(final List<User> inactiveUsers, final Message message, final String textMessage) {
@@ -135,12 +135,12 @@ public class ReminderService {
 
   private void sendThirdReminder(final LocalDate today) {
     final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(thirdNotificationDifference));
-    inactiveUsers.forEach((user)-> sendEmailSafely(subject1, String.format(email1, user.getUsername()), user));
+    inactiveUsers.forEach((user) -> sendEmailSafely(subject1, email1, user));
   }
 
   private void sendFourthReminder(final LocalDate today) {
     final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(fourthNotificationDifference));
-    inactiveUsers.forEach((user) -> sendEmailSafely(subject2, String.format(email2, user.getUsername()), user));
+    inactiveUsers.forEach((user) -> sendEmailSafely(subject2, email2, user));
   }
 
   private void sendEmailSafely(final String subject, final String email, final User user) {
@@ -150,7 +150,7 @@ public class ReminderService {
     try {
       mailClient.send(user.getEmail(),  subject, String.format(email, user.getUsername(), url));
     } catch (MessagingException e) {
-      logger.warn("Failed sending email notification.", e);
+      logger.warn("Failed sending email notification to " + user.getEmail() + " for user: " + user.getId(), e);
     }
   }
 
