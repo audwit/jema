@@ -35,6 +35,10 @@ public class ReminderService {
   private int secondNotificationDifference;
   private int thirdNotificationDifference;
   private int fourthNotificationDifference;
+  private long inactiveWarningDate;
+  private String warningEmailAddress;
+  private String warningEmailSubject;
+  private String inactiveEmailTemplate;
 
   private ClickATellClient textMessageClient;
   private MailClient mailClient;
@@ -88,6 +92,22 @@ public class ReminderService {
     this.fourthNotificationDifference = fourthNotificationDifference;
   }
 
+  public void setInactiveWarningDate(final long inactiveWarningDate) {
+    this.inactiveWarningDate = inactiveWarningDate;
+  }
+
+  public void setWarningEmailAddress(final String warningEmailAddress) {
+    this.warningEmailAddress = warningEmailAddress;
+  }
+
+  public void setWarningEmailSubject(final String warningEmailSubject) {
+    this.warningEmailSubject = warningEmailSubject;
+  }
+
+  public void setInactiveEmailTemplate(final String inactiveEmailTemplate) {
+    this.inactiveEmailTemplate = inactiveEmailTemplate;
+  }
+
   public void setTextMessageClient(final ClickATellClient textMessageClient) {
     this.textMessageClient = textMessageClient;
   }
@@ -126,6 +146,7 @@ public class ReminderService {
     sendSecondReminder(today);
     sendThirdReminder(today);
     sendFourthReminder(today);
+    sendInactiveUsersList(today);
   }
 
   private void sendFirstReminder(final LocalDate today) {
@@ -161,13 +182,31 @@ public class ReminderService {
     inactiveUsers.forEach((user) -> sendEmailSafely(subject2, email2, user));
   }
 
+  private void sendInactiveUsersList(final LocalDate today) {
+    final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(inactiveWarningDate));
+    StringBuilder emailMessageBuilder = new StringBuilder();
+    inactiveUsers.forEach((user) -> emailMessageBuilder.append(user.getId())
+        .append("    ")
+        .append(user.getUsername())
+        .append("\n"));
+
+    executorService.submit(() -> {
+      try {
+        final String body = String.format(inactiveEmailTemplate, emailMessageBuilder.toString());
+        mailClient.send(warningEmailAddress, warningEmailSubject, body);
+      } catch (MessagingException e) {
+        logger.warn("Failed sending warning email notification to: " + warningEmailAddress, e);
+      }
+    });
+  }
+
   private void sendEmailSafely(final String subject, final String email, final User user) {
-    executorService.submit(()->{
+    executorService.submit(() -> {
       final String token = UUID.randomUUID().toString();
       updateUserToken(user, token);
       String url = createResetUrl(user);
       try {
-        mailClient.send(user.getEmail(),  subject, String.format(email, user.getUsername(), url));
+        mailClient.send(user.getEmail(), subject, String.format(email, user.getUsername(), url));
       } catch (MessagingException e) {
         logger.warn("Failed sending email notification to " + user.getEmail() + " for user: " + user.getId(), e);
       }
