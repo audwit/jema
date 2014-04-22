@@ -1,5 +1,6 @@
 package edu.mu.mscs.ubicomp.ema.util;
 
+import java.sql.Time;
 import java.time.*;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -7,8 +8,7 @@ import java.util.GregorianCalendar;
 public class DateTimeUtils {
 
   public static Date toDate(final LocalTime localTime) {
-    final long nanoSeconds = localTime.toNanoOfDay();
-    return new Date(nanoSeconds / 1000000);
+    return new Date(Time.valueOf(localTime).getTime());
   }
 
   public static Date toDate(final LocalDate localDate) {
