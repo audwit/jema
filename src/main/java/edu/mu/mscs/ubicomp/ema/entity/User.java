@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 
 @Entity
+@Table(name = "user")
 public class User {
   private Integer id;
   private String username;
