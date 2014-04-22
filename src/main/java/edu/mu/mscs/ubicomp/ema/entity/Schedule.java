@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.util.Collection;
 
 @Entity
+@Table(name = "EmaSchedule")
 public class Schedule {
   private Integer id;
   private Date surveyDate;

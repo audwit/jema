@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
+@Table(name = "EmaQuestion")
 public class Question {
   private Integer id;
   private String title;
