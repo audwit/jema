@@ -74,11 +74,9 @@ public class NotificationSenderService {
         DateTimeUtils.toDate(date),
         DateTimeUtils.toDate(time)
     );
+    logger.debug("Found total notification: {}", notifications.size());
     if (CollectionUtils.isNotEmpty(notifications)) {
-      logger.debug("Found total notification: {}", notifications.size());
       sendNotifications(notifications, sequenceId);
-    } else {
-      logger.debug("No notification found to be sent");
     }
   }
 
