@@ -7,14 +7,18 @@ import edu.mu.mscs.ubicomp.ema.dao.UserRepository;
 import edu.mu.mscs.ubicomp.ema.entity.Message;
 import edu.mu.mscs.ubicomp.ema.entity.User;
 import edu.mu.mscs.ubicomp.ema.util.DateTimeUtils;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ReminderService {
   private Logger logger = LoggerFactory.getLogger(getClass());
@@ -37,6 +41,8 @@ public class ReminderService {
   private MessageRepository messageRepository;
   private UserRepository userRepository;
   private String baseUrl;
+  private int totalThread;
+  private ExecutorService executorService;
 
   public void setDummyNumber(final String dummyNumber) {
     this.dummyNumber = dummyNumber;
@@ -102,6 +108,18 @@ public class ReminderService {
     this.baseUrl = baseUrl;
   }
 
+  public void setTotalThread(final int totalThread) {
+    this.totalThread = totalThread;
+  }
+
+  @PostConstruct
+  public void init() {
+    final BasicThreadFactory threadFactory = new BasicThreadFactory.Builder()
+        .namingPattern(getClass().getName() + "-%d")
+        .build();
+    executorService = Executors.newFixedThreadPool(totalThread, threadFactory);
+  }
+
   public void sendNotifications() {
     final LocalDate today = LocalDate.now();
     sendFirstReminder(today);
@@ -144,14 +162,16 @@ public class ReminderService {
   }
 
   private void sendEmailSafely(final String subject, final String email, final User user) {
-    final String token = UUID.randomUUID().toString();
-    updateUserToken(user, token);
-    String url = createResetUrl(user);
-    try {
-      mailClient.send(user.getEmail(),  subject, String.format(email, user.getUsername(), url));
-    } catch (MessagingException e) {
-      logger.warn("Failed sending email notification to " + user.getEmail() + " for user: " + user.getId(), e);
-    }
+    executorService.submit(()->{
+      final String token = UUID.randomUUID().toString();
+      updateUserToken(user, token);
+      String url = createResetUrl(user);
+      try {
+        mailClient.send(user.getEmail(),  subject, String.format(email, user.getUsername(), url));
+      } catch (MessagingException e) {
+        logger.warn("Failed sending email notification to " + user.getEmail() + " for user: " + user.getId(), e);
+      }
+    });
   }
 
   private String createResetUrl(final User user) {

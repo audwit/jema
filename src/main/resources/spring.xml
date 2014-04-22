@@ -40,6 +40,7 @@
     <property name="messageRepository" ref="messageRepository"/>
     <property name="userRepository" ref="userRepository"/>
     <property name="baseUrl" value="${application.baseUrl}"/>
+    <property name="totalThread" value="${reminderServiceConfig.totalThread}"/>
   </bean>
 
   <bean class="edu.mu.mscs.ubicomp.ema.service.NotificationSenderService" id="notificationSenderService">
