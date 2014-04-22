@@ -42,6 +42,20 @@
     <property name="baseUrl" value="${application.baseUrl}"/>
   </bean>
 
+  <bean class="edu.mu.mscs.ubicomp.ema.service.NotificationSenderService" id="notificationSenderService">
+    <property name="dummyNumber" value="${notification.dummyNumber}"/>
+    <property name="totalThread" value="${notificationSender.totalThread}"/>
+    <property name="notificationRepository" ref="notificationRepository"/>
+    <property name="client" ref="clickATellClient"/>
+    <property name="messages">
+      <util:list>
+        <ref bean="notification1"/>
+        <ref bean="notification2"/>
+        <ref bean="notification3"/>
+      </util:list>
+    </property>
+  </bean>
+
   <!-- schedulers -->
   <task:scheduler id="scheduler" pool-size="10"/>
   <task:scheduled-tasks scheduler="scheduler">
@@ -78,6 +92,15 @@
     <property name="location" value="file:${user.home}/ema/config/ema.properties"/>
   </bean>
   <util:properties id="mailConfigurations" location="file:${user.home}/ema/config/mail.properties"/>
+  <bean id="notification1" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/notification1.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="notification2" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/notification2.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="notification3" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/notification3.txt" type="java.io.InputStream" />
+  </bean>
   <bean id="message1" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/message1.txt" type="java.io.InputStream" />
   </bean>

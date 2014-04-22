@@ -8,9 +8,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -18,40 +15,40 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-@Service
 @Transactional
 public class NotificationSenderService {
   private Logger logger = LoggerFactory.getLogger(getClass());
 
-  @Autowired
-  @Value("${notification.dummyNumber}")
-  @SuppressWarnings("SpringJavaAutowiringInspection")
   private String dummyNumber;
-  @Autowired
-  @Value("${notificationSender.totalThread}")
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  private int totalThread;
-
-  @Autowired
-  private NotificationRepository notificationRepository;
-  @Autowired
   private ClickATellClient client;
-
-  private ExecutorService executorService;
   private List<String> messages;
+  private NotificationRepository notificationRepository;
+  private int totalThread;
+  private ExecutorService executorService;
 
-  @Autowired
-  @Value("${notification.messages}")
-  @SuppressWarnings("SpringJavaAutowiringInspection")
-  public void setMessages(final String messages) {
-    this.messages = new ArrayList<>(Arrays.asList(messages.split(",")));
+  public void setDummyNumber(final String dummyNumber) {
+    this.dummyNumber = dummyNumber;
+  }
+
+  public void setTotalThread(final int totalThread) {
+    this.totalThread = totalThread;
+  }
+
+  public void setNotificationRepository(final NotificationRepository notificationRepository) {
+    this.notificationRepository = notificationRepository;
+  }
+
+  public void setClient(final ClickATellClient client) {
+    this.client = client;
+  }
+
+  public void setMessages(final List<String> messages) {
+    this.messages = messages;
   }
 
   @PostConstruct
