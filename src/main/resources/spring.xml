@@ -34,6 +34,10 @@
     <property name="secondNotificationDifference" value="${reminderServiceConfig.secondNotificationDifference}"/>
     <property name="thirdNotificationDifference" value="${reminderServiceConfig.thirdNotificationDifference}"/>
     <property name="fourthNotificationDifference" value="${reminderServiceConfig.fourthNotificationDifference}"/>
+    <property name="inactiveWarningDate" value="${reminderServiceConfig.inactiveWarningDate}"/>
+    <property name="warningEmailAddress" value="${reminderServiceConfig.warningEmailAddress}"/>
+    <property name="warningEmailSubject" value="${reminderServiceConfig.warningEmailSubject}"/>
+    <property name="inactiveEmailTemplate" ref="warningEmailTemplate"/>
     <property name="dummyNumber" value="${notification.dummyNumber}"/>
     <property name="textMessageClient" ref="clickATellClient"/>
     <property name="mailClient" ref="mailClient"/>
@@ -113,5 +117,8 @@
   </bean>
   <bean id="email2" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/email2.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="warningEmailTemplate" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/warningEmail.txt" type="java.io.InputStream" />
   </bean>
 </beans>
