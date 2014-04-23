@@ -1,0 +1,9 @@
+We have not heard from you.
+In order to remain active in the study you must RSVP to this message by clicking the link below.
+
+%s
+
+If you no longer desire to be in the study please contact a member of the research team by sending an email or leaving a voice message.
+
+mailto:Striving@mscs.mu.edu
+tel:1-414-229-3169

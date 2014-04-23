@@ -1,0 +1,14 @@
+Dear %s,
+
+It has come to our attention you have not responded to either our text messages or our email.  
+If you choose to remain in the study please respond to this message by clicking on the following link.  %s
+If you no longer desire to be in the study please contact a member of the research team by sending an email or leaving a voice message
+
+mailto:Striving@mscs.mu.edu
+tel:1-414-229-3169
+
+If you fail to contact us within 5 business days a member of the research team will call you.  Failure to respond to phone calls will result in your phone and phone plan being canceled or loss of the $50/month reimbursement for your phone plan.
+
+Yours truly,
+Polly Ryan, PhD, RN
+Primary Investigator:  Striving to be Strong

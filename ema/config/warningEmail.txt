@@ -1,0 +1,4 @@
+Following users are inactive for more than 10 Days.
+
+DatabaseID    StudyID
+%s
