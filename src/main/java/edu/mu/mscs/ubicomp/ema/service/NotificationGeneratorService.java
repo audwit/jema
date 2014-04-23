@@ -1,5 +1,6 @@
 package edu.mu.mscs.ubicomp.ema.service;
 
+import edu.mu.mscs.ubicomp.ema.dao.ContactingTimeRepository;
 import edu.mu.mscs.ubicomp.ema.dao.NotificationRepository;
 import edu.mu.mscs.ubicomp.ema.dao.ScheduleRepository;
 import edu.mu.mscs.ubicomp.ema.entity.ContactingTime;
@@ -32,6 +33,8 @@ public class NotificationGeneratorService {
   public static final int SLOT_DURATION = 30;
 
   @Autowired
+  private ContactingTimeRepository contactingTimeRepository;
+  @Autowired
   private ScheduleRepository scheduleRepository;
   @Autowired
   private NotificationRepository notificationRepository;
@@ -50,11 +53,14 @@ public class NotificationGeneratorService {
   }
 
   private void generateNotification(final User user, final List<Schedule> schedules) {
-    final ContactingTime contactingTime = user.getContactingTime();
-    if(contactingTime == null) {
-      logger.warn("No contacting time for user: " + user);
-      return;
+    final ContactingTime contactingTime;
+    if(user.getContactingTime() == null) {
+      contactingTime = contactingTimeRepository.addContactingTime(user);
     }
+    else {
+      contactingTime = user.getContactingTime();
+    }
+
     logger.debug("Generating notifications ContactTime: {}", contactingTime);
     final LocalTime startTime = contactingTime.getStartTime().toLocalTime();
     final int usableSlot = TOTAL_TIME_SLOT - schedules.size() * 3;
