@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Table(name = "EmaAnswer")
 public class Answer {
   private Integer id;
   private Integer answer;
