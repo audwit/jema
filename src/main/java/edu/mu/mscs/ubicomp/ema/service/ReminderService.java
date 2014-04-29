@@ -206,7 +206,7 @@ public class ReminderService {
       updateUserToken(user, token);
       String url = createResetUrl(user);
       try {
-        mailClient.send(user.getEmail(), subject, String.format(email, user.getUsername(), url));
+        mailClient.send(user.getEmail(), subject, String.format(email, userRepository.getName(user), url));
       } catch (MessagingException e) {
         logger.warn("Failed sending email notification to " + user.getEmail() + " for user: " + user.getId(), e);
       }
