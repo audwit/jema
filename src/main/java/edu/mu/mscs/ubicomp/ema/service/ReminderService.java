@@ -24,7 +24,6 @@ public class ReminderService {
   private Logger logger = LoggerFactory.getLogger(getClass());
   private Random random = new Random();
 
-  private String dummyNumber;
   private String message1;
   private String message2;
   private String email1;
@@ -47,10 +46,6 @@ public class ReminderService {
   private String baseUrl;
   private int totalThread;
   private ExecutorService executorService;
-
-  public void setDummyNumber(final String dummyNumber) {
-    this.dummyNumber = dummyNumber;
-  }
 
   public void setMessage1(final String message1) {
     this.message1 = message1;
@@ -168,7 +163,7 @@ public class ReminderService {
       updateUserToken(inactiveUser, token);
       String url = createResetUrl(inactiveUser);
       final String textMessageBody = String.format(messageFormat, url);
-      textMessageClient.sendTextMessage(textMessageBody, Arrays.asList(dummyNumber));
+      textMessageClient.sendTextMessage(textMessageBody, Arrays.asList(userRepository.getPhoneNumber(inactiveUser)));
     }
   }
 

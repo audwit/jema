@@ -2,6 +2,7 @@ package edu.mu.mscs.ubicomp.ema.service;
 
 import edu.mu.mscs.ubicomp.ema.client.ClickATellClient;
 import edu.mu.mscs.ubicomp.ema.dao.NotificationRepository;
+import edu.mu.mscs.ubicomp.ema.dao.UserRepository;
 import edu.mu.mscs.ubicomp.ema.entity.Notification;
 import edu.mu.mscs.ubicomp.ema.util.DateTimeUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -24,16 +25,12 @@ import java.util.stream.Collectors;
 public class NotificationSenderService {
   private Logger logger = LoggerFactory.getLogger(getClass());
 
-  private String dummyNumber;
   private ClickATellClient client;
   private List<String> messages;
   private NotificationRepository notificationRepository;
+  private UserRepository userRepository;
   private int totalThread;
   private ExecutorService executorService;
-
-  public void setDummyNumber(final String dummyNumber) {
-    this.dummyNumber = dummyNumber;
-  }
 
   public void setTotalThread(final int totalThread) {
     this.totalThread = totalThread;
@@ -41,6 +38,10 @@ public class NotificationSenderService {
 
   public void setNotificationRepository(final NotificationRepository notificationRepository) {
     this.notificationRepository = notificationRepository;
+  }
+
+  public void setUserRepository(final UserRepository userRepository) {
+    this.userRepository = userRepository;
   }
 
   public void setClient(final ClickATellClient client) {
@@ -86,7 +87,7 @@ public class NotificationSenderService {
   private void sendNotifications(final int serial, final List<Notification> notifications, final String sequenceId) {
     final String sequenceNo = sequenceId + "_" + serial;
     final List<String> phoneNumbers = notifications.stream()
-        .map(notification -> dummyNumber)
+        .map(notification -> userRepository.getPhoneNumber(notification.getSchedule().getUser()))
         .collect(Collectors.toList());
 
     executorService.submit(
