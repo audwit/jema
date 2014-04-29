@@ -38,7 +38,6 @@
     <property name="warningEmailAddress" value="${reminderServiceConfig.warningEmailAddress}"/>
     <property name="warningEmailSubject" value="${reminderServiceConfig.warningEmailSubject}"/>
     <property name="inactiveEmailTemplate" ref="warningEmailTemplate"/>
-    <property name="dummyNumber" value="${notification.dummyNumber}"/>
     <property name="textMessageClient" ref="clickATellClient"/>
     <property name="mailClient" ref="mailClient"/>
     <property name="messageRepository" ref="messageRepository"/>
@@ -48,9 +47,9 @@
   </bean>
 
   <bean class="edu.mu.mscs.ubicomp.ema.service.NotificationSenderService" id="notificationSenderService">
-    <property name="dummyNumber" value="${notification.dummyNumber}"/>
     <property name="totalThread" value="${notificationSender.totalThread}"/>
     <property name="notificationRepository" ref="notificationRepository"/>
+    <property name="userRepository" ref="userRepository"/>
     <property name="client" ref="clickATellClient"/>
     <property name="messages">
       <util:list>
