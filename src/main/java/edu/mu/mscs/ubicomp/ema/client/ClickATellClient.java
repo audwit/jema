@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClickATellClient {
@@ -70,7 +71,8 @@ public class ClickATellClient {
     if (StringUtils.isBlank(textMessage)) {
       throw new IllegalArgumentException("textMessage should not be null or empty");
     }
-    if (CollectionUtils.isEmpty(phoneNumbers)) {
+    final List<String> filteredNumbers = phoneNumbers.stream().filter(StringUtils::isBlank).collect(Collectors.toList());
+    if (CollectionUtils.isEmpty(filteredNumbers)) {
       logger.debug("Not sending any message, no phone numbers given.");
       return;
     }
@@ -78,13 +80,13 @@ public class ClickATellClient {
       sequenceNo = LocalDateTime.now().toString();
     }
 
-    final String numbers = StringUtils.join(phoneNumbers, ",");
+    final String numbers = StringUtils.join(filteredNumbers, ",");
     final String requestBody = requestTemplate
         .replace("TEXT", textMessage)
         .replace("TO", numbers)
         .replace("SEQUENCE_NO", sequenceNo);
 
-    logger.debug("Sending total {} notification using: {}", phoneNumbers.size(), textMessage);
+    logger.debug("Sending total {} notification using: {}", filteredNumbers.size(), textMessage);
     logger.debug("Request body: \n{}", requestBody);
     sendInternal(requestBody);
   }
