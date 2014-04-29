@@ -31,6 +31,15 @@ public class UserRepository {
     entityManager.flush();
   }
 
+  public String getPhoneNumber(User user) {
+    final Query query = entityManager.createNativeQuery("SELECT b.studyphonenumber FROM baseline b left join user u ON u.name = b.study_id " +
+        "where u.id = ?")
+        .setParameter(1, user.getId());
+
+    final Object[] singleResult = (Object[]) query.getSingleResult();
+    return singleResult == null ? null : singleResult[0].toString();
+  }
+
   public String getName(final User user) {
     final Query query = entityManager.createNativeQuery("SELECT ec.firstname as firstName, ec.lastname as lastName " +
         "FROM enrollment_contact ec " +
