@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 public class NotificationSenderService {
   private Logger logger = LoggerFactory.getLogger(getClass());
 
+  private LocalDate dummyDate;
+
   private ClickATellClient client;
   private List<String> messages;
   private NotificationRepository notificationRepository;
@@ -52,6 +54,12 @@ public class NotificationSenderService {
     this.messages = messages;
   }
 
+  public void setDummyDate(final String dummyDate) {
+    if (dummyDate != null) {
+      this.dummyDate = LocalDate.parse(dummyDate);
+    }
+  }
+
   @PostConstruct
   public void initialize() {
     final BasicThreadFactory threadFactory = new BasicThreadFactory.Builder()
@@ -61,7 +69,7 @@ public class NotificationSenderService {
   }
 
   public void send() throws ParseException {
-    final LocalDateTime now = LocalDateTime.now();
+    final LocalDateTime now = getCurrentTime();
     final LocalDate date = now.toLocalDate();
     final LocalTime time = LocalTime.of(now.getHour(), now.getMinute() < 30 ? 0 : 30);
 
@@ -76,6 +84,10 @@ public class NotificationSenderService {
     if (CollectionUtils.isNotEmpty(notifications)) {
       sendNotifications(notifications, sequenceId);
     }
+  }
+
+  private LocalDateTime getCurrentTime() {
+    return dummyDate == null ? LocalDateTime.now() : LocalDateTime.of(dummyDate, LocalTime.now());
   }
 
   private void sendNotifications(final List<Notification> notifications, final String sequenceId) {
