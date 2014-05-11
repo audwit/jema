@@ -17,7 +17,7 @@ public class NotificationRepository {
 
   public static final String QL_STRING = "SELECT n FROM Notification n JOIN n.schedule s " +
       "WHERE s.surveyDate = :date AND n.scheduledTime = :time " +
-      "and s <> (select a.schedule from Answer a where a.schedule != n.schedule)";
+      "and s not in (select a.schedule from Answer a where a.schedule != n.schedule)";
 
   @PersistenceContext
   private EntityManager entityManager;
