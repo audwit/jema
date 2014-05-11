@@ -55,6 +55,7 @@ public class NotificationGeneratorService {
   private void generateNotification(final User user, final List<Schedule> schedules) {
     final ContactingTime contactingTime;
     if(user.getContactingTime() == null) {
+      logger.warn("Contacting time not found for user: {} generating it.", user);
       contactingTime = contactingTimeRepository.addContactingTime(user);
     }
     else {
