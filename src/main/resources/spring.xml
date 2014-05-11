@@ -51,6 +51,7 @@
     <property name="notificationRepository" ref="notificationRepository"/>
     <property name="userRepository" ref="userRepository"/>
     <property name="client" ref="clickATellClient"/>
+    <property name="dummyDate" value="${notificationSender.dummyDate:#{null}}"/>
     <property name="messages">
       <util:list>
         <ref bean="notification1"/>
@@ -64,7 +65,7 @@
   <task:scheduler id="scheduler" pool-size="10"/>
   <task:scheduled-tasks scheduler="scheduler">
     <task:scheduled ref="reminderService" method="sendNotifications" cron="${reminderService.schedule}"/>
-    <task:scheduled ref="notificationSenderService" method="send" cron="${notificationSenderService.schedule}"/>
+    <task:scheduled ref="notificationSenderService" method="send" cron="${notificationSender.schedule}"/>
     <task:scheduled ref="notificationGeneratorService" method="generate" cron="${notificationGeneratorService.schedule}"/>
   </task:scheduled-tasks>
 
