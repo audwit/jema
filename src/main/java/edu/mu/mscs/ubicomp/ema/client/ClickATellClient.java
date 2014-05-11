@@ -71,7 +71,7 @@ public class ClickATellClient {
     if (StringUtils.isBlank(textMessage)) {
       throw new IllegalArgumentException("textMessage should not be null or empty");
     }
-    final List<String> filteredNumbers = phoneNumbers.stream().filter(StringUtils::isBlank).collect(Collectors.toList());
+    final List<String> filteredNumbers = phoneNumbers.stream().filter(StringUtils::isNotBlank).collect(Collectors.toList());
     if (CollectionUtils.isEmpty(filteredNumbers)) {
       logger.debug("Not sending any message, no phone numbers given.");
       return;
