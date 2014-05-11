@@ -1,6 +1,8 @@
 package edu.mu.mscs.ubicomp.ema.dao;
 
 import edu.mu.mscs.ubicomp.ema.entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -14,6 +16,7 @@ import java.util.List;
 @Repository
 public class UserRepository {
   private static final String QL_STRING = "FROM User u WHERE u.lastLogin >= :lastLoginStart AND u.lastLogin <= :lastLoginEnd";
+  private Logger logger = LoggerFactory.getLogger(getClass());
 
   @PersistenceContext
   private EntityManager entityManager;
@@ -36,8 +39,13 @@ public class UserRepository {
         "where u.id = ?")
         .setParameter(1, user.getId());
 
-    final Object[] singleResult = (Object[]) query.getSingleResult();
-    return singleResult == null ? null : singleResult[0].toString();
+    try {
+      return query.getSingleResult().toString();
+    }
+    catch (Exception ex) {
+      logger.warn("Failed to retrieve phone number for user: " + user, ex);
+      return null;
+    }
   }
 
   public String getName(final User user) {
@@ -50,10 +58,9 @@ public class UserRepository {
 
     final String name;
     final Object[] singleResult = (Object[]) query.getSingleResult();
-    if(singleResult != null) {
+    if (singleResult != null) {
       name = singleResult[0] + " " + singleResult[1];
-    }
-    else {
+    } else {
       name = user.getUsername();
     }
     return name;
