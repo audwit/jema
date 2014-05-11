@@ -14,6 +14,7 @@ public class ContactingTime {
   private User user;
 
   @Id
+  @GeneratedValue
   @Column(name = "id")
   public Integer getId() {
     return id;
