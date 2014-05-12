@@ -10,8 +10,6 @@ import edu.mu.mscs.ubicomp.ema.entity.User;
 import edu.mu.mscs.ubicomp.ema.util.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Time;
@@ -24,7 +22,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-@Service
 @Transactional
 public class NotificationGeneratorService {
   private Logger logger = LoggerFactory.getLogger(getClass());
@@ -32,13 +29,22 @@ public class NotificationGeneratorService {
   public static final int TOTAL_TIME_SLOT = 20;
   public static final int SLOT_DURATION = 30;
 
-  @Autowired
   private ContactingTimeRepository contactingTimeRepository;
-  @Autowired
   private ScheduleRepository scheduleRepository;
-  @Autowired
   private NotificationRepository notificationRepository;
   private final Random random = new Random();
+
+  public void setContactingTimeRepository(final ContactingTimeRepository contactingTimeRepository) {
+    this.contactingTimeRepository = contactingTimeRepository;
+  }
+
+  public void setScheduleRepository(final ScheduleRepository scheduleRepository) {
+    this.scheduleRepository = scheduleRepository;
+  }
+
+  public void setNotificationRepository(final NotificationRepository notificationRepository) {
+    this.notificationRepository = notificationRepository;
+  }
 
   public void generate() throws ParseException {
     final LocalDateTime now = LocalDateTime.now();
