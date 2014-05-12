@@ -163,7 +163,10 @@ public class ReminderService {
       updateUserToken(inactiveUser, token);
       String url = createResetUrl(inactiveUser);
       final String textMessageBody = String.format(messageFormat, url);
-      textMessageClient.sendTextMessage(textMessageBody, Arrays.asList(userRepository.getPhoneNumber(inactiveUser)));
+      textMessageClient.sendTextMessage(
+          textMessageBody,
+          Arrays.asList(userRepository.getPhoneNumber(inactiveUser))
+      );
     }
   }
 
