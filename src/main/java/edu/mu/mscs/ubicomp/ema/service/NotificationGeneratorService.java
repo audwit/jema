@@ -33,6 +33,7 @@ public class NotificationGeneratorService {
   private ScheduleRepository scheduleRepository;
   private NotificationRepository notificationRepository;
   private final Random random = new Random();
+  private LocalDate dummyDate;
 
   public void setContactingTimeRepository(final ContactingTimeRepository contactingTimeRepository) {
     this.contactingTimeRepository = contactingTimeRepository;
@@ -46,8 +47,14 @@ public class NotificationGeneratorService {
     this.notificationRepository = notificationRepository;
   }
 
+  public void setDummyDate(final String dummyDate) {
+    if (dummyDate != null) {
+      this.dummyDate = LocalDate.parse(dummyDate);
+    }
+  }
+
   public void generate() throws ParseException {
-    final LocalDateTime now = LocalDateTime.now();
+    final LocalDateTime now = getCurrentTime();
     final LocalDate today = now.toLocalDate();
     logger.debug("Started notification generation at: {}", today);
 
@@ -101,6 +108,10 @@ public class NotificationGeneratorService {
     }
 
     return notifications;
+  }
+
+  private LocalDateTime getCurrentTime() {
+    return dummyDate == null ? LocalDateTime.now() : LocalDateTime.of(dummyDate, LocalTime.now());
   }
 
 }

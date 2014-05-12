@@ -46,6 +46,13 @@
     <property name="totalThread" value="${reminderServiceConfig.totalThread}"/>
   </bean>
 
+  <bean id="notificationGeneratorService" class="edu.mu.mscs.ubicomp.ema.service.NotificationGeneratorService">
+    <property name="contactingTimeRepository" ref="contactingTimeRepository"/>
+    <property name="notificationRepository" ref="notificationRepository"/>
+    <property name="scheduleRepository" ref="scheduleRepository"/>
+    <property name="dummyDate" value="${notificationSender.dummyDate:#{null}}"/>
+  </bean>
+
   <bean class="edu.mu.mscs.ubicomp.ema.service.NotificationSenderService" id="notificationSenderService">
     <property name="totalThread" value="${notificationSender.totalThread}"/>
     <property name="notificationRepository" ref="notificationRepository"/>
