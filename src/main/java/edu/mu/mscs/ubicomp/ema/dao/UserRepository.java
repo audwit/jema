@@ -40,9 +40,9 @@ public class UserRepository {
         .setParameter(1, user.getId());
 
     try {
-      return query.getSingleResult().toString();
-    }
-    catch (Exception ex) {
+      final String phoneNumber = query.getSingleResult().toString();
+      return phoneNumber.startsWith("+") ? phoneNumber : "+1" + phoneNumber;
+    } catch (Exception ex) {
       logger.warn("Failed to retrieve phone number for user: " + user, ex);
       return null;
     }
