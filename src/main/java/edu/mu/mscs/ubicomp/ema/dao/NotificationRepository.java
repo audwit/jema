@@ -16,7 +16,7 @@ public class NotificationRepository {
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   public static final String QL_STRING = "SELECT n FROM Notification n JOIN n.schedule s " +
-      "WHERE s.surveyDate = :date AND n.scheduledTime = :time " +
+      "WHERE s.surveyDate = :date AND n.scheduledTime = :time AND s.denied = false " +
       "and s not in (select distinct a.schedule from Answer a where a.schedule = n.schedule)";
 
   @PersistenceContext
