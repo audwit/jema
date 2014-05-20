@@ -80,7 +80,7 @@ public class ClickATellClient {
       sequenceNo = LocalDateTime.now().toString();
     }
 
-    final String numbers = StringUtils.join(filteredNumbers, ",");
+    final String numbers = String.join(",", filteredNumbers);
     final String requestBody = requestTemplate
         .replace("TEXT", textMessage)
         .replace("TO", numbers)
