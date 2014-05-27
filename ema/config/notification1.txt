@@ -1,1 +1,1 @@
-First notification to answer DOT questions. Follow ubicompdot://notification?id=1
+2nd reminder to answer a DOT question. Tap on this link to view the DOT: ubicompdot://notification?id=1

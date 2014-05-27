@@ -1,1 +1,1 @@
-Third notification to answer DOT questions. Follow ubicompdot://notification?id=3
+3rd and final reminder to answer a DOT question. Tap on this link to view the DOT: ubicompdot://notification?id=3
