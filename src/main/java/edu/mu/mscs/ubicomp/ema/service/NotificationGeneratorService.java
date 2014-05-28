@@ -1,6 +1,5 @@
 package edu.mu.mscs.ubicomp.ema.service;
 
-import edu.mu.mscs.ubicomp.ema.dao.ContactingTimeRepository;
 import edu.mu.mscs.ubicomp.ema.dao.NotificationRepository;
 import edu.mu.mscs.ubicomp.ema.dao.ScheduleRepository;
 import edu.mu.mscs.ubicomp.ema.entity.ContactingTime;
@@ -29,15 +28,9 @@ public class NotificationGeneratorService {
   public static final int TOTAL_TIME_SLOT = 20;
   public static final int SLOT_DURATION = 30;
 
-  private ContactingTimeRepository contactingTimeRepository;
   private ScheduleRepository scheduleRepository;
   private NotificationRepository notificationRepository;
   private final Random random = new Random();
-  private LocalDate dummyDate;
-
-  public void setContactingTimeRepository(final ContactingTimeRepository contactingTimeRepository) {
-    this.contactingTimeRepository = contactingTimeRepository;
-  }
 
   public void setScheduleRepository(final ScheduleRepository scheduleRepository) {
     this.scheduleRepository = scheduleRepository;
@@ -47,14 +40,8 @@ public class NotificationGeneratorService {
     this.notificationRepository = notificationRepository;
   }
 
-  public void setDummyDate(final String dummyDate) {
-    if (dummyDate != null) {
-      this.dummyDate = LocalDate.parse(dummyDate);
-    }
-  }
-
   public void generate() throws ParseException {
-    final LocalDateTime now = getCurrentTime();
+    final LocalDateTime now = LocalDateTime.now();
     final LocalDate today = now.toLocalDate();
     logger.debug("Started notification generation at: {}", today);
 
@@ -105,10 +92,6 @@ public class NotificationGeneratorService {
     }
 
     return notifications;
-  }
-
-  private LocalDateTime getCurrentTime() {
-    return dummyDate == null ? LocalDateTime.now() : LocalDateTime.of(dummyDate, LocalTime.now());
   }
 
 }
