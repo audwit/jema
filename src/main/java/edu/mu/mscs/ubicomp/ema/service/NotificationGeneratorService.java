@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 public class NotificationGeneratorService {
   private Logger logger = LoggerFactory.getLogger(getClass());
 
-  public static final int TOTAL_TIME_SLOT = 20;
-  public static final int SLOT_DURATION = 30;
+  public static final int SLOT_DURATION = 15;
+  public static final int TOTAL_TIME_SLOT = 40;
 
   private ScheduleRepository scheduleRepository;
   private NotificationRepository notificationRepository;
