@@ -21,6 +21,7 @@ public class User {
   private Collection<Answer> answers;
   private Collection<Schedule> schedules;
   private Timestamp lastLogin;
+  private Timestamp startDate;
 
   @Id
   @Column(name = "id")
@@ -117,6 +118,16 @@ public class User {
 
   public void setLastLogin(final Timestamp lastLogin) {
     this.lastLogin = lastLogin;
+  }
+
+  @Basic
+  @Column(name = "start_date")
+  public Timestamp getStartDate() {
+    return startDate;
+  }
+
+  public void setStartDate(final Timestamp startDate) {
+    this.startDate = startDate;
   }
 
   @Override
