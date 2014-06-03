@@ -1,6 +1,7 @@
 package edu.mu.mscs.ubicomp.ema.dao;
 
 import edu.mu.mscs.ubicomp.ema.entity.User;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -73,5 +74,14 @@ public class UserRepository {
         .setParameter("startDate", startDate, TemporalType.DATE);
 
     return nativeQuery.getResultList();
+  }
+
+  public List<User> findUsersBy(final Date startDate, final List<String> roles) {
+    Validate.notEmpty(roles, "roles can not be empty");
+    final String qlString = "SELECT u FROM User u WHERE u.startDate = :startDate and u.role in (:roles)";
+    final TypedQuery<User> query = entityManager.createQuery(qlString, User.class)
+        .setParameter("startDate", startDate, TemporalType.DATE)
+        .setParameter("roles", roles);
+    return query.getResultList();
   }
 }
