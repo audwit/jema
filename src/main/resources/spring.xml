@@ -56,7 +56,6 @@
     <property name="notificationRepository" ref="notificationRepository"/>
     <property name="userRepository" ref="userRepository"/>
     <property name="client" ref="clickATellClient"/>
-    <property name="dummyDate" value="${notificationSender.dummyDate:#{null}}"/>
     <property name="messages">
       <util:list>
         <ref bean="notification1"/>
@@ -66,12 +65,29 @@
     </property>
   </bean>
 
+  <bean class="edu.mu.mscs.ubicomp.ema.service.SurveyReminderScheduler" id="surveyReminderScheduler">
+    <property name="reminderSubject" value="${surveyReminderSchedulerService.reminderSubject}"/>
+    <property name="surveyInactiveDay" value="${surveyReminderSchedulerService.surveyInactiveDay}"/>
+    <property name="firstSurveyDay" value="${surveyReminderSchedulerService.firstSurveyDay}"/>
+    <property name="secondSurveyDay" value="${surveyReminderSchedulerService.secondSurveyDay}"/>
+    <property name="thirdSurveyDay" value="${surveyReminderSchedulerService.thirdSurveyDay}"/>
+    <property name="fourthSurveyDay" value="${surveyReminderSchedulerService.fourthSurveyDay}"/>
+    <property name="mail3" ref="mail3"/>
+    <property name="mail6" ref="mail6"/>
+    <property name="mail9" ref="mail9"/>
+    <property name="mail12" ref="mail12"/>
+    <property name="mailClient" ref="mailClient"/>
+    <property name="totalThread" value="${surveyReminderSchedulerService.totalThread}"/>
+    <property name="userRepository" ref="userRepository"/>
+  </bean>
+
   <!-- schedulers -->
   <task:scheduler id="scheduler" pool-size="10"/>
   <task:scheduled-tasks scheduler="scheduler">
     <task:scheduled ref="reminderService" method="sendNotifications" cron="${reminderService.schedule}"/>
     <task:scheduled ref="notificationSenderService" method="send" cron="${notificationSender.schedule}"/>
     <task:scheduled ref="notificationGeneratorService" method="generate" cron="${notificationGeneratorService.schedule}"/>
+    <task:scheduled ref="surveyReminderScheduler" method="sendReminder" cron="${surveyReminderSchedulerService.schedule}"/>
   </task:scheduled-tasks>
 
   <!-- JPA -->
@@ -125,5 +141,17 @@
   </bean>
   <bean id="warningEmailTemplate" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/warningEmail.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="mail3" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/mail3.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="mail6" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/mail6.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="mail9" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/mail9.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="mail12" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/mail12.txt" type="java.io.InputStream" />
   </bean>
 </beans>
