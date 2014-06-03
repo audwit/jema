@@ -1,0 +1,6 @@
+Dear %s,
+
+Message body
+
+mailto:Striving@mscs.mu.edu
+tel:1-414-229-3169
