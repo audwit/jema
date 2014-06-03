@@ -81,6 +81,14 @@
     <property name="userRepository" ref="userRepository"/>
   </bean>
 
+  <bean class="edu.mu.mscs.ubicomp.ema.service.GiftCardNotifier" id="giftCardNotifier">
+    <property name="answerRepository" ref="answerRepository"/>
+    <property name="scheduleRepository" ref="scheduleRepository"/>
+    <property name="userRepository" ref="userRepository"/>
+    <property name="amazonURI" value="${giftCardNotifierService.amazonURI}"/>
+    <property name="totalThread" value="${giftCardNotifierService.totalThread}"/>
+  </bean>
+
   <!-- schedulers -->
   <task:scheduler id="scheduler" pool-size="10"/>
   <task:scheduled-tasks scheduler="scheduler">
@@ -88,6 +96,7 @@
     <task:scheduled ref="notificationSenderService" method="send" cron="${notificationSender.schedule}"/>
     <task:scheduled ref="notificationGeneratorService" method="generate" cron="${notificationGeneratorService.schedule}"/>
     <task:scheduled ref="surveyReminderScheduler" method="sendReminder" cron="${surveyReminderSchedulerService.schedule}"/>
+    <task:scheduled ref="giftCardNotifier" method="sendGiftCard" cron="${giftCardNotifierService.schedule}"/>
   </task:scheduled-tasks>
 
   <!-- JPA -->
