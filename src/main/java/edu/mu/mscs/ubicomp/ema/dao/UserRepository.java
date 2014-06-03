@@ -5,10 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
@@ -64,5 +61,17 @@ public class UserRepository {
       name = user.getUsername();
     }
     return name;
+  }
+
+  public List<User> getRequiresNotificationUsers(String columnName, Date startDate) {
+    final String queryFormat = "select u.* from `user` u where u.name not in (\n" +
+        "  select c.study_id from `completion` c where c.survey_id in (\n" +
+        "    select s.survey_id from `schedule` s where " + columnName + " = 1\n" +
+        "  ))\n" +
+        "and u.start_date = :startDate";
+    final Query nativeQuery = entityManager.createNativeQuery(queryFormat, User.class)
+        .setParameter("startDate", startDate, TemporalType.DATE);
+
+    return nativeQuery.getResultList();
   }
 }
