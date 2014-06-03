@@ -1,11 +1,14 @@
 package edu.mu.mscs.ubicomp.ema.dao;
 
 import edu.mu.mscs.ubicomp.ema.entity.Schedule;
+import edu.mu.mscs.ubicomp.ema.entity.User;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
@@ -26,4 +29,16 @@ public class ScheduleRepository {
     return query.getResultList();
   }
 
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  public int findTotalDenied(final User user, final Date startDate, final Date endDate) {
+    final String totalDenied = "SELECT count(s) as total FROM Schedule s " +
+        "where s.denied = true and s.user = :user and s.surveyDate between :startDate and :endDate";
+    final Query query = entityManager.createQuery(totalDenied)
+        .setParameter("user", user)
+        .setParameter("startDate", startDate)
+        .setParameter("endDate", endDate);
+
+    final Long singleResult = (Long) query.getSingleResult();
+    return singleResult.intValue();
+  }
 }
