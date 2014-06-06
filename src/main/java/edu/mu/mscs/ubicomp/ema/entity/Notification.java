@@ -6,11 +6,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.sql.Timestamp;
 
 @Entity
 public class Notification {
   private Integer id;
-  private Time scheduledTime;
+  private Timestamp scheduledTime;
   private Time sentTime;
   private Boolean sent;
   private Integer serial;
@@ -31,11 +32,11 @@ public class Notification {
 
   @Basic
   @Column(name = "scheduledTime")
-  public Time getScheduledTime() {
+  public Timestamp getScheduledTime() {
     return scheduledTime;
   }
 
-  public void setScheduledTime(final Time scheduledTime) {
+  public void setScheduledTime(final Timestamp scheduledTime) {
     this.scheduledTime = scheduledTime;
   }
 
