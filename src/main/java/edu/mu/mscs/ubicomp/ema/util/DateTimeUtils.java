@@ -1,6 +1,7 @@
 package edu.mu.mscs.ubicomp.ema.util;
 
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.*;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -21,5 +22,9 @@ public class DateTimeUtils {
     ZonedDateTime zonedDateTime = ZonedDateTime.of(ldt, ZoneId.systemDefault());
     GregorianCalendar calendar = GregorianCalendar.from(zonedDateTime);
     return calendar.getTime();
+  }
+
+  public static Timestamp toTimestamp(LocalDateTime localDateTime) {
+    return new Timestamp(toDate(localDateTime).getTime());
   }
 }
