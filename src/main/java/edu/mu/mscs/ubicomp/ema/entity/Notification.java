@@ -5,14 +5,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.sql.Timestamp;
 
 @Entity
 public class Notification {
   private Integer id;
   private Timestamp scheduledTime;
-  private Time sentTime;
   private Boolean sent;
   private Integer serial;
   private String status;
@@ -38,16 +36,6 @@ public class Notification {
 
   public void setScheduledTime(final Timestamp scheduledTime) {
     this.scheduledTime = scheduledTime;
-  }
-
-  @Basic
-  @Column(name = "sentTime")
-  public Time getSentTime() {
-    return sentTime;
-  }
-
-  public void setSentTime(final Time sentTime) {
-    this.sentTime = sentTime;
   }
 
   @Basic
@@ -124,7 +112,6 @@ public class Notification {
     return new ToStringBuilder(this)
         .append("id", id)
         .append("scheduledTime", scheduledTime)
-        .append("sentTime", sentTime)
         .append("sent", sent)
         .toString();
   }
