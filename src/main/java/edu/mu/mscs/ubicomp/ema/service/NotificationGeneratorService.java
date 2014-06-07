@@ -11,22 +11,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.transaction.Transactional;
-import java.sql.Time;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Transactional
 public class NotificationGeneratorService {
   private Logger logger = LoggerFactory.getLogger(getClass());
 
+  public static final int NOTIFICATION_COUNT = 3;
+  public static final int HOUR_DURATION = 10;
   public static final int SLOT_DURATION = 15;
-  public static final int TOTAL_TIME_SLOT = 40;
+  public static final int TOTAL_TIME_SLOT = (int) TimeUnit.HOURS.toMinutes(HOUR_DURATION) / SLOT_DURATION;
 
   private ScheduleRepository scheduleRepository;
   private NotificationRepository notificationRepository;
@@ -43,7 +42,7 @@ public class NotificationGeneratorService {
   public void generate() throws ParseException {
     final LocalDateTime now = LocalDateTime.now();
     final LocalDate today = now.toLocalDate();
-    logger.debug("Started notification generation at: {}", today);
+    logger.debug("Started notification generation at: {}", now);
 
     final List<Schedule> schedules = scheduleRepository.findSchedule(DateTimeUtils.toDate(today));
     logger.debug("Total schedules found: " + schedules.size());
@@ -54,39 +53,43 @@ public class NotificationGeneratorService {
 
   private void generateNotification(final User user, final List<Schedule> schedules) {
     final ContactingTime contactingTime = user.getContactingTime();
-    if(contactingTime == null) {
+    if (contactingTime == null) {
       logger.warn("Notification will not be generated. Contacting time not found for user: {}.", user);
       return;
     }
+    logger.debug("Generating notifications for User: {} using ContactTime: {}", user, contactingTime);
+    final Integer[] randomSlots = generateRandomSlots(schedules);
+    final LocalDate today = LocalDate.now();
+    final LocalDateTime startTime = LocalDateTime.of(today, contactingTime.getStartTime().toLocalTime());
 
-    logger.debug("Generating notifications ContactTime: {}", contactingTime);
-    final LocalTime startTime = contactingTime.getStartTime().toLocalTime();
-    final int usableSlot = TOTAL_TIME_SLOT - schedules.size() * 3;
-    int usedSlot = 0;
-    int i = 0;
-    for (Schedule schedule : schedules) {
-      final int randomSlot = random.nextInt(usableSlot - usedSlot);
-      final int baseSlot = usedSlot + randomSlot + i * 3;
-      final LocalTime baseTime = startTime.plusMinutes(baseSlot * SLOT_DURATION);
-      logger.debug("Randomized notification start time: {}", baseTime);
-
-      final List<Notification> notifications = createNotifications(baseTime, schedule);
+    for (int i = 0; i < schedules.size(); i++) {
+      final LocalDateTime baseTime = startTime.plusMinutes((randomSlots[i] + i * NOTIFICATION_COUNT) * SLOT_DURATION);
+      final List<Notification> notifications = createNotifications(baseTime, schedules.get(i));
       notificationRepository.persistAll(notifications);
-
-      usedSlot += randomSlot;
-      i++;
     }
   }
 
-  private List<Notification> createNotifications(final LocalTime baseTime, final Schedule schedule) {
+  private Integer[] generateRandomSlots(final List<Schedule> schedules) {
+    final Set<Integer> randomSlots = new LinkedHashSet<>();
+    final int usedSlot = schedules.size() * NOTIFICATION_COUNT;
+    final int remainingSlot = TOTAL_TIME_SLOT - usedSlot;
+    while (randomSlots.size() != schedules.size()) {
+      randomSlots.add(random.nextInt(remainingSlot));
+    }
+
+    final Integer[] container = new Integer[randomSlots.size()];
+    return randomSlots.toArray(container);
+  }
+
+  private List<Notification> createNotifications(final LocalDateTime baseTime, final Schedule schedule) {
     final List<Notification> notifications = new ArrayList<>();
-    for (int i = 0; i < 3; i++) {
-      final LocalTime startTime = baseTime.plusMinutes(SLOT_DURATION * i);
+    for (int i = 0; i < NOTIFICATION_COUNT; i++) {
+      final LocalDateTime startTime = baseTime.plusMinutes(SLOT_DURATION * i);
 
       final Notification notification = new Notification();
       notification.setSchedule(schedule);
       notification.setSent(false);
-      notification.setScheduledTime(Time.valueOf(startTime));
+      notification.setScheduledTime(DateTimeUtils.toTimestamp(startTime));
       notification.setSerial(i);
       notifications.add(notification);
     }
