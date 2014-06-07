@@ -48,10 +48,10 @@ public class NotificationGeneratorService {
     logger.debug("Total schedules found: " + schedules.size());
     schedules.stream()
         .collect(Collectors.groupingBy(Schedule::getUser))
-        .forEach(this::generateNotification);
+        .forEach((user, userSchedules) -> generateNotification(user, userSchedules, today));
   }
 
-  private void generateNotification(final User user, final List<Schedule> schedules) {
+  private void generateNotification(final User user, final List<Schedule> schedules, final LocalDate today) {
     final ContactingTime contactingTime = user.getContactingTime();
     if (contactingTime == null) {
       logger.warn("Notification will not be generated. Contacting time not found for user: {}.", user);
@@ -59,7 +59,6 @@ public class NotificationGeneratorService {
     }
     logger.debug("Generating notifications for User: {} using ContactTime: {}", user, contactingTime);
     final Integer[] randomSlots = generateRandomSlots(schedules);
-    final LocalDate today = LocalDate.now();
     final LocalDateTime startTime = LocalDateTime.of(today, contactingTime.getStartTime().toLocalTime());
 
     for (int i = 0; i < schedules.size(); i++) {
