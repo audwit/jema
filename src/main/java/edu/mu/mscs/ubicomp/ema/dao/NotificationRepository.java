@@ -16,7 +16,7 @@ public class NotificationRepository {
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   public static final String QL_STRING = "SELECT n FROM Notification n JOIN n.schedule s " +
-      "WHERE s.surveyDate = :date AND n.scheduledTime = :time AND s.denied = false " +
+      "WHERE n.scheduledTime = :scheduledTime AND s.denied = false " +
       "and s not in (select distinct a.schedule from Answer a where a.schedule = n.schedule)";
 
   @PersistenceContext
@@ -26,12 +26,11 @@ public class NotificationRepository {
     notifications.forEach(entityManager::persist);
   }
 
-  public List<Notification> findNotifications(final Date date, final Date time) {
+  public List<Notification> findNotifications(final Date scheduledTime) {
     final TypedQuery<Notification> query = entityManager.createQuery(QL_STRING, Notification.class)
-        .setParameter("date", date)
-        .setParameter("time", time);
+        .setParameter("scheduledTime", scheduledTime);
 
-    logger.debug("findNotifications: Date: {} time: {}", date, time);
+    logger.debug("Find notifications with scheduledTime: {}", scheduledTime);
     return query.getResultList();
   }
 }
