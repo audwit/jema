@@ -61,16 +61,14 @@ public class NotificationSenderService {
   }
 
   public void send() throws ParseException {
-    final LocalDateTime now = LocalDateTime.now();
-    final LocalDate date = now.toLocalDate();
-    final LocalTime time = LocalTime.of(now.getHour(), calculateMinute(now));
+    final LocalTime now = LocalTime.now();
+    final LocalDateTime scheduledTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(now.getHour(), calculateMinute(now)));
 
-    final String sequenceId = now.toString();
-    logger.debug("Sending notification at time: {}", sequenceId);
+    final String sequenceId = scheduledTime.toString();
+    logger.debug("Sending notification at scheduledTime: {}", sequenceId);
 
     final List<Notification> notifications = notificationRepository.findNotifications(
-        DateTimeUtils.toDate(date),
-        DateTimeUtils.toDate(time)
+        DateTimeUtils.toDate(scheduledTime)
     );
     logger.debug("Found total notification: {}", notifications.size());
     if (CollectionUtils.isNotEmpty(notifications)) {
@@ -78,15 +76,15 @@ public class NotificationSenderService {
     }
   }
 
-  private int calculateMinute(final LocalDateTime now) {
+  private int calculateMinute(final LocalTime now) {
     final int minute = now.getMinute();
     if(minute < 15) {
       return 0;
     }
-    else if(minute < 15) {
+    else if(minute < 30) {
       return 15;
     }
-    else if(minute < 15) {
+    else if(minute < 45) {
       return 30;
     }
     return 45;
