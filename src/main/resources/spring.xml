@@ -113,6 +113,7 @@
     <property name="jpaVendorAdapter">
       <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="showSql" value="${hibernate.showSql}"/>
+        <property name="database" value="MYSQL"/>
       </bean>
     </property>
   </bean>
