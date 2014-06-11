@@ -69,7 +69,7 @@ public class NotificationGeneratorService {
   }
 
   private Integer[] generateRandomSlots(final List<Schedule> schedules) {
-    final Set<Integer> randomSlots = new LinkedHashSet<>();
+    final Set<Integer> randomSlots = new TreeSet<>();
     final int usedSlot = schedules.size() * NOTIFICATION_COUNT;
     final int remainingSlot = TOTAL_TIME_SLOT - usedSlot;
     while (randomSlots.size() != schedules.size()) {
