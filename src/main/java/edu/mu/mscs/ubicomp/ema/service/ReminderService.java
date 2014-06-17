@@ -40,7 +40,7 @@ public class ReminderService {
   private String inactiveEmailTemplate;
   private String chooseGroupSubject;
   private String chooseGroupEmail;
-  private int eightMonthReminderDifference;
+  private int chooseGroupDifference;
   private String studyEndSubject;
   private String studyEndEmail;
   private int studyEndDifference;
@@ -117,8 +117,8 @@ public class ReminderService {
     this.chooseGroupEmail = chooseGroupEmail;
   }
 
-  public void setEightMonthReminderDifference(final int eightMonthReminderDifference) {
-    this.eightMonthReminderDifference = eightMonthReminderDifference;
+  public void setChooseGroupDifference(final int chooseGroupDifference) {
+    this.chooseGroupDifference = chooseGroupDifference;
   }
 
   public void setStudyEndSubject(final String studyEndSubject) {
@@ -235,7 +235,7 @@ public class ReminderService {
   }
 
   private void sendEightMonthReminder(final LocalDate today) {
-    final LocalDate startDate = today.minusDays(eightMonthReminderDifference + 1);
+    final LocalDate startDate = today.minusDays(chooseGroupDifference + 1);
     final List<User> participants = userRepository.findUsersBy(
         DateTimeUtils.toDate(startDate),
         GiftCardNotifier.WAIT_LIST_GROUP
