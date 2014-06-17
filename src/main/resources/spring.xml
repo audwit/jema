@@ -38,6 +38,12 @@
     <property name="warningEmailAddress" value="${reminderServiceConfig.warningEmailAddress}"/>
     <property name="warningEmailSubject" value="${reminderServiceConfig.warningEmailSubject}"/>
     <property name="inactiveEmailTemplate" ref="warningEmailTemplate"/>
+    <property name="chooseGroupDifference" value="${reminderServiceConfig.chooseGroupDifference}"/>
+    <property name="chooseGroupSubject" value="${reminderServiceConfig.chooseGroupSubject}"/>
+    <property name="chooseGroupEmail" ref="chooseGroupEmail"/>
+    <property name="studyEndDifference" value="${reminderServiceConfig.studyEndDifference}"/>
+    <property name="studyEndSubject" value="${reminderServiceConfig.studyEndSubject}"/>
+    <property name="studyEndEmail" ref="studyEndEmail"/>
     <property name="textMessageClient" ref="clickATellClient"/>
     <property name="mailClient" ref="mailClient"/>
     <property name="messageRepository" ref="messageRepository"/>
@@ -163,5 +169,11 @@
   </bean>
   <bean id="mail12" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/mail12.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="chooseGroupEmail" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/chooseGroup.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="studyEndEmail" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/studyEnd.txt" type="java.io.InputStream" />
   </bean>
 </beans>
