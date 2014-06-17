@@ -1,6 +1,12 @@
-Dear %s,
+This is a reminder message.
 
-Message body
+It has been 9 months since you began the study and you need to complete the next set of surveys.
+Go to the study website http://striving.cloudapp.net/.
+Log on using you study number and your password.
+Top left hand column, click on “Survey Forms” and a link to all the surveys will open.
+You will need to complete 1 Calcium Food Log for 3 days in a row.
+When you hit the “submit” button the name of the survey you just completed will be removed from the list.
+You will receive an Amazon.com card for ($10 = 3 month, $15 = 6th, $20 = 9, and $30 =12 month) by email when you have completed all the surveys listed for this time period.
 
 mailto:Striving@mscs.mu.edu
 tel:1-414-229-3169
