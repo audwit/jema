@@ -1,4 +1,7 @@
-Following users are inactive for more than 10 Days.
+Date: %s
 
-DatabaseID    StudyID
+Following participants are no longer actively participating in the study. They have failed to respond to 2 Push messages and have been sent two reminder email messages.
+
+Study Id
+----------
 %s

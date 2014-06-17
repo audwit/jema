@@ -190,7 +190,11 @@ public class ReminderService {
 
     executorService.submit(() -> {
       try {
-        final String body = String.format(inactiveEmailTemplate, emailMessageBuilder.toString());
+        final String body = String.format(
+            inactiveEmailTemplate,
+            LocalDate.now().toString(),
+            emailMessageBuilder.toString()
+        );
         mailClient.send(warningEmailAddress, warningEmailSubject, body);
       } catch (MessagingException e) {
         logger.warn("Failed sending warning email notification to: " + warningEmailAddress, e);
