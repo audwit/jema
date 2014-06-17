@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ReminderService {
-  private Logger logger = LoggerFactory.getLogger(getClass());
+  private final Logger logger = LoggerFactory.getLogger(getClass());
   private Random random = new Random();
 
   private String message1;
@@ -38,6 +38,12 @@ public class ReminderService {
   private String warningEmailAddress;
   private String warningEmailSubject;
   private String inactiveEmailTemplate;
+  private String chooseGroupSubject;
+  private String chooseGroupEmail;
+  private int eightMonthReminderDifference;
+  private String studyEndSubject;
+  private String studyEndEmail;
+  private int studyEndDifference;
 
   private ClickATellClient textMessageClient;
   private MailClient mailClient;
@@ -103,6 +109,30 @@ public class ReminderService {
     this.inactiveEmailTemplate = inactiveEmailTemplate;
   }
 
+  public void setChooseGroupSubject(final String chooseGroupSubject) {
+    this.chooseGroupSubject = chooseGroupSubject;
+  }
+
+  public void setChooseGroupEmail(final String chooseGroupEmail) {
+    this.chooseGroupEmail = chooseGroupEmail;
+  }
+
+  public void setEightMonthReminderDifference(final int eightMonthReminderDifference) {
+    this.eightMonthReminderDifference = eightMonthReminderDifference;
+  }
+
+  public void setStudyEndSubject(final String studyEndSubject) {
+    this.studyEndSubject = studyEndSubject;
+  }
+
+  public void setStudyEndEmail(final String studyEndEmail) {
+    this.studyEndEmail = studyEndEmail;
+  }
+
+  public void setStudyEndDifference(final int studyEndDifference) {
+    this.studyEndDifference = studyEndDifference;
+  }
+
   public void setTextMessageClient(final ClickATellClient textMessageClient) {
     this.textMessageClient = textMessageClient;
   }
@@ -142,6 +172,8 @@ public class ReminderService {
     sendThirdReminder(today);
     sendFourthReminder(today);
     sendInactiveUsersList(today);
+    sendEightMonthReminder(today);
+    sendEndOfStudyReminder(today);
   }
 
   private void sendFirstReminder(final LocalDate today) {
@@ -200,6 +232,23 @@ public class ReminderService {
         logger.warn("Failed sending warning email notification to: " + warningEmailAddress, e);
       }
     });
+  }
+
+  private void sendEightMonthReminder(final LocalDate today) {
+    final LocalDate startDate = today.minusDays(eightMonthReminderDifference + 1);
+    final List<User> participants = userRepository.findUsersBy(
+        DateTimeUtils.toDate(startDate),
+        GiftCardNotifier.WAIT_LIST_GROUP
+    );
+    participants.forEach((user) -> sendEmailSafely(chooseGroupSubject, chooseGroupEmail, user));
+  }
+
+  private void sendEndOfStudyReminder(final LocalDate today) {
+    List<String> roles = new ArrayList<>(GiftCardNotifier.REGULAR_GROUP);
+    roles.addAll(GiftCardNotifier.WAIT_LIST_GROUP);
+    final LocalDate startDate = today.minusDays(studyEndDifference + 1);
+    final List<User> participants = userRepository.findUsersBy(DateTimeUtils.toDate(startDate), roles);
+    participants.forEach((user) -> sendEmailSafely(studyEndSubject, studyEndEmail, user));
   }
 
   private void sendEmailSafely(final String subject, final String email, final User user) {
