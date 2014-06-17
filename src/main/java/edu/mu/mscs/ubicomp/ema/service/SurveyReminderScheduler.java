@@ -117,7 +117,7 @@ public class SurveyReminderScheduler {
     for (User user : users) {
       executorService.submit(() -> {
         try {
-          mailClient.send(user.getEmail(), reminderSubject, String.format(notificationMail, userRepository.getName(user)));
+          mailClient.send(user.getEmail(), reminderSubject, notificationMail);
         } catch (MessagingException e) {
           logger.warn("Failed sending notificationMail notification to " + user.getEmail() + " for user: " + user.getId(), e);
         }
