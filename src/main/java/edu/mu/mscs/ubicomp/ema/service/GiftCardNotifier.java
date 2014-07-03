@@ -74,18 +74,18 @@ public class GiftCardNotifier {
   }
 
   public void sendGiftCard() {
-    sendGiftCard(3, 3, 196, REGULAR_GROUP);
-    sendGiftCard(13, 10, 84, REGULAR_GROUP);
-    sendGiftCard(10, 10, 84, WAIT_LIST_GROUP);
-    sendGiftCard(13, 3, 196, WAIT_LIST_GROUP);
+    sendGiftCard(3, 3, 196, 25, REGULAR_GROUP);
+    sendGiftCard(13, 10, 84, 15, REGULAR_GROUP);
+    sendGiftCard(10, 10, 84, 15, WAIT_LIST_GROUP);
+    sendGiftCard(13, 3, 196, 25, WAIT_LIST_GROUP);
   }
 
-  private void sendGiftCard(final int completedRound, final int giftCardRoundLength, final int totalSchedule, final List<String> roles) {
+  private void sendGiftCard(final int completedRound, final int giftCardRoundLength, final int totalSchedule, final int amount, final List<String> roles) {
     final LocalDate today = LocalDate.now();
     final LocalDate startDate = today.minusDays(DAYS_PER_ROUND * completedRound + 1);
     final LocalDate start = today.minusDays(DAYS_PER_ROUND * giftCardRoundLength + 1);
     final LocalDate end = today.minusDays(1);
-    sendGiftCard(startDate, start, end, roles, totalSchedule);
+    sendGiftCard(startDate, start, end, roles, totalSchedule, amount);
   }
 
   private void sendGiftCard(
@@ -93,7 +93,8 @@ public class GiftCardNotifier {
       final LocalDate startDate,
       final LocalDate endDate,
       final List<String> roles,
-      final int totalSchedule) {
+      final int totalSchedule,
+      final int amount) {
     final List<User> users = userRepository.findUsersBy(DateTimeUtils.toDate(studyStartDate), roles);
 
     List<User> eligibleUsers = new LinkedList<>();
@@ -108,7 +109,7 @@ public class GiftCardNotifier {
       }
     }
 
-    sendRequest(eligibleUsers);
+    sendRequest(eligibleUsers, amount);
   }
 
   private int getTotalDenied(final User user, final LocalDate startDate, final LocalDate endDate) {
@@ -123,13 +124,13 @@ public class GiftCardNotifier {
     return answerRepository.findTotalAnswer(user, start, end);
   }
 
-  private void sendRequest(final List<User> users) {
+  private void sendRequest(final List<User> users, final int amount) {
     if(CollectionUtils.isEmpty(users)) {
       logger.debug("No amazon gift card to be sent");
       return;
     }
 
-    final String requestBody = prepareRequestBody(users);
+    final String requestBody = prepareRequestBody(users, amount);
     executorService.submit(() -> {
       try {
         sendInternal(requestBody);
@@ -140,18 +141,14 @@ public class GiftCardNotifier {
     });
   }
 
-  private String prepareRequestBody(final List<User> users) {
-    StringBuilder requestBody = new StringBuilder();
-    requestBody.append("[\n");
+  private String prepareRequestBody(final List<User> users, final int amount) {
+    List<String> giftCards = new ArrayList<>();
     for (User user : users) {
-      requestBody.append("{");
-      requestBody.append("userId: ");
-      requestBody.append(user.getId());
-      requestBody.append("},");
+      String giftCardJson = "{\"userId\": " + user.getId() + ", \"amount\": " + amount + "}";
+      giftCards.add(giftCardJson);
     }
-    requestBody.append("]\n");
 
-    return requestBody.toString();
+    return "[" + String.join(",", giftCards) + "]";
   }
 
   private void sendInternal(final String requestBody) throws IOException {
