@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import java.util.Date;
 
@@ -20,8 +21,8 @@ public class AnswerRepository {
         "where a.user = :user and a.submissionTime between :startDateTime and :endDateTime";
     final TypedQuery<Date> query = entityManager.createQuery(totalAnswer, Date.class)
         .setParameter("user", user)
-        .setParameter("startDateTime", start)
-        .setParameter("endDateTime", end);
+        .setParameter("startDateTime", start, TemporalType.DATE)
+        .setParameter("endDateTime", end, TemporalType.DATE);
 
     return query.getResultList().size();
   }

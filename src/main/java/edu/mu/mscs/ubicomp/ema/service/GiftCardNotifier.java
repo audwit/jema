@@ -83,7 +83,7 @@ public class GiftCardNotifier {
   private void sendGiftCard(final int completedRound, final int giftCardRoundLength, final int totalSchedule, final int amount, final List<String> roles) {
     final LocalDate today = LocalDate.now();
     final LocalDate startDate = today.minusDays(DAYS_PER_ROUND * completedRound + 1);
-    final LocalDate start = today.minusDays(DAYS_PER_ROUND * giftCardRoundLength + 1);
+    final LocalDate start = today.minusDays(DAYS_PER_ROUND * giftCardRoundLength);
     final LocalDate end = today.minusDays(1);
     sendGiftCard(startDate, start, end, roles, totalSchedule, amount);
   }
