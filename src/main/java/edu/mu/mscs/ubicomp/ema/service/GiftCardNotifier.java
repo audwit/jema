@@ -74,16 +74,16 @@ public class GiftCardNotifier {
   }
 
   public void sendGiftCard() {
-    final LocalDate today = LocalDate.now();
-    sendGiftCard(today, 3, 3, 196, REGULAR_GROUP);
-    sendGiftCard(today, 13, 10, 84, REGULAR_GROUP);
-    sendGiftCard(today, 10, 10, 84, WAIT_LIST_GROUP);
-    sendGiftCard(today, 13, 3, 196, WAIT_LIST_GROUP);
+    sendGiftCard(3, 3, 196, REGULAR_GROUP);
+    sendGiftCard(13, 10, 84, REGULAR_GROUP);
+    sendGiftCard(10, 10, 84, WAIT_LIST_GROUP);
+    sendGiftCard(13, 3, 196, WAIT_LIST_GROUP);
   }
 
-  private void sendGiftCard(final LocalDate today, final int completedRound, final int giftCardRoundLength, final int totalSchedule, final List<String> roles) {
-    final LocalDate startDate = today.minusDays(DAYS_PER_ROUND * completedRound);
-    final LocalDate start = today.minusDays(DAYS_PER_ROUND * giftCardRoundLength);
+  private void sendGiftCard(final int completedRound, final int giftCardRoundLength, final int totalSchedule, final List<String> roles) {
+    final LocalDate today = LocalDate.now();
+    final LocalDate startDate = today.minusDays(DAYS_PER_ROUND * completedRound + 1);
+    final LocalDate start = today.minusDays(DAYS_PER_ROUND * giftCardRoundLength + 1);
     final LocalDate end = today.minusDays(1);
     sendGiftCard(startDate, start, end, roles, totalSchedule);
   }
