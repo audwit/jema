@@ -103,7 +103,7 @@ public class GiftCardNotifier {
       final int total = totalAnswered + totalDenied;
 
       final Double completion = (total * 100) / (double) totalSchedule;
-      if (completion.compareTo(THRESHOLD) > 0) {
+      if (completion.compareTo(THRESHOLD) >= 0) {
         eligibleUsers.add(user);
       }
     }
