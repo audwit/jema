@@ -109,7 +109,11 @@ public class GiftCardNotifier {
       }
     }
 
-    sendRequest(eligibleUsers, amount);
+    if(CollectionUtils.isNotEmpty(eligibleUsers)) {
+      logger.debug("Sending amazon gift card of amount: {}, studyStartDate: {}, startDate: {}, endDate: {}",
+          amount, studyStartDate, startDate, endDate);
+      sendRequest(eligibleUsers, amount);
+    }
   }
 
   private int getTotalDenied(final User user, final LocalDate startDate, final LocalDate endDate) {
@@ -125,11 +129,6 @@ public class GiftCardNotifier {
   }
 
   private void sendRequest(final List<User> users, final int amount) {
-    if(CollectionUtils.isEmpty(users)) {
-      logger.debug("No amazon gift card to be sent");
-      return;
-    }
-
     final String requestBody = prepareRequestBody(users, amount);
     executorService.submit(() -> {
       try {
