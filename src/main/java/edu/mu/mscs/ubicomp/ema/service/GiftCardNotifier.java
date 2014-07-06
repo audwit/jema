@@ -114,6 +114,9 @@ public class GiftCardNotifier {
           amount, studyStartDate, startDate, endDate);
       sendRequest(eligibleUsers, amount);
     }
+    else {
+      logger.debug("Found no participants eligible for amazon gift card.");
+    }
   }
 
   private int getTotalDenied(final User user, final LocalDate startDate, final LocalDate endDate) {
@@ -157,7 +160,7 @@ public class GiftCardNotifier {
         final int statusCode = response.getStatusLine().getStatusCode();
         final HttpEntity entity = response.getEntity();
         final String responseString = IOUtils.toString(entity.getContent());
-        logger.debug("Response: \n" + responseString);
+        logger.debug("Gift card request feedback: \n" + responseString);
         EntityUtils.consume(entity);
         if (statusCode > 300) {
           logger.warn("Failed to send gift card request. Response status code: " + statusCode);
