@@ -221,7 +221,7 @@ public class ReminderService {
     final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
     StringBuilder emailMessageBuilder = new StringBuilder();
     inactiveUsers.forEach((user) -> emailMessageBuilder.append(user.getId())
-        .append("    ")
+        .append("  |  ")
         .append(user.getUsername())
         .append("\n"));
 
