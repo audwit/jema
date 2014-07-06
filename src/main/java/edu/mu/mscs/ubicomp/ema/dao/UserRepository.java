@@ -69,7 +69,7 @@ public class UserRepository {
         "  select c.study_id from `completion` c where c.survey_id in (\n" +
         "    select s.survey_id from `schedule` s where " + columnName + " = 1\n" +
         "  ))\n" +
-        "and u.start_date = :startDate";
+        "and date(u.start_date) = :startDate";
     final Query nativeQuery = entityManager.createNativeQuery(queryFormat, User.class)
         .setParameter("startDate", startDate, TemporalType.DATE);
 
@@ -78,7 +78,7 @@ public class UserRepository {
 
   public List<User> findUsersBy(final Date startDate, final List<String> roles) {
     Validate.notEmpty(roles, "roles can not be empty");
-    final String qlString = "SELECT u FROM User u WHERE u.startDate = :startDate and u.role in (:roles)";
+    final String qlString = "SELECT u FROM User u WHERE DATE(u.startDate) = :startDate and u.role in (:roles)";
     final TypedQuery<User> query = entityManager.createQuery(qlString, User.class)
         .setParameter("startDate", startDate, TemporalType.DATE)
         .setParameter("roles", roles);
