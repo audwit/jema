@@ -177,13 +177,15 @@ public class ReminderService {
   }
 
   private void sendFirstReminder(final LocalDate today) {
-    final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(firstNotificationDifference));
+    final LocalDate lastLoginDate = today.minusDays(firstNotificationDifference);
+    final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
     final Message message = retrieveRandomMessage();
     sendTextMessage(inactiveUsers, message, message1);
   }
 
   private void sendSecondReminder(final LocalDate today) {
-    final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(secondNotificationDifference));
+    final LocalDate lastLoginDate = today.minusDays(secondNotificationDifference);
+    final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
     final Message message = retrieveRandomMessage();
     sendTextMessage(inactiveUsers, message, message2);
   }
@@ -203,17 +205,20 @@ public class ReminderService {
   }
 
   private void sendThirdReminder(final LocalDate today) {
-    final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(thirdNotificationDifference));
+    final LocalDate lastLoginDate = today.minusDays(thirdNotificationDifference);
+    final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
     inactiveUsers.forEach((user) -> sendEmailSafely(subject1, email1, user));
   }
 
   private void sendFourthReminder(final LocalDate today) {
-    final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(fourthNotificationDifference));
+    final LocalDate lastLoginDate = today.minusDays(fourthNotificationDifference);
+    final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
     inactiveUsers.forEach((user) -> sendEmailSafely(subject2, email2, user));
   }
 
   private void sendInactiveUsersList(final LocalDate today) {
-    final List<User> inactiveUsers = getLastLoggedInOn(today.minusDays(inactiveWarningDate));
+    final LocalDate lastLoginDate = today.minusDays(inactiveWarningDate);
+    final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
     StringBuilder emailMessageBuilder = new StringBuilder();
     inactiveUsers.forEach((user) -> emailMessageBuilder.append(user.getId())
         .append("    ")
