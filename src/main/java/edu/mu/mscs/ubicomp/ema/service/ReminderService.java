@@ -232,7 +232,7 @@ public class ReminderService {
   }
 
   private void sendEightMonthReminder(final LocalDate today) {
-    final LocalDate startDate = today.minusDays(chooseGroupDifference + 1);
+    final LocalDate startDate = today.minusDays(chooseGroupDifference);
     final List<User> participants = userRepository.findUsersBy(
         DateTimeUtils.toDate(startDate),
         GiftCardNotifier.WAIT_LIST_GROUP
@@ -252,7 +252,7 @@ public class ReminderService {
   private void sendEndOfStudyReminder(final LocalDate today) {
     List<String> roles = new ArrayList<>(GiftCardNotifier.REGULAR_GROUP);
     roles.addAll(GiftCardNotifier.WAIT_LIST_GROUP);
-    final LocalDate startDate = today.minusDays(studyEndDifference + 1);
+    final LocalDate startDate = today.minusDays(studyEndDifference);
     final List<User> participants = userRepository.findUsersBy(DateTimeUtils.toDate(startDate), roles);
     final String studyIds = prepareStudyIds(participants);
     final String body = String.format(studyEndEmail, studyIds);
