@@ -1,1 +1,12 @@
-You need to choose your group.
+Attention Researcher:
+
+Following participants have just reached their 8th month in the study.  You will need to contact her to determine which app (Striving or Boning up) she would like added to her phone.
+
+Study Id | User Id
+------------------
+%s
+
+You will need to:
+1. Go to the Researcher Collected Forms on the Web-site (administrative side)  under Researcher to complete the Wait List Form,
+2. Once the participant has made her choice contact Sarah or Victoria and requests the app to be pushed out to the participants phone.
+3. Make sure to tell the participant to contact the study if she does not see the icon for the app on her phone within 2 weeks

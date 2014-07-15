@@ -237,7 +237,16 @@ public class ReminderService {
         DateTimeUtils.toDate(startDate),
         GiftCardNotifier.WAIT_LIST_GROUP
     );
-    participants.forEach((user) -> sendEmailSafely(chooseGroupSubject, chooseGroupEmail, user));
+    final String studyIds = prepareStudyIds(participants);
+    final String body = String.format(chooseGroupEmail, studyIds);
+
+    executorService.submit(() -> {
+      try {
+        mailClient.send(warningEmailAddress, chooseGroupSubject, body);
+      } catch (MessagingException e) {
+        logger.warn("Failed sending end of study email notification to: " + warningEmailAddress, e);
+      }
+    });
   }
 
   private void sendEndOfStudyReminder(final LocalDate today) {
@@ -246,10 +255,10 @@ public class ReminderService {
     final LocalDate startDate = today.minusDays(studyEndDifference + 1);
     final List<User> participants = userRepository.findUsersBy(DateTimeUtils.toDate(startDate), roles);
     final String studyIds = prepareStudyIds(participants);
+    final String body = String.format(studyEndEmail, studyIds);
 
     executorService.submit(() -> {
       try {
-        final String body = String.format(studyEndEmail, studyIds);
         mailClient.send(warningEmailAddress, studyEndSubject, body);
       } catch (MessagingException e) {
         logger.warn("Failed sending end of study email notification to: " + warningEmailAddress, e);
