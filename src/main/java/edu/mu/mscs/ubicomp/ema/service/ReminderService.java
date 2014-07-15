@@ -219,19 +219,11 @@ public class ReminderService {
   private void sendInactiveUsersList(final LocalDate today) {
     final LocalDate lastLoginDate = today.minusDays(inactiveWarningDate);
     final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
-    StringBuilder emailMessageBuilder = new StringBuilder();
-    inactiveUsers.forEach((user) -> emailMessageBuilder.append(user.getId())
-        .append("  |  ")
-        .append(user.getUsername())
-        .append("\n"));
+    final String studyIds = prepareStudyIds(inactiveUsers);
 
     executorService.submit(() -> {
       try {
-        final String body = String.format(
-            inactiveEmailTemplate,
-            LocalDate.now().toString(),
-            emailMessageBuilder.toString()
-        );
+        final String body = String.format(inactiveEmailTemplate, LocalDate.now().toString(), studyIds);
         mailClient.send(warningEmailAddress, warningEmailSubject, body);
       } catch (MessagingException e) {
         logger.warn("Failed sending warning email notification to: " + warningEmailAddress, e);
@@ -253,7 +245,25 @@ public class ReminderService {
     roles.addAll(GiftCardNotifier.WAIT_LIST_GROUP);
     final LocalDate startDate = today.minusDays(studyEndDifference + 1);
     final List<User> participants = userRepository.findUsersBy(DateTimeUtils.toDate(startDate), roles);
-    participants.forEach((user) -> sendEmailSafely(studyEndSubject, studyEndEmail, user));
+    final String studyIds = prepareStudyIds(participants);
+
+    executorService.submit(() -> {
+      try {
+        final String body = String.format(studyEndEmail, studyIds);
+        mailClient.send(warningEmailAddress, studyEndSubject, body);
+      } catch (MessagingException e) {
+        logger.warn("Failed sending end of study email notification to: " + warningEmailAddress, e);
+      }
+    });
+  }
+
+  private String prepareStudyIds(final List<User> users) {
+    StringBuilder emailMessageBuilder = new StringBuilder();
+    users.forEach((user) -> emailMessageBuilder.append(user.getId())
+        .append("  |  ")
+        .append(user.getUsername())
+        .append("\n"));
+    return emailMessageBuilder.toString();
   }
 
   private void sendEmailSafely(final String subject, final String email, final User user) {
