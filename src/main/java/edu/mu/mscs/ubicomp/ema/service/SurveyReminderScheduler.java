@@ -37,6 +37,8 @@ public class SurveyReminderScheduler {
   private String mail9;
   private String mail12;
   private String reminderSubject;
+  private String warningEmailAddress;
+  private String reminderWarningEmail;
 
   public void setFirstSurveyDay(final int firstSurveyDay) {
     this.firstSurveyDay = firstSurveyDay;
@@ -90,6 +92,14 @@ public class SurveyReminderScheduler {
     this.totalThread = totalThread;
   }
 
+  public void setWarningEmailAddress(final String warningEmailAddress) {
+    this.warningEmailAddress = warningEmailAddress;
+  }
+
+  public void setReminderWarningEmail(final String reminderWarningEmail) {
+    this.reminderWarningEmail = reminderWarningEmail;
+  }
+
   @PostConstruct
   public void initialize() {
     final BasicThreadFactory threadFactory = new BasicThreadFactory.Builder()
@@ -140,15 +150,23 @@ public class SurveyReminderScheduler {
     final List<User> users = userRepository.getRequiresNotificationUsers(surveyType, startDate);
     logger.debug("Found total: {} user to remind for: {} with start date: {}", users.size(), surveyType, startLocalDateTime.toString());
 
-    for (User user : users) {
-      executorService.submit(() -> {
-        try {
-          mailClient.send(user.getEmail(), reminderSubject, "dummy email for now");
-        } catch (MessagingException e) {
-          logger.warn("Failed sending notificationMail notification to " + user.getEmail() + " for user: " + user.getId(), e);
-        }
-      });
-    }
+    final String studyIds = prepareStudyIds(users);
+    executorService.submit(() -> {
+      try {
+        mailClient.send(warningEmailAddress, reminderSubject, String.format(reminderWarningEmail, LocalDate.now(), studyIds));
+      } catch (MessagingException e) {
+        logger.warn("Failed sending notificationMail notification to " + warningEmailAddress, e);
+      }
+    });
+  }
+
+  private String prepareStudyIds(final List<User> users) {
+    StringBuilder emailMessageBuilder = new StringBuilder();
+    users.forEach((user) -> emailMessageBuilder.append(user.getId())
+        .append("  |  ")
+        .append(user.getUsername())
+        .append("\n"));
+    return emailMessageBuilder.toString();
   }
 
 }
