@@ -72,12 +72,14 @@
   </bean>
 
   <bean class="edu.mu.mscs.ubicomp.ema.service.SurveyReminderScheduler" id="surveyReminderScheduler">
+    <property name="warningEmailAddress" value="${reminderServiceConfig.warningEmailAddress}"/>
     <property name="reminderSubject" value="${surveyReminderSchedulerService.reminderSubject}"/>
     <property name="surveyInactiveDay" value="${surveyReminderSchedulerService.surveyInactiveDay}"/>
     <property name="firstSurveyDay" value="${surveyReminderSchedulerService.firstSurveyDay}"/>
     <property name="secondSurveyDay" value="${surveyReminderSchedulerService.secondSurveyDay}"/>
     <property name="thirdSurveyDay" value="${surveyReminderSchedulerService.thirdSurveyDay}"/>
     <property name="fourthSurveyDay" value="${surveyReminderSchedulerService.fourthSurveyDay}"/>
+    <property name="reminderWarningEmail" ref="surveyReminderWarningEmail"/>
     <property name="mail3" ref="mail3"/>
     <property name="mail6" ref="mail6"/>
     <property name="mail9" ref="mail9"/>
@@ -175,5 +177,8 @@
   </bean>
   <bean id="studyEndEmail" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/studyEnd.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="surveyReminderWarningEmail" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/surveyReminderWarning.txt" type="java.io.InputStream" />
   </bean>
 </beans>
