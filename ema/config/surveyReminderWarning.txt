@@ -1,0 +1,7 @@
+Date: %s
+
+Following participants failed to submit survey.
+
+Study Id | User Id
+------------------
+%s
