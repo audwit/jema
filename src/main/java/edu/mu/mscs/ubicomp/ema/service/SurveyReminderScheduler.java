@@ -21,6 +21,9 @@ public class SurveyReminderScheduler {
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   private UserRepository userRepository;
+  private MailClient mailClient;
+  private ExecutorService executorService;
+  private int totalThread;
 
   private int firstSurveyDay;
   private int secondSurveyDay;
@@ -29,9 +32,6 @@ public class SurveyReminderScheduler {
 
   private int surveyInactiveDay;
 
-  private MailClient mailClient;
-  private int totalThread;
-  private ExecutorService executorService;
   private String mail3;
   private String mail6;
   private String mail9;
