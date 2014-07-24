@@ -157,7 +157,8 @@ public class SurveyReminderScheduler {
       final String studyIds = prepareStudyIds(users);
       executorService.submit(() -> {
         try {
-          mailClient.send(warningEmailAddress, reminderSubject, String.format(reminderWarningEmail, LocalDate.now(), studyIds));
+          final String body = String.format(reminderWarningEmail, LocalDate.now(), studyIds);
+          mailClient.send(warningEmailAddress, reminderSubject, body);
         } catch (MessagingException e) {
           logger.warn("Failed sending notificationMail notification to " + warningEmailAddress, e);
         }
