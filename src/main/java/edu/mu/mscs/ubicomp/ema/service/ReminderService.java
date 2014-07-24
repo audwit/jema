@@ -7,6 +7,7 @@ import edu.mu.mscs.ubicomp.ema.dao.UserRepository;
 import edu.mu.mscs.ubicomp.ema.entity.Message;
 import edu.mu.mscs.ubicomp.ema.entity.User;
 import edu.mu.mscs.ubicomp.ema.util.DateTimeUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -254,16 +255,19 @@ public class ReminderService {
     roles.addAll(GiftCardNotifier.WAIT_LIST_GROUP);
     final LocalDate startDate = today.minusDays(studyEndDifference);
     final List<User> participants = userRepository.findUsersBy(DateTimeUtils.toDate(startDate), roles);
-    final String studyIds = prepareStudyIds(participants);
-    final String body = String.format(studyEndEmail, studyIds);
 
-    executorService.submit(() -> {
-      try {
-        mailClient.send(warningEmailAddress, studyEndSubject, body);
-      } catch (MessagingException e) {
-        logger.warn("Failed sending end of study email notification to: " + warningEmailAddress, e);
-      }
-    });
+    if(CollectionUtils.isNotEmpty(participants)) {
+      final String studyIds = prepareStudyIds(participants);
+      final String body = String.format(studyEndEmail, studyIds);
+
+      executorService.submit(() -> {
+        try {
+          mailClient.send(warningEmailAddress, studyEndSubject, body);
+        } catch (MessagingException e) {
+          logger.warn("Failed sending end of study email notification to: " + warningEmailAddress, e);
+        }
+      });
+    }
   }
 
   private String prepareStudyIds(final List<User> users) {

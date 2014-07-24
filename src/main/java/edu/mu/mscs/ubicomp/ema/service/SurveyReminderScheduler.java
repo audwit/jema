@@ -4,6 +4,7 @@ import edu.mu.mscs.ubicomp.ema.client.MailClient;
 import edu.mu.mscs.ubicomp.ema.dao.UserRepository;
 import edu.mu.mscs.ubicomp.ema.entity.User;
 import edu.mu.mscs.ubicomp.ema.util.DateTimeUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,14 +151,16 @@ public class SurveyReminderScheduler {
     final List<User> users = userRepository.getRequiresNotificationUsers(surveyType, startDate);
     logger.debug("Found total: {} user to remind for: {} with start date: {}", users.size(), surveyType, startLocalDateTime.toString());
 
-    final String studyIds = prepareStudyIds(users);
-    executorService.submit(() -> {
-      try {
-        mailClient.send(warningEmailAddress, reminderSubject, String.format(reminderWarningEmail, LocalDate.now(), studyIds));
-      } catch (MessagingException e) {
-        logger.warn("Failed sending notificationMail notification to " + warningEmailAddress, e);
-      }
-    });
+    if(CollectionUtils.isNotEmpty(users)) {
+      final String studyIds = prepareStudyIds(users);
+      executorService.submit(() -> {
+        try {
+          mailClient.send(warningEmailAddress, reminderSubject, String.format(reminderWarningEmail, LocalDate.now(), studyIds));
+        } catch (MessagingException e) {
+          logger.warn("Failed sending notificationMail notification to " + warningEmailAddress, e);
+        }
+      });
+    }
   }
 
   private String prepareStudyIds(final List<User> users) {
