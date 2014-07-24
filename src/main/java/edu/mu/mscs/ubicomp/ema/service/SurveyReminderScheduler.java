@@ -130,7 +130,8 @@ public class SurveyReminderScheduler {
     final LocalDate startDate = today.minusDays(surveyDay);
 
     final List<User> participants = userRepository.findUsersBy(DateTimeUtils.toDate(startDate), roles);
-    logger.debug("Found total: {} user to remind with start date: {}", participants.size(), startDate.toString());
+    logger.debug("Sending measurement email to total: {} user to remind with start date: {} for {} month survey",
+        participants.size(), startDate.toString(), surveyDay);
 
     for (User user : participants) {
       executorService.submit(() -> {
@@ -149,7 +150,8 @@ public class SurveyReminderScheduler {
     final LocalDate startLocalDateTime = now.minusDays(totalDay);
     final Date startDate = DateTimeUtils.toDate(startLocalDateTime);
     final List<User> users = userRepository.getRequiresNotificationUsers(surveyType, startDate);
-    logger.debug("Found total: {} user to remind for: {} with start date: {}", users.size(), surveyType, startLocalDateTime.toString());
+    logger.debug("Sending unopened measurement notification to admin as start date: {} for {} month survey",
+        startLocalDateTime.toString(), surveyDay);
 
     if(CollectionUtils.isNotEmpty(users)) {
       final String studyIds = prepareStudyIds(users);
