@@ -222,6 +222,7 @@ public class ReminderService {
     final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
 
     if(CollectionUtils.isNotEmpty(inactiveUsers)) {
+      logger.debug("Sending inactive user list to admin: {} ", warningEmailAddress);
       final String studyIds = prepareStudyIds(inactiveUsers);
 
       executorService.submit(() -> {
@@ -233,6 +234,9 @@ public class ReminderService {
         }
       });
     }
+    else {
+      logger.debug("No inactive user found to notify admin");
+    }
   }
 
   private void sendEightMonthReminder(final LocalDate today) {
@@ -243,6 +247,7 @@ public class ReminderService {
     );
 
     if(CollectionUtils.isNotEmpty(participants)) {
+      logger.debug("Sending eight month reminder to admin with start date: {}", startDate);
       final String studyIds = prepareStudyIds(participants);
       final String body = String.format(chooseGroupEmail, studyIds);
 
@@ -254,6 +259,9 @@ public class ReminderService {
         }
       });
     }
+    else {
+      logger.debug("No user found to remind admin for eight month study with start date : {}", startDate);
+    }
   }
 
   private void sendEndOfStudyReminder(final LocalDate today) {
@@ -263,6 +271,8 @@ public class ReminderService {
     final List<User> participants = userRepository.findUsersBy(DateTimeUtils.toDate(startDate), roles);
 
     if(CollectionUtils.isNotEmpty(participants)) {
+      logger.debug("Sending end of study reminder to admin with start date: {}", startDate);
+
       final String studyIds = prepareStudyIds(participants);
       final String body = String.format(studyEndEmail, studyIds);
 
@@ -273,6 +283,9 @@ public class ReminderService {
           logger.warn("Failed sending end of study email notification to: " + warningEmailAddress, e);
         }
       });
+    }
+    else {
+      logger.debug("No user found to remind admin for end of study with start date : {}", startDate);
     }
   }
 
