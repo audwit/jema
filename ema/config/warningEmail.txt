@@ -2,6 +2,6 @@ Date: %s
 
 Following participants are no longer actively participating in the study. They have failed to respond to 2 Push messages and have been sent two reminder email messages.
 
-Study Id | User Id
-------------------
+Study Id
+--------
 %s

@@ -1,7 +1,7 @@
 Following participants have 4 weeks left until she completes the study.  You will need to contact them to set up an “end of study” appointment.  The End of Study appointment includes the 2nd DXA scan,  vitamin D3 capillary blood test, the physical measures, removal of the app, and a discussion about her experience with the app (open-ended interview).  This last visit will take between 2 and 3 hours.
 
-Study Id | User Id
-------------------
+Study Id
+--------
 %s
 
 You will need to:

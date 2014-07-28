@@ -2,8 +2,8 @@ Attention Researcher:
 
 Following participants have just reached their 8th month in the study.  You will need to contact her to determine which app (Striving or Boning up) she would like added to her phone.
 
-Study Id | User Id
-------------------
+Study Id
+--------
 %s
 
 You will need to:
