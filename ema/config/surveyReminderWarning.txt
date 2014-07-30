@@ -1,7 +1,14 @@
-Date: %s
-
-Following participants failed to submit survey.
+Following Study_id failed to complete some or all of their %s month measures.
 
 Study Id
 --------
 %s
+
+
+Please review the participant's responses on the web site to determine if they
+have missed a question, missed a form, or failed to complete any measures.
+Contact the participant via email to personally remind them to complete the measure.
+If the participant fails to respond to your email message the person need to be
+contacted via telephone.  (not 3 attempts need to be made).  If the participant
+fails to complete the measures at 3, 6, 9 months they will need to be removed from
+the study. Follow "Removal from the study procedure" as outlined on Panther File.

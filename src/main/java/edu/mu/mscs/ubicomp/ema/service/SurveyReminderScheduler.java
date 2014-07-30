@@ -154,10 +154,13 @@ public class SurveyReminderScheduler {
         startLocalDateTime.toString(), surveyDay);
 
     if(CollectionUtils.isNotEmpty(users)) {
+      final int month = surveyDay / 30;
+      final int actualMonth = month >= 11 ? month + 1 : month;
       final String studyIds = prepareStudyIds(users);
+      final String body = String.format(reminderWarningEmail, actualMonth, studyIds);
+
       executorService.submit(() -> {
         try {
-          final String body = String.format(reminderWarningEmail, LocalDate.now(), studyIds);
           mailClient.send(warningEmailAddress, reminderSubject, body);
         } catch (MessagingException e) {
           logger.warn("Failed sending notificationMail notification to " + warningEmailAddress, e);
