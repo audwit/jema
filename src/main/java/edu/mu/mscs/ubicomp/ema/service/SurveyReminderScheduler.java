@@ -39,7 +39,7 @@ public class SurveyReminderScheduler {
   private String mail12;
   private String reminderSubject;
   private String warningEmailAddress;
-  private String reminderWarningEmail;
+  private String warningEmailTemplate;
 
   public void setFirstSurveyDay(final int firstSurveyDay) {
     this.firstSurveyDay = firstSurveyDay;
@@ -97,8 +97,8 @@ public class SurveyReminderScheduler {
     this.warningEmailAddress = warningEmailAddress;
   }
 
-  public void setReminderWarningEmail(final String reminderWarningEmail) {
-    this.reminderWarningEmail = reminderWarningEmail;
+  public void setWarningEmailTemplate(final String warningEmailTemplate) {
+    this.warningEmailTemplate = warningEmailTemplate;
   }
 
   @PostConstruct
@@ -157,7 +157,7 @@ public class SurveyReminderScheduler {
       final int month = surveyDay / 30;
       final int actualMonth = month >= 11 ? month + 1 : month;
       final String studyIds = prepareStudyIds(users);
-      final String body = String.format(reminderWarningEmail, actualMonth, studyIds);
+      final String body = String.format(warningEmailTemplate, actualMonth, studyIds);
 
       executorService.submit(() -> {
         try {

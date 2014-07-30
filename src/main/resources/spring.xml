@@ -79,7 +79,7 @@
     <property name="secondSurveyDay" value="${surveyReminderSchedulerService.secondSurveyDay}"/>
     <property name="thirdSurveyDay" value="${surveyReminderSchedulerService.thirdSurveyDay}"/>
     <property name="fourthSurveyDay" value="${surveyReminderSchedulerService.fourthSurveyDay}"/>
-    <property name="reminderWarningEmail" ref="surveyReminderWarningEmail"/>
+    <property name="warningEmailTemplate" ref="surveyReminderWarningEmail"/>
     <property name="mail3" ref="mail3"/>
     <property name="mail6" ref="mail6"/>
     <property name="mail9" ref="mail9"/>
