@@ -39,6 +39,7 @@ public class SurveyReminderScheduler {
   private String mail12;
   private String reminderSubject;
   private String warningEmailAddress;
+  private String warmingEmailSubject;
   private String warningEmailTemplate;
 
   public void setFirstSurveyDay(final int firstSurveyDay) {
@@ -95,6 +96,10 @@ public class SurveyReminderScheduler {
 
   public void setWarningEmailAddress(final String warningEmailAddress) {
     this.warningEmailAddress = warningEmailAddress;
+  }
+
+  public void setWarmingEmailSubject(final String warmingEmailSubject) {
+    this.warmingEmailSubject = warmingEmailSubject;
   }
 
   public void setWarningEmailTemplate(final String warningEmailTemplate) {
@@ -161,7 +166,7 @@ public class SurveyReminderScheduler {
 
       executorService.submit(() -> {
         try {
-          mailClient.send(warningEmailAddress, reminderSubject, body);
+          mailClient.send(warningEmailAddress, warmingEmailSubject, body);
         } catch (MessagingException e) {
           logger.warn("Failed sending notificationMail notification to " + warningEmailAddress, e);
         }
