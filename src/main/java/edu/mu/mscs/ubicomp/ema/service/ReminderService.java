@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -318,10 +316,9 @@ public class ReminderService {
   }
 
   private List<User> getLastLoggedInOn(final LocalDate lastLoginDate) {
-    final Date lastLoginStart = DateTimeUtils.toDate(LocalDateTime.of(lastLoginDate, LocalTime.MIN));
-    final Date lastLoginEnd = DateTimeUtils.toDate(LocalDateTime.of(lastLoginDate, LocalTime.MAX));
+    final Date lastLogin = DateTimeUtils.toDate(lastLoginDate);
 
-    final List<User> inactiveUsers = userRepository.getInactiveUsers(lastLoginStart, lastLoginEnd);
+    final List<User> inactiveUsers = userRepository.getInactiveUsers(lastLogin);
     logger.debug("Found total inactive users: {}", inactiveUsers.size());
     return inactiveUsers;
   }
