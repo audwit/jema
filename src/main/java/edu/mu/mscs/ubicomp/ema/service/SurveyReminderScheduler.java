@@ -32,6 +32,7 @@ public class SurveyReminderScheduler {
   private int fourthSurveyDay;
 
   private int surveyInactiveDay;
+  private int firstWarningDay;
 
   private String mail3;
   private String mail6;
@@ -60,6 +61,10 @@ public class SurveyReminderScheduler {
 
   public void setSurveyInactiveDay(final int surveyInactiveDay) {
     this.surveyInactiveDay = surveyInactiveDay;
+  }
+
+  public void setFirstWarningDay(final int firstWarningDay) {
+    this.firstWarningDay = firstWarningDay;
   }
 
   public void setMail3(final String mail3) {
@@ -129,6 +134,28 @@ public class SurveyReminderScheduler {
     sendAdminNotification(firstSurveyDay, surveyType);
   }
 
+  private void sendFirstWarning(final int surveyDay, final String surveyType) {
+    final LocalDate now = LocalDate.now();
+    final int totalDay = surveyDay + firstWarningDay;
+    final LocalDate startLocalDateTime = now.minusDays(totalDay);
+    final Date startDate = DateTimeUtils.toDate(startLocalDateTime);
+    final List<User> participants = userRepository.getRequiresNotificationUsers(surveyType, startDate);
+    logger.debug("Sending first warning to participants as start date: {} for {} month survey",
+        startLocalDateTime.toString(), surveyDay);
+
+    if(CollectionUtils.isNotEmpty(participants)) {
+      for (User user : participants) {
+        executorService.submit(() -> {
+          try {
+            mailClient.send(user.getEmail(), "dummy subject", "dummy body");
+          } catch (MessagingException e) {
+            logger.warn("Failed sending notificationMail notification to " + user.getEmail() + " for user: " + user.getId(), e);
+          }
+        });
+      }
+    }
+  }
+
   private void sendMeasurementReminder(final int surveyDay, final String notificationMail) {
     List<String> roles = new ArrayList<>(GiftCardNotifier.REGULAR_GROUP);
     roles.addAll(GiftCardNotifier.WAIT_LIST_GROUP);
@@ -136,7 +163,7 @@ public class SurveyReminderScheduler {
     final LocalDate startDate = today.minusDays(surveyDay);
 
     final List<User> participants = userRepository.findUsersBy(DateTimeUtils.toDate(startDate), roles);
-    logger.debug("Sending measurement email to total: {} user to remind with start date: {} for {} month survey",
+    logger.debug("Sending measurement email to total: {} user to remind with start date: {} for {} day survey",
         participants.size(), startDate.toString(), surveyDay);
 
     for (User user : participants) {
@@ -156,7 +183,7 @@ public class SurveyReminderScheduler {
     final LocalDate startLocalDateTime = now.minusDays(totalDay);
     final Date startDate = DateTimeUtils.toDate(startLocalDateTime);
     final List<User> users = userRepository.getRequiresNotificationUsers(surveyType, startDate);
-    logger.debug("Sending unopened measurement notification to admin as start date: {} for {} month survey",
+    logger.debug("Sending unopened measurement notification to admin as start date: {} for {} day survey",
         startLocalDateTime.toString(), surveyDay);
 
     if(CollectionUtils.isNotEmpty(users)) {
