@@ -117,15 +117,16 @@ public class SurveyReminderScheduler {
 
   public void sendReminder() {
     logger.debug("Reminder service started");
-    sendMeasurementReminder(firstSurveyDay, mail3);
-    sendMeasurementReminder(secondSurveyDay, mail6);
-    sendMeasurementReminder(thirdSurveyDay, mail9);
-    sendMeasurementReminder(fourthSurveyDay, mail12);
 
-    findUnopenedSurvey(firstSurveyDay, "threemonths");
-    findUnopenedSurvey(secondSurveyDay, "sixmonths");
-    findUnopenedSurvey(thirdSurveyDay, "ninemonths");
-    findUnopenedSurvey(fourthSurveyDay, "twelvemonths");
+    sendNotifications(firstSurveyDay, mail3, "threemonths");
+    sendNotifications(secondSurveyDay, mail6, "sixmonths");
+    sendNotifications(thirdSurveyDay, mail9, "ninemonths");
+    sendNotifications(fourthSurveyDay, mail12, "twelvemonths");
+  }
+
+  private void sendNotifications(final int surveyDay, final String notificationMail, final String surveyType) {
+    sendMeasurementReminder(surveyDay, notificationMail);
+    sendAdminNotification(firstSurveyDay, surveyType);
   }
 
   private void sendMeasurementReminder(final int surveyDay, final String notificationMail) {
@@ -149,7 +150,7 @@ public class SurveyReminderScheduler {
     }
   }
 
-  private void findUnopenedSurvey(final int surveyDay, final String surveyType) {
+  private void sendAdminNotification(final int surveyDay, final String surveyType) {
     final LocalDate now = LocalDate.now();
     final int totalDay = surveyDay + surveyInactiveDay;
     final LocalDate startLocalDateTime = now.minusDays(totalDay);
