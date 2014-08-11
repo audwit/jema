@@ -146,7 +146,7 @@ public class SurveyReminderScheduler {
           try {
             mailClient.send(user.getEmail(), subject, notificationMail);
           } catch (MessagingException e) {
-            logger.warn("Failed sending notificationMail notification to " + user.getEmail() + " for user: " + user.getId(), e);
+            logger.warn("Failed sending first notificationMail notification to " + user.getEmail() + " for user: " + user.getId(), e);
           }
         });
       }
@@ -177,7 +177,7 @@ public class SurveyReminderScheduler {
           try {
             mailClient.send(user.getEmail(), subject, notificationMail);
           } catch (MessagingException e) {
-            logger.warn("Failed sending notificationMail notification to " + user.getEmail() + " for user: " + user.getId(), e);
+            logger.warn("Failed sending second notificationMail notification to " + user.getEmail() + " for user: " + user.getId(), e);
           }
         });
       }
@@ -208,7 +208,7 @@ public class SurveyReminderScheduler {
         try {
           mailClient.send(warningEmailAddress, warmingEmailSubject, body);
         } catch (MessagingException e) {
-          logger.warn("Failed sending notificationMail notification to " + warningEmailAddress, e);
+          logger.warn("Failed sending admin notification to " + warningEmailAddress, e);
         }
       });
     }
