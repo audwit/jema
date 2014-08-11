@@ -87,6 +87,7 @@
     <property name="reminderSubjectTemplate" value="${surveyReminderSchedulerService.reminderSubjectTemplate}"/>
     <property name="firstReminderTemplate" ref="firstMeasurementTemplate"/>
     <property name="secondReminderTemplate" ref="secondMeasurementTemplate"/>
+    <property name="thirdReminderTemplate" ref="thirdMeasurementEmail"/>
     <property name="surveyInactiveDay" value="${surveyReminderSchedulerService.surveyInactiveDay}"/>
     <property name="firstWarningDay" value="${surveyReminderSchedulerService.firstWarningDay}"/>
     <property name="firstSurveyDay" value="${surveyReminderSchedulerService.firstSurveyDay}"/>
@@ -171,6 +172,9 @@
   </bean>
   <bean id="secondMeasurementTemplate" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/measurement/secondReminderTemplate.txt" type="java.io.InputStream" />
+  </bean>
+  <bean id="thirdMeasurementEmail" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/measurement/thirdReminderTemplate.txt" type="java.io.InputStream" />
   </bean>
   <bean id="surveyReminderWarningEmail" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/measurement/adminReminderTemplate.txt" type="java.io.InputStream" />

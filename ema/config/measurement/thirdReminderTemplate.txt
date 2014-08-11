@@ -1,0 +1,31 @@
+This is a final notice.
+
+Completion of the surveys is required for you to remain in the Striving to be Strong
+study. If you fail to complete the surveys you will be required to return the
+study phone and the phone plan will be discontinued or if you are using your own
+phone the $50 per month payment will be stopped.
+
+It has been %s months since you began the study and you need to complete the next
+set of surveys.  You must complete all of the surveys by tomorrow. If you
+would like to speak with one of the researchers please call 414-229-3169, leave
+a message and someone will call you back within 24 hours during business hours.
+
+To complete the survey go to the study website http://striving.cloudapp.net/
+
+Log into the website using you study number and your password.
+
+You will be taken to a new screen.  On the top left hand column, click on
+“Survey Forms” and a link to all the surveys will open.
+
+Click on the link when you are ready to take a survey.
+
+Remember you will need to complete 1 Calcium Food Log for 3 days in a row.
+
+When you hit the “submit” button at the end of each survey, the name
+of the survey you just completed will be removed from the list.
+
+You will receive an Amazon.com card for %s by email when you have
+completed all surveys before midnight tomorrow.
+
+Mail to: Striving@mscs.mu.edu
+Contact Phone Number for the Striving to be Strong Study: +1-414-229-3169
