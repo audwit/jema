@@ -84,17 +84,15 @@
     <property name="warningEmailAddress" value="${surveyReminderSchedulerService.warningEmailAddress}"/>
     <property name="warmingEmailSubject" value="${surveyReminderSchedulerService.warningEmailSubject}"/>
     <property name="warningEmailTemplate" ref="surveyReminderWarningEmail"/>
-    <property name="reminderSubject" value="${surveyReminderSchedulerService.reminderSubject}"/>
+    <property name="reminderSubjectTemplate" value="${surveyReminderSchedulerService.reminderSubjectTemplate}"/>
+    <property name="firstReminderTemplate" ref="firstMeasurementTemplate"/>
+    <property name="secondReminderTemplate" ref="secondMeasurementTemplate"/>
     <property name="surveyInactiveDay" value="${surveyReminderSchedulerService.surveyInactiveDay}"/>
     <property name="firstWarningDay" value="${surveyReminderSchedulerService.firstWarningDay}"/>
     <property name="firstSurveyDay" value="${surveyReminderSchedulerService.firstSurveyDay}"/>
     <property name="secondSurveyDay" value="${surveyReminderSchedulerService.secondSurveyDay}"/>
     <property name="thirdSurveyDay" value="${surveyReminderSchedulerService.thirdSurveyDay}"/>
     <property name="fourthSurveyDay" value="${surveyReminderSchedulerService.fourthSurveyDay}"/>
-    <property name="mail3" ref="mail3"/>
-    <property name="mail6" ref="mail6"/>
-    <property name="mail9" ref="mail9"/>
-    <property name="mail12" ref="mail12"/>
     <property name="mailClient" ref="mailClient"/>
     <property name="totalThread" value="${surveyReminderSchedulerService.totalThread}"/>
     <property name="userRepository" ref="userRepository"/>
@@ -168,17 +166,11 @@
   <bean id="warningEmailTemplate" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/warningEmail.txt" type="java.io.InputStream" />
   </bean>
-  <bean id="mail3" class="org.apache.commons.io.IOUtils" factory-method="toString">
-    <constructor-arg value="file:${user.home}/ema/config/mail3.txt" type="java.io.InputStream" />
+  <bean id="firstMeasurementTemplate" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/measurement/firstReminderTemplate.txt" type="java.io.InputStream" />
   </bean>
-  <bean id="mail6" class="org.apache.commons.io.IOUtils" factory-method="toString">
-    <constructor-arg value="file:${user.home}/ema/config/mail6.txt" type="java.io.InputStream" />
-  </bean>
-  <bean id="mail9" class="org.apache.commons.io.IOUtils" factory-method="toString">
-    <constructor-arg value="file:${user.home}/ema/config/mail9.txt" type="java.io.InputStream" />
-  </bean>
-  <bean id="mail12" class="org.apache.commons.io.IOUtils" factory-method="toString">
-    <constructor-arg value="file:${user.home}/ema/config/mail12.txt" type="java.io.InputStream" />
+  <bean id="secondMeasurementTemplate" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/measurement/secondReminderTemplate.txt" type="java.io.InputStream" />
   </bean>
   <bean id="chooseGroupEmail" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/chooseGroup.txt" type="java.io.InputStream" />

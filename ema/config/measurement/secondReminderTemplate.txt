@@ -1,0 +1,24 @@
+This is your second notice.
+
+It has been %s months since you began the study and you need to complete
+the next set of surveys.  You have 1 week to complete all of the surveys.
+
+Go to the study website http://striving.cloudapp.net/
+
+Log into the website using you study number and your password.
+
+You will be taken to a new screen. On the top left hand column, click on
+“Survey Forms” and a link to all the surveys will open.
+
+Click on the link when you are ready to take a survey.
+
+Remember you will need to complete 1 Calcium Food Log for 3 days in a row.
+
+When you hit the “submit” button at the end of each survey, the name
+of the survey you just completed will be removed from the list.
+
+You will receive an Amazon.com card for %s by email when you have
+completed all of the surveys during the remaining week.
+
+Mail to: Striving@mscs.mu.edu
+Contact Phone Number for the Striving to be Strong Study: +1-414-229-3169
