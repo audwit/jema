@@ -1,17 +1,21 @@
+The following participant has failed to complete the required Survey
+Measures for the %s month time period.
+
+Please send a text message to the participant and ask them to call
+you within 24 hours.
+
+If the study has not been contacted within 24 hours, send a personal
+email expressing your concern about their failure to complete study measures.
+
+If you do not receive a call within 24 hours, call the participant.
+If you do not speak directly with them leave a voice message.
+
+If they fail to contact the study (check email and study phone) follow
+the “Failure to Complete Measure Procedure” located in PantherFile:Procedure.
+
+
 Following Study_id failed to complete some or all of their %s month measures.
 
 Study Id
 --------
 %s
-
-
-Please review the participant's responses on the web site to determine if they
-have missed a question, missed a form, or failed to complete any measures.
-Contact the participant via email to personally remind them to complete the measure.
-If the participant fails to respond to your email message the person need to be
-contacted via telephone.  (not 3 attempts need to be made).  If the participant
-fails to complete the measures at 3, 6, 9 months they will need to be removed from
-the study. Follow "Removal from the study procedure" as outlined on Panther File.
-
-If the participant has failed to complete the 12 month measure they must do so at
-the End of Study appointment (please make sure a note is put in persons Study File.
