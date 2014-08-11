@@ -37,6 +37,7 @@ public class SurveyReminderScheduler {
   private String reminderSubjectTemplate;
   private String firstReminderTemplate;
   private String secondReminderTemplate;
+  private String thirdReminderTemplate;
 
   private String warningEmailAddress;
   private String warmingEmailSubject;
@@ -76,6 +77,10 @@ public class SurveyReminderScheduler {
 
   public void setSecondReminderTemplate(final String secondReminderTemplate) {
     this.secondReminderTemplate = secondReminderTemplate;
+  }
+
+  public void setThirdReminderTemplate(final String thirdReminderTemplate) {
+    this.thirdReminderTemplate = thirdReminderTemplate;
   }
 
   public void setUserRepository(final UserRepository userRepository) {
@@ -123,6 +128,7 @@ public class SurveyReminderScheduler {
   private void sendNotifications(final int surveyDay, final String surveyType) {
     sendFirstMeasurementReminder(surveyDay);
     sendSecondMeasurementReminder(surveyDay, surveyType);
+    sendThirdMeasurementReminder(surveyDay, surveyType);
     sendAdminNotification(surveyDay, surveyType);
   }
 
@@ -146,7 +152,7 @@ public class SurveyReminderScheduler {
           try {
             mailClient.send(user.getEmail(), subject, notificationMail);
           } catch (MessagingException e) {
-            logger.warn("Failed sending first notificationMail notification to " + user.getEmail() + " for user: " + user.getId(), e);
+            logger.warn("Failed sending first notification to " + user.getEmail() + " for user: " + user.getId(), e);
           }
         });
       }
@@ -170,14 +176,14 @@ public class SurveyReminderScheduler {
       final String subject = String.format(reminderSubjectTemplate, actualMonth);
       final String notificationMail = String.format(secondReminderTemplate, String.valueOf(actualMonth), String.valueOf(10));
 
-      logger.debug("Sending first warning to participants as start date: {} for {} month survey",
+      logger.debug("Sending second reminder to participants as start date: {} for {} month survey",
           startLocalDateTime.toString(), actualMonth);
       for (User user : participants) {
         executorService.submit(() -> {
           try {
             mailClient.send(user.getEmail(), subject, notificationMail);
           } catch (MessagingException e) {
-            logger.warn("Failed sending second notificationMail notification to " + user.getEmail() + " for user: " + user.getId(), e);
+            logger.warn("Failed sending second notification to " + user.getEmail() + " for user: " + user.getId(), e);
           }
         });
       }
@@ -185,6 +191,34 @@ public class SurveyReminderScheduler {
     else {
       logger.debug("No participants to send second reminder as start date: {} for {} month survey",
           startLocalDateTime, actualMonth);
+    }
+  }
+
+  private void sendThirdMeasurementReminder(final int surveyDay, final String surveyType) {
+    final LocalDate now = LocalDate.now();
+    final int totalDay = surveyDay + surveyInactiveDay - 1;
+    final LocalDate startLocalDate = now.minusDays(totalDay);
+    final Date startDate = DateTimeUtils.toDate(startLocalDate);
+    final List<User> users = userRepository.getRequiresNotificationUsers(surveyType, startDate);
+
+    final int month = surveyDay / 30;
+    final int actualMonth = month >= 11 ? month + 1 : month;
+    if(CollectionUtils.isNotEmpty(users)) {
+      final String amount = String.valueOf(getAmount(actualMonth));
+      final String subject = String.format(reminderSubjectTemplate, actualMonth);
+      final String body = String.format(thirdReminderTemplate, actualMonth, amount);
+
+      logger.debug("Sending third reminder to participants as start date: {} for {} month survey",
+          startLocalDate, actualMonth);
+      for (User user : users) {
+        executorService.submit(() -> {
+          try {
+            mailClient.send(user.getEmail(), subject, body);
+          } catch (MessagingException e) {
+            logger.warn("Failed sending third notification to " + user.getEmail() + " for user: " + user.getId(), e);
+          }
+        });
+      }
     }
   }
 
@@ -222,6 +256,21 @@ public class SurveyReminderScheduler {
     StringBuilder emailMessageBuilder = new StringBuilder();
     users.forEach((user) -> emailMessageBuilder.append(user.getUsername()).append("\n"));
     return emailMessageBuilder.toString();
+  }
+
+  private int getAmount(final int actualMonth) {
+    if(actualMonth <= 3) {
+      return 10;
+    }
+    else if(actualMonth <= 6) {
+      return 15;
+    }
+    else if(actualMonth <= 9) {
+      return 20;
+    }
+    else {
+      return 30;
+    }
   }
 
 }
