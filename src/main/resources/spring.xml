@@ -172,13 +172,13 @@
   <bean id="secondMeasurementTemplate" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/measurement/secondReminderTemplate.txt" type="java.io.InputStream" />
   </bean>
+  <bean id="surveyReminderWarningEmail" class="org.apache.commons.io.IOUtils" factory-method="toString">
+    <constructor-arg value="file:${user.home}/ema/config/measurement/adminReminderTemplate.txt" type="java.io.InputStream" />
+  </bean>
   <bean id="chooseGroupEmail" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/chooseGroup.txt" type="java.io.InputStream" />
   </bean>
   <bean id="studyEndEmail" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/studyEnd.txt" type="java.io.InputStream" />
-  </bean>
-  <bean id="surveyReminderWarningEmail" class="org.apache.commons.io.IOUtils" factory-method="toString">
-    <constructor-arg value="file:${user.home}/ema/config/surveyReminderWarning.txt" type="java.io.InputStream" />
   </bean>
 </beans>
