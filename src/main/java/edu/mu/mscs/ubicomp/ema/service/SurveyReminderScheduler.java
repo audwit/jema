@@ -126,6 +126,32 @@ public class SurveyReminderScheduler {
     sendAdminNotification(surveyDay, surveyType);
   }
 
+  private void sendFirstMeasurementReminder(final int surveyDay) {
+    List<String> roles = new ArrayList<>(GiftCardNotifier.REGULAR_GROUP);
+    roles.addAll(GiftCardNotifier.WAIT_LIST_GROUP);
+    final LocalDate today = LocalDate.now();
+    final LocalDate startDate = today.minusDays(surveyDay);
+
+    final List<User> participants = userRepository.findUsersBy(DateTimeUtils.toDate(startDate), roles);
+    logger.debug("Sending measurement email to total: {} user to remind with start date: {} for {} day survey",
+        participants.size(), startDate.toString(), surveyDay);
+
+    final int month = surveyDay / 30;
+    final int actualMonth = month >= 11 ? month + 1 : month;
+    final String subject = String.format(reminderSubjectTemplate, actualMonth);
+    final String notificationMail = String.format(firstReminderTemplate, String.valueOf(actualMonth), String.valueOf(10));
+
+    for (User user : participants) {
+      executorService.submit(() -> {
+        try {
+          mailClient.send(user.getEmail(), subject, notificationMail);
+        } catch (MessagingException e) {
+          logger.warn("Failed sending notificationMail notification to " + user.getEmail() + " for user: " + user.getId(), e);
+        }
+      });
+    }
+  }
+
   private void sendSecondMeasurementReminder(final int surveyDay, final String surveyType) {
     final LocalDate now = LocalDate.now();
     final int totalDay = surveyDay + firstWarningDay;
@@ -150,32 +176,6 @@ public class SurveyReminderScheduler {
           }
         });
       }
-    }
-  }
-
-  private void sendFirstMeasurementReminder(final int surveyDay) {
-    List<String> roles = new ArrayList<>(GiftCardNotifier.REGULAR_GROUP);
-    roles.addAll(GiftCardNotifier.WAIT_LIST_GROUP);
-    final LocalDate today = LocalDate.now();
-    final LocalDate startDate = today.minusDays(surveyDay);
-
-    final List<User> participants = userRepository.findUsersBy(DateTimeUtils.toDate(startDate), roles);
-    logger.debug("Sending measurement email to total: {} user to remind with start date: {} for {} day survey",
-        participants.size(), startDate.toString(), surveyDay);
-
-    final int month = surveyDay / 30;
-    final int actualMonth = month >= 11 ? month + 1 : month;
-    final String subject = String.format(reminderSubjectTemplate, actualMonth);
-    final String notificationMail = String.format(firstReminderTemplate, String.valueOf(actualMonth), String.valueOf(10));
-
-    for (User user : participants) {
-      executorService.submit(() -> {
-        try {
-          mailClient.send(user.getEmail(), subject, notificationMail);
-        } catch (MessagingException e) {
-          logger.warn("Failed sending notificationMail notification to " + user.getEmail() + " for user: " + user.getId(), e);
-        }
-      });
     }
   }
 
