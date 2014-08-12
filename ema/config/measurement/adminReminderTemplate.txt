@@ -1,6 +1,10 @@
 The following participant has failed to complete the required Survey
 Measures for the %s month time period.
 
+Study Id
+--------
+%s
+
 Please send a text message to the participant and ask them to call
 you within 24 hours.
 
@@ -12,10 +16,3 @@ If you do not speak directly with them leave a voice message.
 
 If they fail to contact the study (check email and study phone) follow
 the “Failure to Complete Measure Procedure” located in PantherFile:Procedure.
-
-
-Following Study_id failed to complete some or all of their %s month measures.
-
-Study Id
---------
-%s
