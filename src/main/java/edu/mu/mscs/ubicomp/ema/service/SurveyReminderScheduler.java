@@ -33,6 +33,7 @@ public class SurveyReminderScheduler {
 
   private int surveyInactiveDay;
   private int firstWarningDay;
+  private int finalWarningDay;
 
   private String reminderSubjectTemplate;
   private String firstReminderTemplate;
@@ -65,6 +66,10 @@ public class SurveyReminderScheduler {
 
   public void setFirstWarningDay(final int firstWarningDay) {
     this.firstWarningDay = firstWarningDay;
+  }
+
+  public void setFinalWarningDay(final int finalWarningDay) {
+    this.finalWarningDay = finalWarningDay;
   }
 
   public void setReminderSubjectTemplate(final String reminderSubjectTemplate) {
@@ -198,7 +203,7 @@ public class SurveyReminderScheduler {
 
   private void sendThirdMeasurementReminder(final int surveyDay, final String surveyType) {
     final LocalDate now = LocalDate.now();
-    final int totalDay = surveyDay + surveyInactiveDay - 1;
+    final int totalDay = surveyDay + finalWarningDay;
     final LocalDate startLocalDate = now.minusDays(totalDay);
     final Date startDate = DateTimeUtils.toDate(startLocalDate);
     final List<User> users = userRepository.getRequiresNotificationUsers(surveyType, startDate);

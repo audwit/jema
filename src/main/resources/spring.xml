@@ -90,6 +90,7 @@
     <property name="thirdReminderTemplate" ref="thirdMeasurementEmail"/>
     <property name="surveyInactiveDay" value="${surveyReminderSchedulerService.surveyInactiveDay}"/>
     <property name="firstWarningDay" value="${surveyReminderSchedulerService.firstWarningDay}"/>
+    <property name="finalWarningDay" value="${surveyReminderSchedulerService.finalWarningDay}"/>
     <property name="firstSurveyDay" value="${surveyReminderSchedulerService.firstSurveyDay}"/>
     <property name="secondSurveyDay" value="${surveyReminderSchedulerService.secondSurveyDay}"/>
     <property name="thirdSurveyDay" value="${surveyReminderSchedulerService.thirdSurveyDay}"/>
