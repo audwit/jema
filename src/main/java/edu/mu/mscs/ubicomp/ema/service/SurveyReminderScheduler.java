@@ -142,8 +142,9 @@ public class SurveyReminderScheduler {
     final int month = surveyDay / 30;
     final int actualMonth = month >= 11 ? month + 1 : month;
     if(CollectionUtils.isNotEmpty(participants)) {
+      final String amount = getAmount(actualMonth);
       final String subject = String.format(reminderSubjectTemplate, actualMonth);
-      final String notificationMail = String.format(firstReminderTemplate, String.valueOf(actualMonth), String.valueOf(10));
+      final String notificationMail = String.format(firstReminderTemplate, actualMonth, amount);
 
       logger.debug("Sending measurement email to total: {} user to remind with start date: {} for {} month survey",
           participants.size(), startDate, actualMonth);
@@ -173,8 +174,9 @@ public class SurveyReminderScheduler {
     final int month = surveyDay / 30;
     final int actualMonth = month >= 11 ? month + 1 : month;
     if(CollectionUtils.isNotEmpty(participants)) {
+      final String amount = getAmount(actualMonth);
       final String subject = String.format(reminderSubjectTemplate, actualMonth);
-      final String notificationMail = String.format(secondReminderTemplate, String.valueOf(actualMonth), String.valueOf(10));
+      final String notificationMail = String.format(secondReminderTemplate, actualMonth, amount);
 
       logger.debug("Sending second reminder to participants as start date: {} for {} month survey",
           startLocalDateTime.toString(), actualMonth);
@@ -204,7 +206,7 @@ public class SurveyReminderScheduler {
     final int month = surveyDay / 30;
     final int actualMonth = month >= 11 ? month + 1 : month;
     if(CollectionUtils.isNotEmpty(users)) {
-      final String amount = String.valueOf(getAmount(actualMonth));
+      final String amount = getAmount(actualMonth);
       final String subject = String.format(reminderSubjectTemplate, actualMonth);
       final String body = String.format(thirdReminderTemplate, actualMonth, amount);
 
@@ -233,7 +235,7 @@ public class SurveyReminderScheduler {
     final int actualMonth = month >= 11 ? month + 1 : month;
     if(CollectionUtils.isNotEmpty(users)) {
       final String studyIds = prepareStudyIds(users);
-      final String body = String.format(warningEmailTemplate, actualMonth, studyIds);
+      final String body = String.format(warningEmailTemplate, actualMonth, actualMonth, studyIds);
 
       logger.debug("Sending unopened measurement notification to admin as start date: {} for {} month survey",
           startLocalDateTime.toString(), actualMonth);
@@ -258,18 +260,18 @@ public class SurveyReminderScheduler {
     return emailMessageBuilder.toString();
   }
 
-  private int getAmount(final int actualMonth) {
+  private String getAmount(final int actualMonth) {
     if(actualMonth <= 3) {
-      return 10;
+      return "$10";
     }
     else if(actualMonth <= 6) {
-      return 15;
+      return "$15";
     }
     else if(actualMonth <= 9) {
-      return 20;
+      return "$20";
     }
     else {
-      return 30;
+      return "$30";
     }
   }
 
