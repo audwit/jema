@@ -227,9 +227,8 @@ public class SurveyReminderScheduler {
   private void sendAdminNotification(final int surveyDay, final String surveyType) {
     final LocalDate now = LocalDate.now();
     final int totalDay = surveyDay + surveyInactiveDay;
-    final LocalDate startLocalDateTime = now.minusDays(totalDay);
-    final Date startDate = DateTimeUtils.toDate(startLocalDateTime);
-    final List<User> users = userRepository.getRequiresNotificationUsers(surveyType, startDate);
+    final LocalDate startDate = now.minusDays(totalDay);
+    final List<User> users = userRepository.getRequiresNotificationUsers(surveyType, DateTimeUtils.toDate(startDate));
 
     final int month = surveyDay / 30;
     final int actualMonth = month >= 11 ? month + 1 : month;
@@ -238,7 +237,7 @@ public class SurveyReminderScheduler {
       final String body = String.format(warningEmailTemplate, actualMonth, actualMonth, studyIds);
 
       logger.debug("Sending unopened measurement notification to admin as start date: {} for {} month survey",
-          startLocalDateTime.toString(), actualMonth);
+          startDate.toString(), actualMonth);
 
       executorService.submit(() -> {
         try {
@@ -250,7 +249,7 @@ public class SurveyReminderScheduler {
     }
     else {
       logger.debug("No participants to send enlist for warning as start date: {} for {} month survey",
-          startLocalDateTime, actualMonth);
+          startDate, actualMonth);
     }
   }
 
