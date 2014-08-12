@@ -44,7 +44,7 @@
     <property name="thirdNotificationDifference" value="${reminderServiceConfig.thirdNotificationDifference}"/>
     <property name="fourthNotificationDifference" value="${reminderServiceConfig.fourthNotificationDifference}"/>
     <property name="inactiveWarningDate" value="${reminderServiceConfig.inactiveWarningDate}"/>
-    <property name="warningEmailAddress" value="${reminderServiceConfig.warningEmailAddress}"/>
+    <property name="warningEmailAddress" value="${warningEmailAddress}"/>
     <property name="warningEmailSubject" value="${reminderServiceConfig.warningEmailSubject}"/>
     <property name="inactiveEmailTemplate" ref="warningEmailTemplate"/>
     <property name="chooseGroupDifference" value="${reminderServiceConfig.chooseGroupDifference}"/>
@@ -81,7 +81,7 @@
   </bean>
 
   <bean class="edu.mu.mscs.ubicomp.ema.service.SurveyReminderScheduler" id="surveyReminderScheduler">
-    <property name="warningEmailAddress" value="${surveyReminderSchedulerService.warningEmailAddress}"/>
+    <property name="warningEmailAddress" value="${warningEmailAddress}"/>
     <property name="warmingEmailSubject" value="${surveyReminderSchedulerService.warningEmailSubject}"/>
     <property name="warningEmailTemplate" ref="surveyReminderWarningEmail"/>
     <property name="reminderSubjectTemplate" value="${surveyReminderSchedulerService.reminderSubjectTemplate}"/>
