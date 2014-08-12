@@ -63,7 +63,7 @@ public class MailClient {
    * @throws javax.mail.MessagingException if the connection is dead or not in the connected state or if the message is not a MimeMessage
    */
   public void send(String recipientEmail, String title, String message) throws MessagingException {
-    logger.debug("Sending email to: {}", recipientEmail);
+    logger.debug("Sending email to: {} Subject: {}", recipientEmail, title);
     Session session = Session.getInstance(properties, null);
     final MimeMessage msg = new MimeMessage(session);
 
