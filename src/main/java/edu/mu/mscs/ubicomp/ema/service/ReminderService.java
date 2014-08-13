@@ -220,12 +220,14 @@ public class ReminderService {
   private void sendThirdReminder(final LocalDate today) {
     final LocalDate lastLoginDate = today.minusDays(thirdNotificationDifference);
     final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
+    logger.debug("Sending third inactivity reminder to: {}", inactiveUsers.size());
     inactiveUsers.forEach((user) -> sendEmailSafely(subject1, email1, user, "third"));
   }
 
   private void sendFourthReminder(final LocalDate today) {
     final LocalDate lastLoginDate = today.minusDays(fourthNotificationDifference);
     final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
+    logger.debug("Sending fourth inactivity reminder to: {}", inactiveUsers.size());
     inactiveUsers.forEach((user) -> sendEmailSafely(subject2, email2, user, "fourth"));
   }
 
