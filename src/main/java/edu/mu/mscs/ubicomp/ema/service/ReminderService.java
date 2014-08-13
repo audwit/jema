@@ -207,8 +207,7 @@ public class ReminderService {
     final String messageFormat = String.format("%s\n%s", message.getContent(), textMessage);
     for (User inactiveUser : inactiveUsers) {
       final String token = UUID.randomUUID().toString();
-      updateUserToken(inactiveUser, token);
-      String url = createResetUrl(inactiveUser);
+      String url = updateUserToken(inactiveUser, token);
       final String textMessageBody = String.format(messageFormat, url);
       final String phoneNumber = userRepository.getPhoneNumber(inactiveUser);
       executorService.execute(() -> {
@@ -309,10 +308,9 @@ public class ReminderService {
   }
 
   private void sendEmailSafely(final String subject, final String email, final User user) {
+    final String token = UUID.randomUUID().toString();
+    String url = updateUserToken(user, token);
     executorService.submit(() -> {
-      final String token = UUID.randomUUID().toString();
-      updateUserToken(user, token);
-      String url = createResetUrl(user);
       try {
         mailClient.send(user.getEmail(), subject, String.format(email, userRepository.getName(user), url));
       } catch (MessagingException e) {
@@ -321,13 +319,10 @@ public class ReminderService {
     });
   }
 
-  private String createResetUrl(final User user) {
-    return String.format("%s/profile/resetlogin/%d/%s", baseUrl, user.getId(), user.getResetToken());
-  }
-
-  private void updateUserToken(final User user, final String token) {
+  private String updateUserToken(final User user, final String token) {
     user.setResetToken(token);
     userRepository.update(user);
+    return String.format("%s/profile/resetlogin/%d/%s", baseUrl, user.getId(), user.getResetToken());
   }
 
   private List<User> getLastLoggedInOn(final LocalDate lastLoginDate) {
