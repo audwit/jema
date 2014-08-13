@@ -178,15 +178,29 @@ public class ReminderService {
   private void sendFirstReminder(final LocalDate today) {
     final LocalDate lastLoginDate = today.minusDays(firstNotificationDifference);
     final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
-    final Message message = retrieveRandomMessage();
-    sendTextMessage(inactiveUsers, message, message1);
+
+    if(CollectionUtils.isNotEmpty(inactiveUsers)) {
+      final Message message = retrieveRandomMessage();
+      logger.debug("Sending first inactivity reminder to {} participants", inactiveUsers.size());
+      sendTextMessage(inactiveUsers, message, message2);
+    }
+    else {
+      logger.debug("No user to send first inactivity reminders");
+    }
   }
 
   private void sendSecondReminder(final LocalDate today) {
     final LocalDate lastLoginDate = today.minusDays(secondNotificationDifference);
     final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
-    final Message message = retrieveRandomMessage();
-    sendTextMessage(inactiveUsers, message, message2);
+
+    if(CollectionUtils.isNotEmpty(inactiveUsers)) {
+      final Message message = retrieveRandomMessage();
+      logger.debug("Sending second inactivity reminder to {} participants", inactiveUsers.size());
+      sendTextMessage(inactiveUsers, message, message2);
+    }
+    else {
+      logger.debug("No user to send second inactivity reminders");
+    }
   }
 
   private void sendTextMessage(final List<User> inactiveUsers, final Message message, final String textMessage) {
@@ -196,10 +210,11 @@ public class ReminderService {
       updateUserToken(inactiveUser, token);
       String url = createResetUrl(inactiveUser);
       final String textMessageBody = String.format(messageFormat, url);
-      textMessageClient.sendTextMessage(
-          textMessageBody,
-          Arrays.asList(userRepository.getPhoneNumber(inactiveUser))
-      );
+      final String phoneNumber = userRepository.getPhoneNumber(inactiveUser);
+      executorService.execute(() -> {
+        logger.debug("Sending inactivity reminder to participant {} with phone: {}", inactiveUser.getUsername(), phoneNumber);
+        textMessageClient.sendTextMessage(textMessageBody, Arrays.asList(phoneNumber));
+      });
     }
   }
 
