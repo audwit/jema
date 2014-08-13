@@ -305,7 +305,7 @@ public class ReminderService {
 
   private String prepareStudyIds(final List<User> users) {
     StringBuilder emailMessageBuilder = new StringBuilder();
-    users.forEach((user) -> emailMessageBuilder.append(user.getId()).append("\n"));
+    users.forEach((user) -> emailMessageBuilder.append(user.getUsername()).append("\n"));
     return emailMessageBuilder.toString();
   }
 
