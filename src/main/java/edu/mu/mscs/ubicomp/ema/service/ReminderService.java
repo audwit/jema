@@ -182,7 +182,7 @@ public class ReminderService {
     if(CollectionUtils.isNotEmpty(inactiveUsers)) {
       final Message message = retrieveRandomMessage();
       logger.debug("Sending first inactivity reminder to {} participants", inactiveUsers.size());
-      sendTextMessage(inactiveUsers, message, message2);
+      sendTextMessage(inactiveUsers, message, message1);
     }
     else {
       logger.debug("No user to send first inactivity reminders");
