@@ -220,13 +220,13 @@ public class ReminderService {
   private void sendThirdReminder(final LocalDate today) {
     final LocalDate lastLoginDate = today.minusDays(thirdNotificationDifference);
     final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
-    inactiveUsers.forEach((user) -> sendEmailSafely(subject1, email1, user));
+    inactiveUsers.forEach((user) -> sendEmailSafely(subject1, email1, user, "third"));
   }
 
   private void sendFourthReminder(final LocalDate today) {
     final LocalDate lastLoginDate = today.minusDays(fourthNotificationDifference);
     final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
-    inactiveUsers.forEach((user) -> sendEmailSafely(subject2, email2, user));
+    inactiveUsers.forEach((user) -> sendEmailSafely(subject2, email2, user, "fourth"));
   }
 
   private void sendInactiveUsersList(final LocalDate today) {
@@ -307,11 +307,12 @@ public class ReminderService {
     return emailMessageBuilder.toString();
   }
 
-  private void sendEmailSafely(final String subject, final String email, final User user) {
+  private void sendEmailSafely(final String subject, final String email, final User user, final String warningName) {
     final String token = UUID.randomUUID().toString();
     String url = updateUserToken(user, token);
     executorService.submit(() -> {
       try {
+        logger.debug("Sending {} reminder to participant with study_id: {} email: {}", warningName, user.getUsername(), user.getEmail());
         mailClient.send(user.getEmail(), subject, String.format(email, userRepository.getName(user), url));
       } catch (MessagingException e) {
         logger.warn("Failed sending email notification to " + user.getEmail() + " for user: " + user.getId(), e);
