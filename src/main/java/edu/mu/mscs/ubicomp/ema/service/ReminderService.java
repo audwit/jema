@@ -304,12 +304,10 @@ public class ReminderService {
   }
 
   private void sendEmailSafely(final String subject, final String email, final User user, final String warningName) {
-    final String token = UUID.randomUUID().toString();
-    String url = updateUserToken(user, token);
     executorService.submit(() -> {
       try {
         logger.debug("Sending {} reminder to participant with study_id: {} email: {}", warningName, user.getUsername(), user.getEmail());
-        mailClient.send(user.getEmail(), subject, String.format(email, userRepository.getName(user), url));
+        mailClient.send(user.getEmail(), subject, String.format(email, userRepository.getName(user)));
       } catch (MessagingException e) {
         logger.warn("Failed sending email notification to " + user.getEmail() + " for user: " + user.getId(), e);
       }
