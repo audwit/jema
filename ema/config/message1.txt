@@ -1,4 +1,2 @@
-We have not heard from you this week
-How things are going?
-Please respond to this message within 24 hours
-%s
+You have not been an “Active Participant” in the Striving Study. Click for more information.
+http://strivingtest.cloudapp.net/site/noActivity_pushMessages
