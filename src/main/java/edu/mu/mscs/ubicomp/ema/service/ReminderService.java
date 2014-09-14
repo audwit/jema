@@ -180,9 +180,8 @@ public class ReminderService {
     final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
 
     if(CollectionUtils.isNotEmpty(inactiveUsers)) {
-      final Message message = retrieveRandomMessage();
       logger.debug("Sending first inactivity reminder to {} participants", inactiveUsers.size());
-      sendTextMessage(inactiveUsers, message, message1);
+      sendTextMessage(inactiveUsers, message1);
     }
     else {
       logger.debug("No user to send first inactivity reminders");
@@ -194,25 +193,20 @@ public class ReminderService {
     final List<User> inactiveUsers = getLastLoggedInOn(lastLoginDate);
 
     if(CollectionUtils.isNotEmpty(inactiveUsers)) {
-      final Message message = retrieveRandomMessage();
       logger.debug("Sending second inactivity reminder to {} participants", inactiveUsers.size());
-      sendTextMessage(inactiveUsers, message, message2);
+      sendTextMessage(inactiveUsers, message2);
     }
     else {
       logger.debug("No user to send second inactivity reminders");
     }
   }
 
-  private void sendTextMessage(final List<User> inactiveUsers, final Message message, final String textMessage) {
-    final String messageFormat = String.format("%s\n%s", message.getContent(), textMessage);
+  private void sendTextMessage(final List<User> inactiveUsers, final String textMessage) {
     for (User inactiveUser : inactiveUsers) {
-      final String token = UUID.randomUUID().toString();
-      String url = updateUserToken(inactiveUser, token);
-      final String textMessageBody = String.format(messageFormat, url);
       final String phoneNumber = userRepository.getPhoneNumber(inactiveUser);
       executorService.execute(() -> {
         logger.debug("Sending inactivity reminder to participant {} with phone: {}", inactiveUser.getUsername(), phoneNumber);
-        textMessageClient.sendTextMessage(textMessageBody, Arrays.asList(phoneNumber));
+        textMessageClient.sendTextMessage(textMessage, Arrays.asList(phoneNumber));
       });
     }
   }
