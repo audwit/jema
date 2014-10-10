@@ -102,9 +102,10 @@ public class NotificationSenderService {
         .map(notification -> userRepository.getPhoneNumber(notification.getSchedule().getUser()))
         .collect(Collectors.toList());
 
-    executorService.submit(
-        () -> client.sendTextMessage(messages.get(serial), phoneNumbers, sequenceNo)
-    );
+    executorService.submit(() -> {
+        client.sendTextMessage(messages.get(serial), phoneNumbers, sequenceNo);
+        notificationRepository.markAsSent(notifications);
+    });
   }
 
 }

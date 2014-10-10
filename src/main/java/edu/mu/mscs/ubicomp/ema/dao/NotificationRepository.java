@@ -33,4 +33,13 @@ public class NotificationRepository {
     logger.debug("Find notifications with scheduledTime: {}", scheduledTime);
     return query.getResultList();
   }
+
+  public void markAsSent(final List<Notification> notifications) {
+    notifications.forEach((notification) -> {
+      notification.setSent(true);
+      entityManager.merge(notification);
+    });
+
+    entityManager.flush();
+  }
 }
