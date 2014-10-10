@@ -321,9 +321,11 @@ public class ReminderService {
   }
 
   private List<User> getLastLoggedInOn(final LocalDate lastLoginDate) {
+    List<String> roles = new ArrayList<>(GiftCardNotifier.REGULAR_GROUP);
+    roles.addAll(GiftCardNotifier.WAIT_LIST_GROUP);
     final Date lastLogin = DateTimeUtils.toDate(lastLoginDate);
 
-    final List<User> inactiveUsers = userRepository.getInactiveUsers(lastLogin);
+    final List<User> inactiveUsers = userRepository.getInactiveUsers(lastLogin, roles);
     logger.debug("Found total inactive users: {}", inactiveUsers.size());
     return inactiveUsers;
   }

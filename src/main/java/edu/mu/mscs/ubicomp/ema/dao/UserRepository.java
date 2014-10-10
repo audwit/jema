@@ -13,15 +13,16 @@ import java.util.List;
 
 @Repository
 public class UserRepository {
-  private static final String QL_STRING = "FROM User u WHERE DATE(u.lastLogin) = :lastLoginDate";
+  private static final String FIND_USER = "FROM User u WHERE DATE(u.lastLogin) = :lastLoginDate AND u.role in (:roles)";
   private Logger logger = LoggerFactory.getLogger(getClass());
 
   @PersistenceContext
   private EntityManager entityManager;
 
-  public List<User> getInactiveUsers(final Date lastLoginDate) {
-    final TypedQuery<User> query = entityManager.createQuery(QL_STRING, User.class)
-        .setParameter("lastLoginDate", lastLoginDate, TemporalType.DATE);
+  public List<User> getInactiveUsers(final Date lastLoginDate, final List<String> roles) {
+    final TypedQuery<User> query = entityManager.createQuery(FIND_USER, User.class)
+        .setParameter("lastLoginDate", lastLoginDate, TemporalType.DATE)
+        .setParameter("roles", roles);
     return query.getResultList();
   }
 
