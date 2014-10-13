@@ -9,6 +9,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -31,6 +35,7 @@ public class NotificationSenderService {
   private UserRepository userRepository;
   private int totalThread;
   private ExecutorService executorService;
+  private JpaTransactionManager transactionManager;
 
   public void setTotalThread(final int totalThread) {
     this.totalThread = totalThread;
@@ -50,6 +55,10 @@ public class NotificationSenderService {
 
   public void setMessages(final List<String> messages) {
     this.messages = messages;
+  }
+
+  public void setTransactionManager(final JpaTransactionManager transactionManager) {
+    this.transactionManager = transactionManager;
   }
 
   @PostConstruct
@@ -104,8 +113,29 @@ public class NotificationSenderService {
 
     executorService.submit(() -> {
         client.sendTextMessage(messages.get(serial), phoneNumbers, sequenceNo);
-        notificationRepository.markAsSent(notifications);
+        updateNotifications(notifications);
     });
+  }
+
+  @Transactional(Transactional.TxType.REQUIRED)
+  private void updateNotifications(final List<Notification> notifications) {
+    DefaultTransactionDefinition def = new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED);
+    def.setName(getClass().getName() + ".updateNotifications");
+    TransactionStatus status = transactionManager.getTransaction(def);
+    try {
+      notificationRepository.markAsSent(notifications);
+    }
+    catch (Exception ex) {
+      transactionManager.rollback(status);
+      logger.warn("Failed to commit.", ex);
+    } finally {
+      try {
+        transactionManager.commit(status);
+      } catch (Exception ex) {
+        transactionManager.rollback(status);
+        logger.warn("Failed to commit.", ex);
+      }
+    }
   }
 
 }

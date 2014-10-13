@@ -78,6 +78,7 @@
         <ref bean="notification3"/>
       </util:list>
     </property>
+    <property name="transactionManager" ref="transactionManager"/>
   </bean>
 
   <bean class="edu.mu.mscs.ubicomp.ema.service.SurveyReminderScheduler" id="surveyReminderScheduler">
