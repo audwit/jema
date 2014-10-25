@@ -144,7 +144,7 @@
   <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
   <tx:annotation-driven/>
 
-  <util:properties id="mailConfigurations" location="file:${user.home}/ema/config/mail.properties"/>
+  <util:properties id="mailConfigurations" location="classpath:mail.properties"/>
   <bean id="notification1" class="org.apache.commons.io.IOUtils" factory-method="toString">
     <constructor-arg value="file:${user.home}/ema/config/notification1.txt" type="java.io.InputStream" />
   </bean>
