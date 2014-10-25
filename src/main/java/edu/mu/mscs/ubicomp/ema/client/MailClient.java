@@ -8,14 +8,17 @@ import javax.annotation.PostConstruct;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.security.Security;
 import java.util.Date;
 import java.util.Properties;
 
 public class MailClient {
   private Logger logger = LoggerFactory.getLogger(getClass());
+
+  private Session session;
+  private InternetAddress fromAddress;
 
   private String host;
   private String username;
@@ -44,13 +47,12 @@ public class MailClient {
   }
 
   @PostConstruct
-  private void init() {
-    Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-
-    properties.setProperty("mail.smtps.auth", "true");
-    properties.put("mail.smtps.quitwait", "false");
-    properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-    properties.setProperty("mail.smtp.socketFactory.fallback", "false");
+  private void init() throws AddressException {
+    properties.put("mail.smtp.host", host);
+    properties.put("mail.smtp.user", username);
+    properties.put("mail.smtp.password", password);
+    session = Session.getInstance(properties, null);
+    fromAddress = new InternetAddress(from);
   }
 
   /**
@@ -64,17 +66,16 @@ public class MailClient {
    */
   public void send(String recipientEmail, String title, String message) throws MessagingException {
     logger.debug("Sending email to: {} Subject: {}", recipientEmail, title);
-    Session session = Session.getInstance(properties, null);
-    final MimeMessage msg = new MimeMessage(session);
 
-    msg.setFrom(new InternetAddress(from));
+    final MimeMessage msg = new MimeMessage(session);
+    msg.setFrom(fromAddress);
     msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail, false));
 
     msg.setSubject(title);
     msg.setText(message, "utf-8");
     msg.setSentDate(new Date());
 
-    SMTPTransport smtpTransport = (SMTPTransport)session.getTransport("smtps");
+    SMTPTransport smtpTransport = (SMTPTransport)session.getTransport("smtp");
 
     smtpTransport.connect(host, username, password);
     smtpTransport.sendMessage(msg, msg.getAllRecipients());
