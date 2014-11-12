@@ -27,6 +27,7 @@
   <bean id="mailClient" class="edu.mu.mscs.ubicomp.ema.client.MailClient">
     <property name="properties" ref="mailConfigurations"/>
     <property name="host" value="${mailClientConfig.host}"/>
+    <property name="port" value="${mailClientConfig.port}"/>
     <property name="username" value="${mailClientConfig.username}"/>
     <property name="password" value="${mailClientConfig.password}"/>
     <property name="from" value="${mailClientConfig.from}"/>
