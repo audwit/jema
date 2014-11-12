@@ -25,6 +25,7 @@ public class MailClient {
   private String password;
   private String from;
   private Properties properties;
+  private String port;
 
   public void setHost(final String host) {
     this.host = host;
@@ -46,11 +47,16 @@ public class MailClient {
     this.properties = properties;
   }
 
+  public void setPort(final String port) {
+    this.port = port;
+  }
+
   @PostConstruct
   private void init() throws AddressException {
     properties.put("mail.smtp.host", host);
     properties.put("mail.smtp.user", username);
     properties.put("mail.smtp.password", password);
+    properties.put("mail.smtp.port", port);
     session = Session.getInstance(properties, null);
     fromAddress = new InternetAddress(from);
   }
