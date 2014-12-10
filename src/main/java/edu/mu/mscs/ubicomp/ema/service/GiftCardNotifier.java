@@ -112,6 +112,7 @@ public class GiftCardNotifier {
     if(CollectionUtils.isNotEmpty(eligibleUsers)) {
       logger.debug("Sending amazon gift card of amount: {}, studyStartDate: {}, startDate: {}, endDate: {}",
           amount, studyStartDate, startDate, endDate);
+      logger.debug("Sending gift card to: {}", users);
       sendRequest(eligibleUsers, amount);
     }
     else {
@@ -155,6 +156,7 @@ public class GiftCardNotifier {
 
   private void sendInternal(final String requestBody) throws IOException {
     try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+      logger.debug("Sending gift card request with: {}", requestBody);
       HttpPost httpPost = createRequest(requestBody);
       try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
         final int statusCode = response.getStatusLine().getStatusCode();
