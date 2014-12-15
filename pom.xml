@@ -11,10 +11,11 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.spring>4.0.2.RELEASE</version.spring>
+    <version.spring>4.1.3.RELEASE</version.spring>
     <version.java>1.8</version.java>
     <version.slf4j>1.7.5</version.slf4j>
     <version.log4j>1.2.17</version.log4j>
+    <version.hibernate>4.3.7.Final</version.hibernate>
   </properties>
 
   <dependencyManagement>
@@ -129,9 +130,9 @@
       <version>4.3.0.Final</version>
     </dependency>
     <dependency>
-      <groupId>javassist</groupId>
+      <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
-      <version>3.12.1.GA</version>
+      <version>3.18.2-GA</version>
     </dependency>
 
     <!-- logging -->
