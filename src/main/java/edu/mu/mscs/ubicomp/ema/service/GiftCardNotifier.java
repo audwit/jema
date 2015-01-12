@@ -74,10 +74,10 @@ public class GiftCardNotifier {
   }
 
   public void sendGiftCard() {
-    sendGiftCard(3, 3, 196, 25, REGULAR_GROUP);
-    sendGiftCard(13, 10, 84, 15, REGULAR_GROUP);
-    sendGiftCard(10, 10, 84, 15, WAIT_LIST_GROUP);
-    sendGiftCard(13, 3, 196, 25, WAIT_LIST_GROUP);
+//    sendGiftCard(3, 3, 196, 25, REGULAR_GROUP);
+//    sendGiftCard(13, 10, 84, 15, REGULAR_GROUP);
+//    sendGiftCard(10, 10, 84, 15, WAIT_LIST_GROUP);
+//    sendGiftCard(13, 3, 196, 25, WAIT_LIST_GROUP);
   }
 
   private void sendGiftCard(final int completedRound, final int giftCardRoundLength, final int totalSchedule, final int amount, final List<String> roles) {
