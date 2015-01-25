@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -124,28 +123,27 @@ public class SurveyReminderScheduler {
   public void sendReminder() {
     logger.debug("Reminder service started");
 
-    sendNotifications(firstSurveyDay, "threemonths");
-    sendNotifications(secondSurveyDay, "sixmonths");
-    sendNotifications(thirdSurveyDay, "ninemonths");
-    sendNotifications(fourthSurveyDay, "twelvemonths");
+    sendNotifications(firstSurveyDay);
+    sendNotifications(secondSurveyDay);
+    sendNotifications(thirdSurveyDay);
+    sendNotifications(fourthSurveyDay);
   }
 
-  private void sendNotifications(final int surveyDay, final String surveyType) {
+  private void sendNotifications(final int surveyDay) {
     sendFirstMeasurementReminder(surveyDay);
-    sendSecondMeasurementReminder(surveyDay, surveyType);
-    sendThirdMeasurementReminder(surveyDay, surveyType);
-    sendAdminNotification(surveyDay, surveyType);
+    sendSecondMeasurementReminder(surveyDay);
+    sendThirdMeasurementReminder(surveyDay);
+    sendAdminNotification(surveyDay);
   }
 
   private void sendFirstMeasurementReminder(final int surveyDay) {
-    List<String> roles = new ArrayList<>(GiftCardNotifier.REGULAR_GROUP);
-    roles.addAll(GiftCardNotifier.WAIT_LIST_GROUP);
-    final LocalDate today = LocalDate.now();
-    final LocalDate startDate = today.minusDays(surveyDay);
-    final List<User> participants = userRepository.findUsersBy(DateTimeUtils.toDate(startDate), roles);
-
     final int month = surveyDay / 30;
     final int actualMonth = month >= 11 ? month + 1 : month;
+    final LocalDate today = LocalDate.now();
+    final LocalDate startLocalDateTime = today.minusDays(surveyDay);
+    final Date startDate = DateTimeUtils.toDate(startLocalDateTime);
+    final List<User> participants = userRepository.getRequiresNotificationUsers(startDate, String.valueOf(actualMonth));
+
     if(CollectionUtils.isNotEmpty(participants)) {
       final String amount = getAmount(actualMonth);
       final String subject = String.format(reminderSubjectTemplate, actualMonth);
@@ -169,15 +167,15 @@ public class SurveyReminderScheduler {
     }
   }
 
-  private void sendSecondMeasurementReminder(final int surveyDay, final String surveyType) {
+  private void sendSecondMeasurementReminder(final int surveyDay) {
+    final int month = surveyDay / 30;
+    final int actualMonth = month >= 11 ? month + 1 : month;
     final LocalDate now = LocalDate.now();
     final int totalDay = surveyDay + firstWarningDay;
     final LocalDate startLocalDateTime = now.minusDays(totalDay);
     final Date startDate = DateTimeUtils.toDate(startLocalDateTime);
-    final List<User> participants = userRepository.getRequiresNotificationUsers(surveyType, startDate);
+    final List<User> participants = userRepository.getRequiresNotificationUsers(startDate, String.valueOf(actualMonth));
 
-    final int month = surveyDay / 30;
-    final int actualMonth = month >= 11 ? month + 1 : month;
     if(CollectionUtils.isNotEmpty(participants)) {
       final String amount = getAmount(actualMonth);
       final String subject = String.format(reminderSubjectTemplate, actualMonth);
@@ -201,15 +199,15 @@ public class SurveyReminderScheduler {
     }
   }
 
-  private void sendThirdMeasurementReminder(final int surveyDay, final String surveyType) {
+  private void sendThirdMeasurementReminder(final int surveyDay) {
+    final int month = surveyDay / 30;
+    final int actualMonth = month >= 11 ? month + 1 : month;
     final LocalDate now = LocalDate.now();
     final int totalDay = surveyDay + finalWarningDay;
     final LocalDate startLocalDate = now.minusDays(totalDay);
     final Date startDate = DateTimeUtils.toDate(startLocalDate);
-    final List<User> users = userRepository.getRequiresNotificationUsers(surveyType, startDate);
+    final List<User> users = userRepository.getRequiresNotificationUsers(startDate, String.valueOf(actualMonth));
 
-    final int month = surveyDay / 30;
-    final int actualMonth = month >= 11 ? month + 1 : month;
     if(CollectionUtils.isNotEmpty(users)) {
       final String amount = getAmount(actualMonth);
       final String subject = String.format(reminderSubjectTemplate, actualMonth);
@@ -229,14 +227,15 @@ public class SurveyReminderScheduler {
     }
   }
 
-  private void sendAdminNotification(final int surveyDay, final String surveyType) {
-    final LocalDate now = LocalDate.now();
-    final int totalDay = surveyDay + surveyInactiveDay;
-    final LocalDate startDate = now.minusDays(totalDay);
-    final List<User> users = userRepository.getRequiresNotificationUsers(surveyType, DateTimeUtils.toDate(startDate));
-
+  private void sendAdminNotification(final int surveyDay) {
     final int month = surveyDay / 30;
     final int actualMonth = month >= 11 ? month + 1 : month;
+    final LocalDate now = LocalDate.now();
+    final int totalDay = surveyDay + surveyInactiveDay;
+    final LocalDate startLocalDate = now.minusDays(totalDay);
+    final Date startDate = DateTimeUtils.toDate(startLocalDate);
+    final List<User> users = userRepository.getRequiresNotificationUsers(startDate, String.valueOf(actualMonth));
+
     if(CollectionUtils.isNotEmpty(users)) {
       final String studyIds = prepareStudyIds(users);
       final String body = String.format(warningEmailTemplate, actualMonth, actualMonth, studyIds);
