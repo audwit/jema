@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Repository
@@ -67,14 +68,25 @@ public class UserRepository {
     return name;
   }
 
-  public List<User> getRequiresNotificationUsers(String columnName, Date startDate) {
-    final String queryFormat = "select u.* from `user` u where u.name not in (\n" +
-        "  select c.study_id from `completion` c where c.survey_id in (\n" +
-        "    select s.survey_id from `schedule` s where " + columnName + " = 1\n" +
-        "  ))\n" +
-        "and date(u.start_date) = :startDate";
+  public List<User> getRequiresNotificationUsers(Date startDate, String month) {
+    final List<User> regularUsers = getRegularUsers(startDate, month, "'Boning Up Group', 'SS Study Group'", 17);
+    final List<User> choiceGroupUsers = getRegularUsers(startDate, month, "'Personal Choice Group'", 16);
+    final LinkedList<User> users = new LinkedList<>(regularUsers);
+    users.addAll(choiceGroupUsers);
+    return users;
+  }
+
+  private List<User> getRegularUsers(final Date startDate, final String month, final String roles, final int totalSurvey) {
+    final String queryFormat = "select u.* " +
+        "from user u " +
+        "where u.role in (" + roles + ") " +
+        "and date(u.start_date) = :startDate " +
+        "and (select count(c.survey_id) from completion c where c.time_stamp= :month and c.study_id = u.name) < '" + totalSurvey + "' " +
+        "order by u.name asc";
+
     final Query nativeQuery = entityManager.createNativeQuery(queryFormat, User.class)
-        .setParameter("startDate", startDate, TemporalType.DATE);
+        .setParameter("startDate", startDate, TemporalType.DATE)
+        .setParameter("month", month);
 
     return nativeQuery.getResultList();
   }
