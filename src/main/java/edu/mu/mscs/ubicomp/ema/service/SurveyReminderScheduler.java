@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Stream;
 
 public class SurveyReminderScheduler {
   private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -121,20 +122,15 @@ public class SurveyReminderScheduler {
 
 
   public void sendReminder() {
+    final LocalDate now = LocalDate.now();
     logger.debug("Reminder service started");
 
-    sendNotifications(firstSurveyDay);
-    sendNotifications(secondSurveyDay);
-    sendNotifications(thirdSurveyDay);
-    sendNotifications(fourthSurveyDay);
-  }
-
-  private void sendNotifications(final int surveyDay) {
-    final LocalDate now = LocalDate.now();
-    sendEmail(now, surveyDay, 0, firstReminderTemplate);
-    sendEmail(now, surveyDay, firstWarningDay, secondReminderTemplate);
-    sendEmail(now, surveyDay, finalWarningDay, thirdReminderTemplate);
-    sendAdminNotification(now, surveyDay);
+    Stream.of(firstSurveyDay, secondSurveyDay, thirdSurveyDay, fourthSurveyDay).forEach(surveyDay -> {
+      sendEmail(now, surveyDay, 0, firstReminderTemplate);
+      sendEmail(now, surveyDay, firstWarningDay, secondReminderTemplate);
+      sendEmail(now, surveyDay, finalWarningDay, thirdReminderTemplate);
+      sendAdminNotification(now, surveyDay);
+    });
   }
 
   private void sendAdminNotification(final LocalDate now, final int surveyDay) {
