@@ -130,51 +130,16 @@ public class SurveyReminderScheduler {
   }
 
   private void sendNotifications(final int surveyDay) {
-    sendFirstMeasurementReminder(surveyDay);
-    sendSecondMeasurementReminder(surveyDay);
-    sendThirdMeasurementReminder(surveyDay);
-    sendAdminNotification(surveyDay);
-  }
-
-  private void sendFirstMeasurementReminder(final int surveyDay) {
-    final int month = surveyDay / 30;
-    final int actualMonth = month >= 11 ? month + 1 : month;
-    final LocalDate today = LocalDate.now();
-    final LocalDate startLocalDateTime = today.minusDays(surveyDay);
-    final Date startDate = DateTimeUtils.toDate(startLocalDateTime);
-    final List<User> participants = userRepository.getRequiresNotificationUsers(startDate, String.valueOf(actualMonth));
-
-    sendEmail(actualMonth, startDate, participants, firstReminderTemplate);
-  }
-
-  private void sendSecondMeasurementReminder(final int surveyDay) {
-    final int month = surveyDay / 30;
-    final int actualMonth = month >= 11 ? month + 1 : month;
     final LocalDate now = LocalDate.now();
-    final int totalDay = surveyDay + firstWarningDay;
-    final LocalDate startLocalDateTime = now.minusDays(totalDay);
-    final Date startDate = DateTimeUtils.toDate(startLocalDateTime);
-    final List<User> participants = userRepository.getRequiresNotificationUsers(startDate, String.valueOf(actualMonth));
-
-    sendEmail(actualMonth, startDate, participants, secondReminderTemplate);
+    sendEmail(now, surveyDay, 0, firstReminderTemplate);
+    sendEmail(now, surveyDay, firstWarningDay, secondReminderTemplate);
+    sendEmail(now, surveyDay, finalWarningDay, thirdReminderTemplate);
+    sendAdminNotification(now, surveyDay);
   }
 
-  private void sendThirdMeasurementReminder(final int surveyDay) {
+  private void sendAdminNotification(final LocalDate now, final int surveyDay) {
     final int month = surveyDay / 30;
     final int actualMonth = month >= 11 ? month + 1 : month;
-    final LocalDate now = LocalDate.now();
-    final int totalDay = surveyDay + finalWarningDay;
-    final LocalDate startLocalDate = now.minusDays(totalDay);
-    final Date startDate = DateTimeUtils.toDate(startLocalDate);
-    final List<User> participants = userRepository.getRequiresNotificationUsers(startDate, String.valueOf(actualMonth));
-
-    sendEmail(actualMonth, startDate, participants, thirdReminderTemplate);
-  }
-
-  private void sendAdminNotification(final int surveyDay) {
-    final int month = surveyDay / 30;
-    final int actualMonth = month >= 11 ? month + 1 : month;
-    final LocalDate now = LocalDate.now();
     final int totalDay = surveyDay + surveyInactiveDay;
     final LocalDate startLocalDate = now.minusDays(totalDay);
     final Date startDate = DateTimeUtils.toDate(startLocalDate);
@@ -207,28 +172,38 @@ public class SurveyReminderScheduler {
     return emailMessageBuilder.toString();
   }
 
-  private void sendEmail(final int actualMonth, final Date startDate, final List<User> participants, final String reminderTemplate) {
+  private void sendEmail(final LocalDate now, final int surveyDay, final int warningDay, final String reminderTemplate) {
+    final int month = surveyDay / 30;
+    final int actualMonth = month >= 11 ? month + 1 : month;
+    final int totalDay = surveyDay + warningDay;
+    final LocalDate startLocalDate = now.minusDays(totalDay);
+    final Date startDate = DateTimeUtils.toDate(startLocalDate);
+    final List<User> participants = userRepository.getRequiresNotificationUsers(startDate, String.valueOf(actualMonth));
+
     if(CollectionUtils.isNotEmpty(participants)) {
       logger.debug("Sending email notifications to: {}", participants);
-      final String amount = getAmount(actualMonth);
-      final String subject = String.format(reminderSubjectTemplate, actualMonth);
-      final String notificationMail = String.format(reminderTemplate, actualMonth, amount);
-
-      logger.debug("Sending measurement email to total: {} user to remind with start date: {} for {} month survey",
-          participants.size(), startDate, actualMonth);
-      for (User user : participants) {
-        executorService.submit(() -> {
-          try {
-            mailClient.send(user.getEmail(), subject, notificationMail);
-          } catch (MessagingException e) {
-            logger.warn("Failed sending first notification to " + user.getEmail() + " for user: " + user.getId(), e);
-          }
-        });
-      }
+      sendEmail(actualMonth, startDate, participants, reminderTemplate);
     }
     else {
-      logger.debug("No participants to send first reminder as start date: {} for {} month survey",
-          startDate, actualMonth);
+      logger.debug("No participants to send first reminder as start date: {} for {} month survey", startDate, actualMonth);
+    }
+  }
+
+  private void sendEmail(final int actualMonth, final Date startDate, final List<User> participants, final String reminderTemplate) {
+    final String amount = getAmount(actualMonth);
+    final String subject = String.format(reminderSubjectTemplate, actualMonth);
+    final String notificationMail = String.format(reminderTemplate, actualMonth, amount);
+
+    logger.debug("Sending measurement email to total: {} user to remind with start date: {} for {} month survey",
+        participants.size(), startDate, actualMonth);
+    for (User user : participants) {
+      executorService.submit(() -> {
+        try {
+          mailClient.send(user.getEmail(), subject, notificationMail);
+        } catch (MessagingException e) {
+          logger.warn("Failed sending first notification to " + user.getEmail() + " for user: " + user.getId(), e);
+        }
+      });
     }
   }
 
