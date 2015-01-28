@@ -123,7 +123,7 @@ public class SurveyReminderScheduler {
 
   public void sendReminder() {
     final LocalDate now = LocalDate.now();
-    logger.debug("Reminder service started");
+    logger.debug("Reminder service started for: {}", now);
 
     Stream.of(firstSurveyDay, secondSurveyDay, thirdSurveyDay, fourthSurveyDay).forEach(surveyDay -> {
       sendEmail(now, surveyDay, 0, firstReminderTemplate);
