@@ -165,6 +165,7 @@ public class User {
   public String toString() {
     return new ToStringBuilder(this)
         .append("id", id)
+        .append("username", username)
         .append("email", email)
         .toString();
   }
