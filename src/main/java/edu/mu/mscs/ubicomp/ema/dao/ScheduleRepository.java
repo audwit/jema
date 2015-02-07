@@ -14,7 +14,8 @@ import java.util.List;
 
 @Repository
 public class ScheduleRepository {
-  public static final String SELECT_SCHEDULE = "SELECT s FROM Schedule s WHERE s.surveyDate = :today " +
+  public static final String SELECT_SCHEDULE = "SELECT s FROM Schedule s JOIN s.user u " +
+      "WHERE s.surveyDate = :today " +
       "AND s NOT IN (SELECT n.schedule FROM Notification n JOIN n.schedule ss WHERE ss.surveyDate = :today )";
 
   @PersistenceContext
