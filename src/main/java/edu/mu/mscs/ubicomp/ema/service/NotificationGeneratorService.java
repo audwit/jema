@@ -52,6 +52,9 @@ public class NotificationGeneratorService {
   }
 
   private void generateNotification(final User user, final List<Schedule> schedules, final LocalDate today) {
+    if(!user.getActive()) {
+      logger.debug("Notification is not generated for inactive user: " + user);
+    }
     final ContactingTime contactingTime = user.getContactingTime();
     if (contactingTime == null) {
       logger.warn("Notification will not be generated. Contacting time not found for user: {}.", user);
