@@ -22,6 +22,7 @@ public class User {
   private Collection<Schedule> schedules;
   private Timestamp lastLogin;
   private Timestamp startDate;
+  private Boolean active;
 
   @Id
   @Column(name = "id")
@@ -128,6 +129,16 @@ public class User {
 
   public void setStartDate(final Timestamp startDate) {
     this.startDate = startDate;
+  }
+
+  @Basic
+  @Column(name = "active", nullable = false, columnDefinition = "TINYINT(1)")
+  public Boolean getActive() {
+    return active;
+  }
+
+  public void setActive(final Boolean active) {
+    this.active = active;
   }
 
   @Override
