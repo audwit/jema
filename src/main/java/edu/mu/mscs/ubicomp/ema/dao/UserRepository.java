@@ -22,6 +22,7 @@ public class UserRepository {
   public List<User> getInactiveUsers(final Date lastLoginDate, final List<String> roles) {
     final String findUser = "FROM User u " +
         "WHERE DATE(u.lastLogin) = :lastLoginDate " +
+        "AND u.active = true " +
         "AND u.role in (:roles) " +
         "AND u.startDate > '2000-00-00 00:00:00'";
     final TypedQuery<User> query = entityManager.createQuery(findUser, User.class)
@@ -80,6 +81,7 @@ public class UserRepository {
     final String queryFormat = "select u.* " +
         "from user u " +
         "where u.role in (" + roles + ") " +
+        "AND u.active = true " +
         "and date(u.start_date) = :startDate " +
         "and (select count(c.survey_id) from completion c where c.time_stamp= :month and c.study_id = u.name) < '" + totalSurvey + "' " +
         "order by u.name asc";
@@ -93,7 +95,10 @@ public class UserRepository {
 
   public List<User> findUsersBy(final Date startDate, final List<String> roles) {
     Validate.notEmpty(roles, "roles can not be empty");
-    final String qlString = "SELECT u FROM User u WHERE DATE(u.startDate) = :startDate and u.role in (:roles)";
+    final String qlString = "SELECT u FROM User u " +
+        "WHERE DATE(u.startDate) = :startDate " +
+        "AND u.active = true " +
+        "AND u.role in (:roles)";
     final TypedQuery<User> query = entityManager.createQuery(qlString, User.class)
         .setParameter("startDate", startDate, TemporalType.DATE)
         .setParameter("roles", roles);
