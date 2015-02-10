@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -44,17 +45,27 @@ public class NotificationGeneratorService {
     final LocalDate today = now.toLocalDate();
     logger.debug("Started notification generation at: {}", now);
 
+    final List<User> inactiveUsers = new LinkedList<>();
+    final Predicate<Map.Entry<User, List<Schedule>>> inactiveUserPredicate = entry -> {
+      final User user = entry.getKey();
+      if(!user.getActive()) {
+        inactiveUsers.add(user);
+      }
+      return user.getActive();
+    };
+
     final List<Schedule> schedules = scheduleRepository.findSchedule(DateTimeUtils.toDate(today));
     logger.debug("Total schedules found: " + schedules.size());
     schedules.stream()
         .collect(Collectors.groupingBy(Schedule::getUser))
-        .forEach((user, userSchedules) -> generateNotification(user, userSchedules, today));
+        .entrySet().stream()
+        .filter(inactiveUserPredicate)
+        .forEach(entry -> generateNotification(entry.getKey(), entry.getValue(), today));
+
+    logger.debug("Notification is not generated for following inactive users: " + inactiveUsers);
   }
 
   private void generateNotification(final User user, final List<Schedule> schedules, final LocalDate today) {
-    if(!user.getActive()) {
-      logger.debug("Notification is not generated for inactive user: " + user);
-    }
     final ContactingTime contactingTime = user.getContactingTime();
     if (contactingTime == null) {
       logger.warn("Notification will not be generated. Contacting time not found for user: {}.", user);
