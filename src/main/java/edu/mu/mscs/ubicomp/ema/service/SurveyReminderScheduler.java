@@ -143,7 +143,7 @@ public class SurveyReminderScheduler {
 
     if(CollectionUtils.isNotEmpty(users)) {
       final String studyIds = prepareStudyIds(users);
-      final String body = String.format(warningEmailTemplate, actualMonth, actualMonth, studyIds);
+      final String body = String.format(warningEmailTemplate, actualMonth, studyIds);
 
       logger.debug("Sending unopened measurement notification to admin as start date: {} for {} month survey",
           startDate.toString(), actualMonth);
