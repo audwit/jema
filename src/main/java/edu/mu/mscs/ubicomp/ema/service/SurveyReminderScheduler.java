@@ -145,8 +145,8 @@ public class SurveyReminderScheduler {
       final String studyIds = prepareStudyIds(users);
       final String body = String.format(warningEmailTemplate, actualMonth, studyIds);
 
-      logger.debug("Sending unopened measurement notification to admin as start date: {} for {} month survey",
-          startDate.toString(), actualMonth);
+      logger.debug("Sending unopened measurement notification to admin as start date: {}\nmonth{}\nparticipants: {}",
+          startDate.toString(), actualMonth, studyIds);
 
       executorService.submit(() -> {
         try {
