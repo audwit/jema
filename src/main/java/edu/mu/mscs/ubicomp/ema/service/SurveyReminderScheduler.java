@@ -12,14 +12,19 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SurveyReminderScheduler {
   private final Logger logger = LoggerFactory.getLogger(getClass());
+
+  public static final List<String> REGULAR_GROUP = Arrays.asList("SS Study Group", "Boning Up Group");
+  public static final List<String> WAIT_LIST_GROUP = Arrays.asList("Personal Choice Group");
+  private final Map<Integer, Map<Integer, Integer>> regularExpectedSurveyCount = initializeRegularSurveyCount();
+  private final Map<Integer, Map<Integer, Integer>> waitListExpectedSurveyCount = initializeWaitListSurveyCount();
 
   private UserRepository userRepository;
   private MailClient mailClient;
@@ -114,6 +119,9 @@ public class SurveyReminderScheduler {
 
   @PostConstruct
   public void initialize() {
+    logger.debug("Expected survey requirement for regular participant is: {}", regularExpectedSurveyCount);
+    logger.debug("Expected survey requirement for wait list participant is: {}", waitListExpectedSurveyCount);
+
     final BasicThreadFactory threadFactory = new BasicThreadFactory.Builder()
         .namingPattern(getClass().getName() + "-%d")
         .build();
@@ -139,7 +147,7 @@ public class SurveyReminderScheduler {
     final int totalDay = surveyDay + surveyInactiveDay;
     final LocalDate startLocalDate = now.minusDays(totalDay);
     final Date startDate = DateTimeUtils.toDate(startLocalDate);
-    final List<User> users = userRepository.getRequiresNotificationUsers(startDate, String.valueOf(actualMonth));
+    final List<User> users = getUsersRequiresNotification(actualMonth, startDate);
 
     if(CollectionUtils.isNotEmpty(users)) {
       final String studyIds = prepareStudyIds(users);
@@ -174,7 +182,7 @@ public class SurveyReminderScheduler {
     final int totalDay = surveyDay + warningDay;
     final LocalDate startLocalDate = now.minusDays(totalDay);
     final Date startDate = DateTimeUtils.toDate(startLocalDate);
-    final List<User> participants = userRepository.getRequiresNotificationUsers(startDate, String.valueOf(actualMonth));
+    final List<User> participants = getUsersRequiresNotification(actualMonth, startDate);
 
     if(CollectionUtils.isNotEmpty(participants)) {
       logger.debug("Sending email notifications to: {}", participants);
@@ -183,6 +191,55 @@ public class SurveyReminderScheduler {
     else {
       logger.debug("No participants to send first reminder as start date: {} for {} month survey", startDate, actualMonth);
     }
+  }
+
+  private List<User> getUsersRequiresNotification(final int actualMonth, final Date startDate) {
+    final Map<Integer, List<Integer[]>> usersSubmittedSurveys = userRepository.getSubmittedSurveyTotal(actualMonth, startDate)
+        .stream()
+        .collect(Collectors.groupingBy(objects -> objects[0]));
+
+    final List<User> regularUsers = getCollect(startDate, usersSubmittedSurveys, REGULAR_GROUP, regularExpectedSurveyCount.get(actualMonth));
+    final List<User> waitListUsers = getCollect(startDate, usersSubmittedSurveys, WAIT_LIST_GROUP, waitListExpectedSurveyCount.get(actualMonth));
+    regularUsers.addAll(waitListUsers);
+
+    return regularUsers;
+  }
+
+  private List<User> getCollect(final Date startDate,
+                                final Map<Integer, List<Integer[]>> usersSubmittedSurveys,
+                                final List<String> roles,
+                                final Map<Integer, Integer> expectedSurveyCount) {
+    return userRepository.findUsersBy(startDate, roles).stream()
+        .filter(user -> {
+              final List<Integer[]> submittedSurveys = usersSubmittedSurveys.getOrDefault(
+                  Integer.valueOf(user.getUsername()),
+                  Collections.emptyList()
+              );
+              final boolean isRequired = isNotificationRequired(submittedSurveys, expectedSurveyCount);
+              if(isRequired) {
+                logger.debug("Survey reminder required for {} with for surveys: {}", user, submittedSurveys);
+              }
+              return isRequired;
+            }
+        )
+        .collect(Collectors.toList());
+  }
+
+  private static boolean isNotificationRequired(final List<Integer[]> submittedSurveys, final Map<Integer, Integer> expectedSurveyCount) {
+    final List<Integer[]> requiredSubmittedSurveys = submittedSurveys.stream()
+        .filter(submittedSurvey -> expectedSurveyCount.containsKey(submittedSurvey[1]))
+        .collect(Collectors.toList());
+
+    if (!CollectionUtils.isEmpty(requiredSubmittedSurveys) && requiredSubmittedSurveys.size() == expectedSurveyCount.size()) {
+      for (final Integer[] submittedSurvey : submittedSurveys) {
+        if (submittedSurvey[2] < expectedSurveyCount.get(submittedSurvey[1])) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    return true;
   }
 
   private void sendEmail(final int actualMonth, final Date startDate, final List<User> participants, final String reminderTemplate) {
@@ -216,6 +273,79 @@ public class SurveyReminderScheduler {
     else {
       return "$30";
     }
+  }
+
+  private static Map<Integer, Map<Integer, Integer>> initializeRegularSurveyCount() {
+    Map<Integer, Map<Integer, Integer>> expectedSurveyCount = new HashMap<>();
+    expectedSurveyCount.put(3, getExpectedSurveyCountMonth3());
+    expectedSurveyCount.put(6, getExpectedSurveyCountMonth6and9());
+    expectedSurveyCount.put(9, getExpectedSurveyCountMonth6and9());
+    expectedSurveyCount.put(12, getExpectedSurveyCountMonth12());
+
+    return Collections.unmodifiableMap(expectedSurveyCount);
+  }
+
+  private static Map<Integer, Map<Integer, Integer>> initializeWaitListSurveyCount() {
+    Map<Integer, Map<Integer, Integer>> expectedSurveyCount = new HashMap<>();
+    final Map<Integer, Integer> expectedSurveyCountMonth3 = new HashMap<>(getExpectedSurveyCountMonth3());
+    expectedSurveyCount.remove(16);
+
+    final Map<Integer, Integer> expectedSurveyCountMonth12 = new HashMap<>(getExpectedSurveyCountMonth12());
+    expectedSurveyCountMonth12.put(14, 1);
+    expectedSurveyCountMonth12.put(16, 1);
+
+    expectedSurveyCount.put(3, Collections.unmodifiableMap(expectedSurveyCountMonth3));
+    expectedSurveyCount.put(6, getExpectedSurveyCountMonth6and9());
+    expectedSurveyCount.put(9, getExpectedSurveyCountMonth6and9());
+    expectedSurveyCount.put(12, Collections.unmodifiableMap(expectedSurveyCountMonth12));
+
+    return Collections.unmodifiableMap(expectedSurveyCount);
+  }
+
+  private static Map<Integer, Integer> getExpectedSurveyCountMonth3() {
+    final Map<Integer, Integer> expectedSurveyCounts = new HashMap<>();
+    expectedSurveyCounts.put(4, 3);
+    expectedSurveyCounts.put(14, 1);
+    expectedSurveyCounts.put(15, 1);
+    expectedSurveyCounts.put(16, 1);
+    expectedSurveyCounts.put(19, 1);
+    expectedSurveyCounts.put(20, 1);
+    expectedSurveyCounts.put(21, 1);
+    expectedSurveyCounts.put(22, 1);
+    expectedSurveyCounts.put(23, 1);
+
+    return Collections.unmodifiableMap(expectedSurveyCounts);
+  }
+
+  private static Map<Integer, Integer> getExpectedSurveyCountMonth6and9() {
+    final Map<Integer, Integer> expectedSurveyCounts = new HashMap<>();
+    expectedSurveyCounts.put(4, 3);
+    expectedSurveyCounts.put(15, 1);
+    expectedSurveyCounts.put(19, 1);
+    expectedSurveyCounts.put(22, 1);
+    expectedSurveyCounts.put(23, 1);
+
+    return Collections.unmodifiableMap(expectedSurveyCounts);
+  }
+
+  private static Map<Integer, Integer> getExpectedSurveyCountMonth12() {
+    Map<Integer, Integer> expectedSurveyCounts = new HashMap<>();
+    expectedSurveyCounts.put(4, 3);
+    expectedSurveyCounts.put(8, 1);
+    expectedSurveyCounts.put(9, 1);
+    expectedSurveyCounts.put(12, 1);
+    expectedSurveyCounts.put(13, 1);
+    expectedSurveyCounts.put(15, 1);
+    expectedSurveyCounts.put(18, 1);
+    expectedSurveyCounts.put(19, 1);
+    expectedSurveyCounts.put(20, 1);
+    expectedSurveyCounts.put(21, 1);
+    expectedSurveyCounts.put(22, 1);
+    expectedSurveyCounts.put(23, 1);
+    expectedSurveyCounts.put(24, 1);
+    expectedSurveyCounts.put(25, 1);
+
+    return Collections.unmodifiableMap(expectedSurveyCounts);
   }
 
 }
