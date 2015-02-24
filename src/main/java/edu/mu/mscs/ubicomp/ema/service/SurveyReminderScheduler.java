@@ -198,14 +198,14 @@ public class SurveyReminderScheduler {
         .stream()
         .collect(Collectors.groupingBy(objects -> objects[0]));
 
-    final List<User> regularUsers = getCollect(startDate, usersSubmittedSurveys, REGULAR_GROUP, regularExpectedSurveyCount.get(actualMonth));
-    final List<User> waitListUsers = getCollect(startDate, usersSubmittedSurveys, WAIT_LIST_GROUP, waitListExpectedSurveyCount.get(actualMonth));
+    final List<User> regularUsers = getUsersRequiresNotification(startDate, usersSubmittedSurveys, REGULAR_GROUP, regularExpectedSurveyCount.get(actualMonth));
+    final List<User> waitListUsers = getUsersRequiresNotification(startDate, usersSubmittedSurveys, WAIT_LIST_GROUP, waitListExpectedSurveyCount.get(actualMonth));
     regularUsers.addAll(waitListUsers);
 
     return regularUsers;
   }
 
-  private List<User> getCollect(final Date startDate,
+  private List<User> getUsersRequiresNotification(final Date startDate,
                                 final Map<Integer, List<Integer[]>> usersSubmittedSurveys,
                                 final List<String> roles,
                                 final Map<Integer, Integer> expectedSurveyCount) {
