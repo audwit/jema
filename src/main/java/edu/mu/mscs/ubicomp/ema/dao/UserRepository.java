@@ -73,7 +73,7 @@ public class UserRepository {
   public List<Integer[]> getSubmittedSurveyTotal(final int month, final Date startDate) {
     final String countSurveyCompletionQuery = "select study_id, survey_id, count(survey_id) from completion " +
         "where time_stamp = :month " +
-        "and survey_id in (SELECT survey_id FROM Schedule WHERE threemonths = 1 ORDER BY survey_id) " +
+        "and survey_id in (SELECT survey_id FROM schedule WHERE threemonths = 1 ORDER BY survey_id) " +
 //        "and study_id in (select u.name from user u) " +
         "and study_id in (select u.name from user u where date(u.start_date) = :startDate) " +
         "group by study_id, survey_id " +
