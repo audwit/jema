@@ -215,7 +215,7 @@ public class SurveyReminderScheduler {
                   Integer.valueOf(user.getUsername()),
                   Collections.emptyList()
               );
-              final boolean isRequired = isNotificationRequired(submittedSurveys, expectedSurveyCount);
+              final boolean isRequired = isNotificationRequired(user, submittedSurveys, expectedSurveyCount);
               if(isRequired) {
                 logger.debug("Survey reminder required for {} with for surveys: {}", user, submittedSurveys);
               }
@@ -225,7 +225,7 @@ public class SurveyReminderScheduler {
         .collect(Collectors.toList());
   }
 
-  private static boolean isNotificationRequired(final List<Integer[]> submittedSurveys, final Map<Integer, Integer> expectedSurveyCount) {
+  private boolean isNotificationRequired(final User user, final List<Integer[]> submittedSurveys, final Map<Integer, Integer> expectedSurveyCount) {
     final List<Integer[]> requiredSubmittedSurveys = submittedSurveys.stream()
         .filter(submittedSurvey -> expectedSurveyCount.containsKey(submittedSurvey[1]))
         .collect(Collectors.toList());
@@ -233,12 +233,15 @@ public class SurveyReminderScheduler {
     if (!CollectionUtils.isEmpty(requiredSubmittedSurveys) && requiredSubmittedSurveys.size() == expectedSurveyCount.size()) {
       for (final Integer[] submittedSurvey : submittedSurveys) {
         if (submittedSurvey[2] < expectedSurveyCount.get(submittedSurvey[1])) {
+          logger.debug("The study_id={} missed the survey_id={} total_submission={} required={}",
+              user.getUsername(), submittedSurvey[1], submittedSurvey[2], expectedSurveyCount.get(submittedSurvey[1]));
           return true;
         }
       }
       return false;
     }
 
+    logger.debug("Required survey submitted by study_id={} are={}, required={}", user, requiredSubmittedSurveys, expectedSurveyCount);
     return true;
   }
 
