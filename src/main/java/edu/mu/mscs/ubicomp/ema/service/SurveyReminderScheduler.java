@@ -286,14 +286,14 @@ public class SurveyReminderScheduler {
   }
 
   private static Map<Integer, Map<Integer, Integer>> initializeWaitListSurveyCount() {
-    Map<Integer, Map<Integer, Integer>> expectedSurveyCount = new HashMap<>();
     final Map<Integer, Integer> expectedSurveyCountMonth3 = new HashMap<>(getExpectedSurveyCountMonth3());
-    expectedSurveyCount.remove(16);
+    expectedSurveyCountMonth3.remove(16);
 
     final Map<Integer, Integer> expectedSurveyCountMonth12 = new HashMap<>(getExpectedSurveyCountMonth12());
     expectedSurveyCountMonth12.put(14, 1);
     expectedSurveyCountMonth12.put(16, 1);
 
+    Map<Integer, Map<Integer, Integer>> expectedSurveyCount = new HashMap<>();
     expectedSurveyCount.put(3, Collections.unmodifiableMap(expectedSurveyCountMonth3));
     expectedSurveyCount.put(6, getExpectedSurveyCountMonth6and9());
     expectedSurveyCount.put(9, getExpectedSurveyCountMonth6and9());
