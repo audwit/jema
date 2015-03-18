@@ -1,5 +1,5 @@
 The following participant has failed to complete the required Survey Measures
-for the (3,6,9,12 month time period).
+for the %s month time period.
 
 Please send a text message to the participant and ask them to call
 you within 24 hours.
