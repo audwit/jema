@@ -13,6 +13,6 @@ If you do not speak directly with them leave a voice message.
 If they fail to contact the study (check email and study phone) follow
 the “Failure to Complete Measure Procedure” located in PantherFile:Procedure
 
-Study ID      Indicate  3/6/9/ or 12 month measures
+Study ID ---- Indicate  3/6/9/ or 12 month measures
 -----------------------------------------------
 %s

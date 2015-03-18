@@ -150,7 +150,7 @@ public class SurveyReminderScheduler {
     final List<User> users = getUsersRequiresNotification(actualMonth, startDate);
 
     if(CollectionUtils.isNotEmpty(users)) {
-      final String studyIds = prepareStudyIds(users);
+      final String studyIds = prepareStudyIds(users, actualMonth);
       final String body = String.format(warningEmailTemplate, actualMonth, studyIds);
 
       logger.debug("Sending unopened measurement notification to admin as start date: {}\nmonth{}\nparticipants: {}",
@@ -170,9 +170,14 @@ public class SurveyReminderScheduler {
     }
   }
 
-  private String prepareStudyIds(final List<User> users) {
+  private String prepareStudyIds(final List<User> users, final int actualMonth) {
     StringBuilder emailMessageBuilder = new StringBuilder();
-    users.forEach((user) -> emailMessageBuilder.append(user.getUsername()).append("\n"));
+    users.forEach((user) -> emailMessageBuilder
+        .append(user.getUsername())
+        .append(" ---- ")
+        .append(actualMonth)
+        .append("\n")
+    );
     return emailMessageBuilder.toString();
   }
 
