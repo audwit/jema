@@ -1,10 +1,18 @@
 Dear %s,
 
-It has come to our attention that you have not responded to the text message from the Striving to be Strong Study.  We need to hear from you.  Failure to respond could result in you losing the phone and phone plan if you are using a study phone.  Or if you are using your own phone you could lose the $50/month payment.
+It has come to our attention that you have not responded to the text message from
+the Striving to be Strong Study.  We need to hear from you.  Failure to respond
+could result in you being removed from the study. If you are using a study phone,
+you may need to return the phone. If you are using your own phone, you may lose
+the $50/month payment.
 
-If you choose to remain in the study please click on the following link to connect to the study website to receive more information.
+If you choose to remain in the study please click on the following link to connect
+to the study website to receive more information.
 http://strivingtest.cloudapp.net/site/noActivity_pushMessages
 
-If you no longer desire to be in the study please contact a member of the research team by sending an email or leaving a voice message
+If you no longer desire to be in the study please contact a member of the research
+team by sending an email or leaving a voice message. If you have had technical issues
+that have affected your participation in the study, please contact the research team.
+
 Striving@mscs.mu.edu
 414-229-3169
