@@ -8,5 +8,5 @@ Study Id
 
 You will need to:
 1. Go to the Researcher Collected Forms on the Web-site (administrative side)  under Researcher to complete the Wait List Form,
-2. Once the participant has made her choice contact Sarah or Victoria and requests the app to be pushed out to the participants phone.
+2. Once the participant has made her choice contact go to the “Procedure for Wait List Adding App” located on PantherFile:Procedure
 3. Make sure to tell the participant to contact the study if she does not see the icon for the app on her phone within 2 weeks

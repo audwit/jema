@@ -1,10 +1,11 @@
-Following participants have 4 weeks left until she completes the study.  You will need to contact them to set up an “end of study” appointment.  The End of Study appointment includes the 2nd DXA scan,  vitamin D3 capillary blood test, the physical measures, removal of the app, and a discussion about her experience with the app (open-ended interview).  This last visit will take between 2 and 3 hours.
+Attention Researcher:
+
+Following participants have 4 weeks left until she completes the study.  You will need to contact her to set up an “end of study” appointment.  The End of Study appointment includes the 2nd DXA scan,  vitamin D3 capillary blood test, the physical measures, removal of the app, and a discussion about her experience with the app (open-ended interview).  This last visit will take between 2 and 3 hours.
 
 Study Id
 --------
 %s
 
 You will need to:
-1. Go to the Researcher Collected Forms on the Web-site (administrative side) under Researcher to complete the End of Study form,
-2. Set up an appointment for DXA scan and with a nurse researcher.
-3. Try to schedule this appointment for some time within the the time interval ranging from 2 weeks before the 12 month mark to 2 week after the 12 month date.
+1. Go to the Researcher Collected Forms on the Web-site (administrative side) under Researcher to complete the End of Study form.
+2. Follow “End of Study Procedure” on PantherFile:Procedure
