@@ -86,10 +86,12 @@
     <property name="warningEmailAddress" value="${warningEmailAddress}"/>
     <property name="warmingEmailSubject" value="${surveyReminderSchedulerService.warningEmailSubject}"/>
     <property name="warningEmailTemplate" ref="surveyReminderWarningEmail"/>
-    <property name="reminderSubjectTemplate" value="${surveyReminderSchedulerService.reminderSubjectTemplate}"/>
     <property name="firstReminderTemplate" ref="firstMeasurementTemplate"/>
     <property name="secondReminderTemplate" ref="secondMeasurementTemplate"/>
     <property name="thirdReminderTemplate" ref="thirdMeasurementEmail"/>
+    <property name="firstReminderSubject" value="${surveyReminderSchedulerService.firstReminderSubject}"/>
+    <property name="secondReminderSubject" value="${surveyReminderSchedulerService.secondReminderSubject}"/>
+    <property name="thirdReminderSubject" value="${surveyReminderSchedulerService.thirdReminderSubject}"/>
     <property name="surveyInactiveDay" value="${surveyReminderSchedulerService.surveyInactiveDay}"/>
     <property name="firstWarningDay" value="${surveyReminderSchedulerService.firstWarningDay}"/>
     <property name="finalWarningDay" value="${surveyReminderSchedulerService.finalWarningDay}"/>

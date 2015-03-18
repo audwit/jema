@@ -40,10 +40,13 @@ public class SurveyReminderScheduler {
   private int firstWarningDay;
   private int finalWarningDay;
 
-  private String reminderSubjectTemplate;
   private String firstReminderTemplate;
   private String secondReminderTemplate;
   private String thirdReminderTemplate;
+
+  private String firstReminderSubject;
+  private String secondReminderSubject;
+  private String thirdReminderSubject;
 
   private String warningEmailAddress;
   private String warmingEmailSubject;
@@ -77,10 +80,6 @@ public class SurveyReminderScheduler {
     this.finalWarningDay = finalWarningDay;
   }
 
-  public void setReminderSubjectTemplate(final String reminderSubjectTemplate) {
-    this.reminderSubjectTemplate = reminderSubjectTemplate;
-  }
-
   public void setFirstReminderTemplate(final String firstReminderTemplate) {
     this.firstReminderTemplate = firstReminderTemplate;
   }
@@ -91,6 +90,18 @@ public class SurveyReminderScheduler {
 
   public void setThirdReminderTemplate(final String thirdReminderTemplate) {
     this.thirdReminderTemplate = thirdReminderTemplate;
+  }
+
+  public void setFirstReminderSubject(final String firstReminderSubject) {
+    this.firstReminderSubject = firstReminderSubject;
+  }
+
+  public void setSecondReminderSubject(final String secondReminderSubject) {
+    this.secondReminderSubject = secondReminderSubject;
+  }
+
+  public void setThirdReminderSubject(final String thirdReminderSubject) {
+    this.thirdReminderSubject = thirdReminderSubject;
   }
 
   public void setUserRepository(final UserRepository userRepository) {
@@ -134,9 +145,9 @@ public class SurveyReminderScheduler {
     logger.debug("Reminder service started for: {}", now);
 
     Stream.of(firstSurveyDay, secondSurveyDay, thirdSurveyDay, fourthSurveyDay).forEach(surveyDay -> {
-      sendEmail(now, surveyDay, 0, firstReminderTemplate);
-      sendEmail(now, surveyDay, firstWarningDay, secondReminderTemplate);
-      sendEmail(now, surveyDay, finalWarningDay, thirdReminderTemplate);
+      sendEmail(now, surveyDay, 0, firstReminderTemplate, firstReminderSubject);
+      sendEmail(now, surveyDay, firstWarningDay, secondReminderTemplate, secondReminderSubject);
+      sendEmail(now, surveyDay, finalWarningDay, thirdReminderTemplate, thirdReminderSubject);
       sendAdminNotification(now, surveyDay);
     });
   }
@@ -181,7 +192,7 @@ public class SurveyReminderScheduler {
     return emailMessageBuilder.toString();
   }
 
-  private void sendEmail(final LocalDate now, final int surveyDay, final int warningDay, final String reminderTemplate) {
+  private void sendEmail(final LocalDate now, final int surveyDay, final int warningDay, final String reminderTemplate, final String reminderSubjectTemplate) {
     final int month = surveyDay / 30;
     final int actualMonth = month >= 11 ? month + 1 : month;
     final int totalDay = surveyDay + warningDay;
@@ -191,7 +202,7 @@ public class SurveyReminderScheduler {
 
     if(CollectionUtils.isNotEmpty(participants)) {
       logger.debug("Sending email notifications to: {}", participants);
-      sendEmail(actualMonth, startDate, participants, reminderTemplate);
+      sendEmail(actualMonth, startDate, participants, reminderTemplate, reminderSubjectTemplate);
     }
     else {
       logger.debug("No participants to send first reminder as start date: {} for {} month survey", startDate, actualMonth);
@@ -250,7 +261,7 @@ public class SurveyReminderScheduler {
     return true;
   }
 
-  private void sendEmail(final int actualMonth, final Date startDate, final List<User> participants, final String reminderTemplate) {
+  private void sendEmail(final int actualMonth, final Date startDate, final List<User> participants, final String reminderTemplate, final String reminderSubjectTemplate) {
     final String amount = getAmount(actualMonth);
     final String subject = String.format(reminderSubjectTemplate, actualMonth);
     final String notificationMail = String.format(reminderTemplate, actualMonth, amount);
