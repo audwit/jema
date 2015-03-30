@@ -16,6 +16,7 @@ public class User {
   private String email;
   private String password;
   private String role;
+  private String previousRole;
   private String resetToken;
   private ContactingTime contactingTime;
   private Collection<Answer> answers;
@@ -72,6 +73,16 @@ public class User {
 
   public void setRole(final String role) {
     this.role = role;
+  }
+
+  @Basic
+  @Column(name = "previous_role")
+  public String getPreviousRole() {
+    return previousRole;
+  }
+
+  public void setPreviousRole(final String previousRole) {
+    this.previousRole = previousRole;
   }
 
   @Basic
