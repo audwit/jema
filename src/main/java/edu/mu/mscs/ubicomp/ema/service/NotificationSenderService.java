@@ -15,6 +15,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -136,6 +137,13 @@ public class NotificationSenderService {
         logger.warn("Failed to commit.", ex);
       }
     }
+  }
+
+  @PreDestroy
+  public void destroy() {
+    logger.debug("Destroying executor service");
+    final List<Runnable> jobs = executorService.shutdownNow();
+    logger.debug("Destroyed executor service. Killed total jobs: " + jobs.size());
   }
 
 }

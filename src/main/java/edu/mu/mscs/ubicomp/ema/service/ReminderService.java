@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.util.*;
@@ -336,6 +337,13 @@ public class ReminderService {
     final Message message = messageRepository.find(id);
     logger.debug("Sending notification using message: {}", message);
     return message;
+  }
+
+  @PreDestroy
+  public void destroy() {
+    logger.debug("Destroying executor service");
+    final List<Runnable> jobs = executorService.shutdownNow();
+    logger.debug("Destroyed executor service. Killed total jobs: " + jobs.size());
   }
 
 }

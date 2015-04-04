@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
@@ -178,6 +179,13 @@ public class GiftCardNotifier {
     nameValuePairs.add(new BasicNameValuePair(REQUEST_BODY_KEY, requestBody));
     httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
     return httpPost;
+  }
+
+  @PreDestroy
+  public void destroy() {
+    logger.debug("Destroying executor service");
+    final List<Runnable> jobs = executorService.shutdownNow();
+    logger.debug("Destroyed executor service. Killed total jobs: " + jobs.size());
   }
 
 }

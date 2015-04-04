@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.util.*;
@@ -365,6 +366,13 @@ public class SurveyReminderScheduler {
     expectedSurveyCounts.put(25, 1);
 
     return Collections.unmodifiableMap(expectedSurveyCounts);
+  }
+
+  @PreDestroy
+  public void destroy() {
+    logger.debug("Destroying executor service");
+    final List<Runnable> jobs = executorService.shutdownNow();
+    logger.debug("Destroyed executor service. Killed total jobs: " + jobs.size());
   }
 
 }
